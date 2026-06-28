@@ -1,4 +1,5 @@
 import type { ActionPlan, ChecklistItem, DocumentKind, RiskFinding } from "../types";
+import { getDocumentKindLabel } from "../data/documentKinds";
 
 export function buildActionPlan(kind: DocumentKind, findings: RiskFinding[], checklist: ChecklistItem[]): ActionPlan {
   const redFindings = findings.filter((finding) => finding.severity === "red");
@@ -67,23 +68,9 @@ function buildCounterpartyMessage(kind: DocumentKind, topics: string[]): string 
 }
 
 function kindLabel(kind: DocumentKind): string {
-  return {
-    rental: "租房合同",
-    employment: "劳动协议",
-    renovation: "装修合同",
-    loan: "借款合同",
-    insurance: "保险保单",
-    unknown: "文件"
-  }[kind];
+  return kind === "unknown" ? "文件" : getDocumentKindLabel(kind);
 }
 
 function kindShortLabel(kind: DocumentKind): string {
-  return {
-    rental: "租房合同",
-    employment: "劳动协议",
-    renovation: "装修合同",
-    loan: "借款合同",
-    insurance: "保险保单",
-    unknown: "文件"
-  }[kind];
+  return kindLabel(kind);
 }

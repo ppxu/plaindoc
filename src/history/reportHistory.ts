@@ -1,4 +1,5 @@
 import type { AnalysisReport, SavedReport } from "../types";
+import { getDocumentKindLabel } from "../data/documentKinds";
 
 const STORAGE_KEY = "plaindoc:report-history:v1";
 const MAX_HISTORY_ITEMS = 8;
@@ -46,14 +47,7 @@ function writeReportHistory(items: SavedReport[], storage: Storage | undefined) 
 }
 
 function createReportTitle(report: AnalysisReport): string {
-  const kind = {
-    rental: "租房合同",
-    employment: "劳动协议",
-    renovation: "装修合同",
-    loan: "借款合同",
-    insurance: "保险保单",
-    unknown: "文件"
-  }[report.documentKind];
+  const kind = report.documentKind === "unknown" ? "文件" : getDocumentKindLabel(report.documentKind);
   return `${kind} · ${statusLabel(report.status)} · ${report.score} 分`;
 }
 

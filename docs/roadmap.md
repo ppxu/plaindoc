@@ -22,6 +22,7 @@
 - Copyable clause-edit pack for all proposed changes.
 - Loan and borrowing contract rule pack.
 - Insurance policy rule pack.
+- Document-kind coverage panel backed by shared metadata.
 
 ## 0.3 Document Ingestion
 

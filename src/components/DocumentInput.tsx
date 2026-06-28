@@ -1,5 +1,6 @@
-import { FileText, FolderOpen, Sparkles, Upload } from "lucide-react";
+import { FileText, FolderOpen, ShieldCheck, Sparkles, Upload } from "lucide-react";
 import type { DocumentExample, DocumentKind, ModelAnalyzerSettings, SavedReport } from "../types";
+import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
 
@@ -46,6 +47,8 @@ export function DocumentInput({
   onModelSettingsChange,
   onClearModelSettings
 }: DocumentInputProps) {
+  const selectedKindMeta = documentKindMeta[kind];
+
   return (
     <section className="input-panel" aria-label="Document input">
       <div className="panel-heading">
@@ -59,14 +62,25 @@ export function DocumentInput({
       <label className="field">
         <span>文件类型</span>
         <select value={kind} onChange={(event) => onKindChange(event.target.value as DocumentKind)}>
-          <option value="rental">租房合同</option>
-          <option value="employment">劳动协议</option>
-          <option value="renovation">装修合同</option>
-          <option value="loan">借款/贷款合同</option>
-          <option value="insurance">保险保单</option>
-          <option value="unknown">不确定</option>
+          {documentKindOptions.map((option) => (
+            <option key={option.kind} value={option.kind}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
+
+      <section className="coverage-panel" aria-label={`${selectedKindMeta.label}重点检查项`}>
+        <div>
+          <ShieldCheck aria-hidden="true" />
+          <span>{selectedKindMeta.label}重点检查</span>
+        </div>
+        <ul>
+          {selectedKindMeta.coverage.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
 
       <label className="field">
         <span>快速样例</span>

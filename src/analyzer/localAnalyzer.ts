@@ -1,4 +1,5 @@
 import type { AnalysisReport, AnalyzerInput, ExtractedFact, ReportStatus } from "../types";
+import { documentKindMeta } from "../data/documentKinds";
 import { buildActionPlan } from "./actionPlan";
 import { checklistFromRules, runRules } from "./rules";
 import { countWords, findDateMatches, findEvidence, findMoneyMatches } from "./patterns";
@@ -145,29 +146,14 @@ function statusFromScore(score: number): ReportStatus {
 }
 
 function summarize(kind: AnalyzerInput["kind"], findingCount: number, facts: ExtractedFact[]): string {
-  const label = {
-    rental: "这份租房文件",
-    employment: "这份劳动文件",
-    renovation: "这份装修文件",
-    loan: "这份借款文件",
-    insurance: "这份保险文件",
-    unknown: "这份文件"
-  }[kind];
-
+  const label = documentKindMeta[kind].summaryLabel;
   const factText = facts.length ? `已识别 ${facts.length} 个金额、期限或义务线索` : "暂未识别出足够的金额或期限线索";
   const riskText = findingCount > 0 ? `发现 ${findingCount} 个需要确认的风险点` : "没有命中明显高风险规则，但仍建议逐条确认关键义务";
   return `${label}${factText}，${riskText}。`;
 }
 
 function buildPlainLanguage(kind: AnalyzerInput["kind"], findingCount: number): string[] {
-  const kindLine = {
-    rental: "把它当成一张退租和押金风险表来看：重点盯住押金怎么扣、维修谁负责、提前退租要付多少。",
-    employment: "把它当成一张离职成本表来看：重点盯住竞业限制、违约金、加班和离职通知期。",
-    renovation: "把它当成一张付款和验收控制表来看：重点盯住付款节点、增项确认、延期责任和验收标准。",
-    loan: "把它当成一张真实借款成本表来看：重点盯住实际到账金额、服务费、提前还款、逾期费用和一次性到期条件。",
-    insurance: "把它当成一张保障边界表来看：重点盯住等待期、既往症、免责条款、续保条件和理赔通知。",
-    unknown: "先把它当成一份责任分配表来看：谁付钱、谁负责、什么时候结束、违约会怎样。"
-  }[kind];
+  const kindLine = documentKindMeta[kind].plainLanguage;
 
   const riskLine = findingCount
     ? "红色项不是说一定违法，而是表示签之前应该让对方书面解释或修改。"

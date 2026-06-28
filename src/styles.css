@@ -272,10 +272,53 @@ textarea:focus,
 .upload-strip svg,
 .primary-action svg,
 .ghost-button svg,
-.privacy-note svg {
+.privacy-note svg,
+.coverage-panel svg {
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
+}
+
+.coverage-panel {
+  margin: -2px 0 15px;
+  padding: 12px;
+  background: #f7faf9;
+  border: 1px solid #dfe9e5;
+  border-radius: 10px;
+}
+
+.coverage-panel > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #263b36;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.coverage-panel svg {
+  color: var(--teal);
+}
+
+.coverage-panel ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coverage-panel li {
+  min-height: 28px;
+  padding: 6px 9px;
+  color: #37514b;
+  background: #fff;
+  border: 1px solid #d9e6e2;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .text-field {
