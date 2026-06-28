@@ -1,6 +1,6 @@
 export async function copyTextToClipboard(text: string): Promise<boolean> {
   try {
-    if (navigator.clipboard && window.isSecureContext) {
+    if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
       return true;
     }
@@ -15,7 +15,9 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
   textarea.style.left = "-9999px";
   textarea.style.top = "0";
   document.body.appendChild(textarea);
+  textarea.focus();
   textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
 
   try {
     return document.execCommand("copy");

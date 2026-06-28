@@ -22,6 +22,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - A next-step action plan and a message draft you can send back for clarification.
 - Plain-language explanations for non-experts.
 - Local report history for revisiting recent analyses.
+- One-click copy for the full Markdown report.
 - Markdown export for saving or sharing the report.
 - Optional AI-enhanced analysis with local-rule fallback.
 

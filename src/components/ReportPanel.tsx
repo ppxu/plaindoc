@@ -1,6 +1,8 @@
-import { Download, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import { ClipboardCheck, Download, ShieldCheck } from "lucide-react";
 import type { AnalysisReport } from "../types";
 import { reportToMarkdown } from "../export/markdown";
+import { copyTextToClipboard } from "../utils/clipboard";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClauseEditPack } from "./ClauseEditPack";
@@ -13,11 +15,17 @@ interface ReportPanelProps {
 }
 
 export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: ReportPanelProps) {
+  const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
+  const markdownReport = reportToMarkdown(report);
+
+  async function copyReport() {
+    setCopyReportState((await copyTextToClipboard(markdownReport)) ? "copied" : "failed");
+  }
 
   function downloadMarkdown() {
-    const blob = new Blob([reportToMarkdown(report)], { type: "text/markdown;charset=utf-8" });
+    const blob = new Blob([markdownReport], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -44,13 +52,25 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: Re
         <span>
           {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {report.wordCount} 字符线索 · {sourceText(report)}
         </span>
-        <button className="ghost-button" type="button" onClick={downloadMarkdown}>
-          <Download aria-hidden="true" />
-          导出 Markdown
-        </button>
+        <div className="report-action-buttons">
+          <button className="ghost-button" type="button" onClick={copyReport}>
+            <ClipboardCheck aria-hidden="true" />
+            {copyReportLabel(copyReportState)}
+          </button>
+          <button className="ghost-button" type="button" onClick={downloadMarkdown}>
+            <Download aria-hidden="true" />
+            导出 Markdown
+          </button>
+        </div>
       </div>
 
       {report.notice ? <p className="report-notice">{report.notice}</p> : null}
+      {copyReportState === "failed" ? (
+        <div className="report-copy-fallback">
+          <span>浏览器没有允许自动复制。可以在这里手动全选复制完整报告。</span>
+          <textarea readOnly value={markdownReport} aria-label="完整 Markdown 报告" />
+        </div>
+      ) : null}
 
       <section className="report-section">
         <p className="section-label">Risks</p>
@@ -101,6 +121,12 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: Re
       <p className="disclaimer">{report.disclaimer}</p>
     </section>
   );
+}
+
+function copyReportLabel(state: "idle" | "copied" | "failed"): string {
+  if (state === "copied") return "已复制";
+  if (state === "failed") return "复制失败";
+  return "复制报告";
 }
 
 function sourceText(report: AnalysisReport): string {
