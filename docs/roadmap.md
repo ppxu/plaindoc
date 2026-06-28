@@ -13,6 +13,7 @@
 
 - Optional OpenAI-compatible analyzer.
 - Browser-side model settings.
+- Session-only API key handling by default with explicit opt-in persistence.
 - Structured output validation.
 - Conservative model/local merge that preserves local evidence snippets.
 - Local-rule fallback when model calls fail.

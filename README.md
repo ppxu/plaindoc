@@ -68,7 +68,7 @@ Privacy boundary:
 - PDF text extraction runs in your browser before analysis.
 - Recent report history is stored in your browser, deduplicates repeated analyses, and does not store the original document text. Restoring a history report clears the editor so stale text is not shown beside the restored report.
 - When AI mode is on, the document text is sent from your browser to the endpoint you configured.
-- The API key is stored in your browser localStorage and can be cleared from the UI.
+- The API key is session-only by default. It is written to browser localStorage only when you explicitly enable **记住 API key**, and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
 - When AI mode improves a local risk card, PlainDoc keeps the local evidence snippet instead of replacing it with unsupported model text.
 
@@ -84,6 +84,7 @@ Supported in this MVP:
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Session-only API key handling by default, with explicit opt-in persistence.
 - Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.
 - One-click original-text locating for risk evidence snippets.
 - Suggested clause edits for common risk patterns.

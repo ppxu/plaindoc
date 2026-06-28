@@ -92,4 +92,5 @@ export interface ModelAnalyzerSettings {
   baseUrl: string;
   model: string;
   apiKey: string;
+  rememberApiKey: boolean;
 }

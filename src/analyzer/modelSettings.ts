@@ -6,7 +6,8 @@ export const DEFAULT_MODEL_SETTINGS: ModelAnalyzerSettings = {
   enabled: false,
   baseUrl: "https://api.openai.com/v1",
   model: "gpt-4o-mini",
-  apiKey: ""
+  apiKey: "",
+  rememberApiKey: false
 };
 
 export function loadModelSettings(storage: Storage | undefined = getBrowserStorage()): ModelAnalyzerSettings {
@@ -28,7 +29,7 @@ export function loadModelSettings(storage: Storage | undefined = getBrowserStora
 
 export function saveModelSettings(settings: ModelAnalyzerSettings, storage: Storage | undefined = getBrowserStorage()) {
   if (!storage) return;
-  storage.setItem(STORAGE_KEY, JSON.stringify(normalizeModelSettings(settings)));
+  storage.setItem(STORAGE_KEY, JSON.stringify(toStoredModelSettings(settings)));
 }
 
 export function clearModelSettings(storage: Storage | undefined = getBrowserStorage()) {
@@ -37,11 +38,24 @@ export function clearModelSettings(storage: Storage | undefined = getBrowserStor
 }
 
 function normalizeModelSettings(settings: Partial<ModelAnalyzerSettings>): ModelAnalyzerSettings {
+  const rememberApiKey = Boolean(settings.rememberApiKey);
   return {
     enabled: Boolean(settings.enabled),
     baseUrl: cleanText(settings.baseUrl, DEFAULT_MODEL_SETTINGS.baseUrl),
     model: cleanText(settings.model, DEFAULT_MODEL_SETTINGS.model),
-    apiKey: typeof settings.apiKey === "string" ? settings.apiKey : ""
+    apiKey: rememberApiKey && typeof settings.apiKey === "string" ? settings.apiKey : "",
+    rememberApiKey
+  };
+}
+
+function toStoredModelSettings(settings: ModelAnalyzerSettings): ModelAnalyzerSettings {
+  const normalized = normalizeModelSettings(settings);
+  if (normalized.rememberApiKey) {
+    return normalized;
+  }
+  return {
+    ...normalized,
+    apiKey: ""
   };
 }
 

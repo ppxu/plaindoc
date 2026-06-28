@@ -3,17 +3,51 @@ import { clearModelSettings, loadModelSettings, saveModelSettings } from "../ana
 import type { ModelAnalyzerSettings } from "../types";
 
 describe("model settings", () => {
-  it("stores, loads, and clears model settings", () => {
+  it("does not persist the API key unless the user opts in", () => {
     const storage = createMemoryStorage();
     const settings: ModelAnalyzerSettings = {
       enabled: true,
       baseUrl: "https://example.com/v1",
       model: "custom-model",
-      apiKey: "secret"
+      apiKey: "secret",
+      rememberApiKey: false
+    };
+
+    saveModelSettings(settings, storage);
+    expect(loadModelSettings(storage)).toEqual({
+      enabled: true,
+      baseUrl: "https://example.com/v1",
+      model: "custom-model",
+      apiKey: "",
+      rememberApiKey: false
+    });
+  });
+
+  it("persists the API key only after rememberApiKey is enabled", () => {
+    const storage = createMemoryStorage();
+    const settings: ModelAnalyzerSettings = {
+      enabled: true,
+      baseUrl: "https://example.com/v1",
+      model: "custom-model",
+      apiKey: "secret",
+      rememberApiKey: true
     };
 
     saveModelSettings(settings, storage);
     expect(loadModelSettings(storage)).toEqual(settings);
+  });
+
+  it("clears model settings", () => {
+    const storage = createMemoryStorage();
+    const settings: ModelAnalyzerSettings = {
+      enabled: true,
+      baseUrl: "https://example.com/v1",
+      model: "custom-model",
+      apiKey: "secret",
+      rememberApiKey: true
+    };
+
+    saveModelSettings(settings, storage);
 
     clearModelSettings(storage);
     expect(loadModelSettings(storage).enabled).toBe(false);

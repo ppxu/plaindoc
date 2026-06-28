@@ -500,6 +500,14 @@ textarea:focus,
   border-top: 1px solid #dfebe7;
 }
 
+.key-retention-toggle {
+  margin: 8px 0 10px;
+  padding: 9px 10px;
+  background: #fff;
+  border: 1px solid #d6e3df;
+  border-radius: 8px;
+}
+
 .clear-settings-button {
   min-height: 36px;
   padding: 0 10px;
