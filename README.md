@@ -14,6 +14,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 
 - A one-sentence summary.
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
+- Local document-type detection for pasted or uploaded text.
 - Red/yellow/green risk cards with evidence snippets.
 - Suggested clause edits for flagged risks.
 - A copyable clause-edit pack for sending all proposed changes together.
@@ -74,6 +75,7 @@ Supported in this MVP:
 - Paste text.
 - Upload selectable-text PDF, `.txt`, and `.md` files.
 - Load fictional rental, employment, renovation, loan, and insurance examples.
+- Automatically detect the closest supported document type for uploaded or uncertain text.
 - Analyze common loan and borrowing clauses.
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.

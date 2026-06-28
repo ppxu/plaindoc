@@ -23,6 +23,7 @@
 - Loan and borrowing contract rule pack.
 - Insurance policy rule pack.
 - Document-kind coverage panel backed by shared metadata.
+- Local document-type detection for pasted and uploaded text.
 
 ## 0.3 Document Ingestion
 

@@ -85,6 +85,7 @@ export function DocumentInput({
       <label className="field">
         <span>快速样例</span>
         <select value={selectedExampleId} onChange={(event) => onExampleChange(event.target.value)}>
+          <option value="">自定义/上传文本</option>
           {examples.map((example) => (
             <option key={example.id} value={example.id}>
               {example.title}

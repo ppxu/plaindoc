@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Github, LockKeyhole, ScrollText } from "lucide-react";
+import { detectDocumentKind, type DocumentKindDetection } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
 import { analyzeWithModel } from "./analyzer/modelAnalyzer";
 import { clearModelSettings, loadModelSettings, saveModelSettings } from "./analyzer/modelSettings";
 import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
+import { getDocumentKindLabel } from "./data/documentKinds";
 import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { isPdfFile } from "./ingest/pdfText";
@@ -40,6 +42,7 @@ export default function App() {
 
   function handleTextChange(nextText: string) {
     setText(nextText);
+    setSelectedExampleId("");
     setInputNotice("");
   }
 
@@ -55,8 +58,14 @@ export default function App() {
       setError("");
     }
 
-    const localReport = analyzeDocument({ text, kind });
+    const resolvedKind = resolveAnalysisKind(text, kind);
+    const localReport = analyzeDocument({ text, kind: resolvedKind.kind });
     setReport(localReport);
+    if (resolvedKind.kind !== kind) {
+      setKind(resolvedKind.kind);
+      setSelectedExampleId("");
+    }
+    setInputNotice(resolvedKind.notice);
 
     if (!modelSettings.enabled) {
       setHistory(saveReportToHistory(localReport));
@@ -65,7 +74,7 @@ export default function App() {
 
     setIsAnalyzing(true);
     try {
-      const modelReport = await analyzeWithModel({ text, kind }, modelSettings, localReport);
+      const modelReport = await analyzeWithModel({ text, kind: resolvedKind.kind }, modelSettings, localReport);
       setReport(modelReport);
       setHistory(saveReportToHistory(modelReport));
       if (!modelSettings.apiKey.trim()) {
@@ -137,8 +146,12 @@ export default function App() {
       }
       setText(fileText);
       setSelectedExampleId("");
+      const detection = detectDocumentKind(fileText);
+      if (detection.kind !== "unknown") {
+        setKind(detection.kind);
+      }
       setError("");
-      setInputNotice(`${isPdfUpload ? "已从 PDF 提取" : "已读取"} ${fileText.trim().length} 个字符，可继续生成风险清单。`);
+      setInputNotice(buildUploadNotice(isPdfUpload, fileText, detection));
     } catch {
       setError("文件读取失败。请确认 PDF 不是加密文件，或直接复制关键条款粘贴到正文框。");
     } finally {
@@ -212,4 +225,50 @@ export default function App() {
 async function extractUploadedPdfText(file: File): Promise<string> {
   const { extractTextFromPdf } = await import("./ingest/pdf");
   return extractTextFromPdf(file);
+}
+
+function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: DocumentKind; notice: string } {
+  const detection = detectDocumentKind(text);
+  if (detection.kind === "unknown") {
+    return selectedKind === "unknown"
+      ? {
+          kind: selectedKind,
+          notice: "暂未识别出明确文件类型，已按通用风险模式分析。你也可以手动选择更接近的类型后重新生成。"
+        }
+      : { kind: selectedKind, notice: "" };
+  }
+
+  if (selectedKind === "unknown") {
+    return {
+      kind: detection.kind,
+      notice: `已自动识别为${getDocumentKindLabel(detection.kind)}，并按该类型生成风险清单。你仍可手动修改文件类型后重新生成。`
+    };
+  }
+
+  if (selectedKind !== detection.kind && detection.confidence === "high") {
+    return {
+      kind: detection.kind,
+      notice: `文本特征更像${getDocumentKindLabel(detection.kind)}，已自动切换规则包。你仍可手动改回${getDocumentKindLabel(selectedKind)}后重新生成。`
+    };
+  }
+
+  if (selectedKind !== detection.kind) {
+    return {
+      kind: selectedKind,
+      notice: `文本也出现了${getDocumentKindLabel(detection.kind)}特征；当前仍按${getDocumentKindLabel(selectedKind)}分析。`
+    };
+  }
+
+  return {
+    kind: selectedKind,
+    notice: `已识别为${getDocumentKindLabel(detection.kind)}，当前规则包匹配。`
+  };
+}
+
+function buildUploadNotice(isPdfUpload: boolean, text: string, detection: DocumentKindDetection): string {
+  const prefix = `${isPdfUpload ? "已从 PDF 提取" : "已读取"} ${text.trim().length} 个字符`;
+  if (detection.kind === "unknown") {
+    return `${prefix}，暂未识别出明确文件类型。你可以选择文件类型后生成风险清单。`;
+  }
+  return `${prefix}，已自动识别为${getDocumentKindLabel(detection.kind)}。如不准确，可手动修改文件类型。`;
 }
