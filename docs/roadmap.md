@@ -14,6 +14,7 @@
 - Optional OpenAI-compatible analyzer.
 - Browser-side model settings.
 - Per-session confirmation before sending document text to the configured model service, revoked when the document or model destination changes.
+- Transparent AI input-scope notice for long documents when only the first 12,000 characters are sent to the model.
 - Session-only API key handling by default with explicit opt-in persistence.
 - Structured output validation.
 - Conservative model/local merge that preserves local evidence snippets.

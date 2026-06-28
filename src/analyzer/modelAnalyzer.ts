@@ -7,6 +7,7 @@ import type {
   RiskFinding,
   Severity
 } from "../types";
+import { prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
 
 interface ChatCompletionResponse {
   choices?: Array<{
@@ -46,6 +47,7 @@ export async function analyzeWithModel(
     };
   }
 
+  const preparedDocument = prepareModelDocumentText(input.text);
   const response = await fetch(`${settings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
     method: "POST",
     headers: {
@@ -79,7 +81,12 @@ export async function analyzeWithModel(
               plainLanguage: "array, max 4 strings"
             },
             documentKind: input.kind,
-            documentText: input.text.slice(0, 12000),
+            documentText: preparedDocument.text,
+            documentTextScope: {
+              originalChars: preparedDocument.originalLength,
+              sentChars: preparedDocument.sentLength,
+              truncated: preparedDocument.truncated
+            },
             localBaseline: {
               summary: localReport.summary,
               status: localReport.status,
@@ -107,13 +114,14 @@ export async function analyzeWithModel(
   }
 
   const payload = parseModelPayload(content);
-  return mergeModelPayload(localReport, payload, settings.model.trim());
+  return mergeModelPayload(localReport, payload, settings.model.trim(), preparedDocument);
 }
 
 export function mergeModelPayload(
   localReport: AnalysisReport,
   payload: ModelReportPayload,
-  modelName: string
+  modelName: string,
+  modelInput?: PreparedModelDocumentText
 ): AnalysisReport {
   const findings = sanitizeFindings(payload.findings);
   const checklist = sanitizeChecklist(payload.checklist);
@@ -130,8 +138,16 @@ export function mergeModelPayload(
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
     modelName,
-    notice: "AI 增强已开启：报告结合了本地规则和你配置的模型服务；本地证据片段会被保留。"
+    notice: buildModelNotice(modelInput)
   };
+}
+
+function buildModelNotice(modelInput?: PreparedModelDocumentText): string {
+  const baseNotice = "AI 增强已开启：报告结合了本地规则和你配置的模型服务；本地证据片段会被保留。";
+  if (!modelInput?.truncated) {
+    return baseNotice;
+  }
+  return `${baseNotice} 由于正文较长，AI 增强仅发送前 ${modelInput.sentLength} 个字符给模型服务，完整文本仍由本地规则分析；超出部分请继续人工确认。`;
 }
 
 function sanitizeActionPlan(value: unknown): ActionPlan | undefined {

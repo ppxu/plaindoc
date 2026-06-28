@@ -74,4 +74,22 @@ describe("model analyzer", () => {
     expect(report.checklist).toEqual(localReport.checklist);
     expect(report.plainLanguage).toEqual(localReport.plainLanguage);
   });
+
+  it("adds model input range notice when a long document is truncated before model analysis", () => {
+    const localReport = analyzeDocument({ text: "甲方和乙方签署普通文件。", kind: "unknown" });
+    const report = mergeModelPayload(
+      localReport,
+      { summary: "模型摘要" },
+      "test-model",
+      {
+        text: "条".repeat(12000),
+        originalLength: 12025,
+        sentLength: 12000,
+        truncated: true
+      }
+    );
+
+    expect(report.notice).toContain("仅发送前 12000 个字符");
+    expect(report.notice).toContain("完整文本仍由本地规则分析");
+  });
 });

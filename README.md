@@ -73,7 +73,7 @@ Privacy boundary:
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
 - Changing the document text, loading an example, uploading a file, restoring a history report, clearing the workspace, or changing the model endpoint/model/API key cancels the send confirmation.
-- After confirmation, the document text is sent from your browser to the endpoint you configured.
+- After confirmation, PlainDoc sends up to the first 12,000 characters of the document text from your browser to the endpoint you configured. The full document is still analyzed locally, and long AI-enhanced reports include a notice when the model only received the front section.
 - The API key is session-only by default. It is written to browser localStorage only when you explicitly enable **记住 API key**, and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
 - When AI mode improves a local risk card, PlainDoc keeps the local evidence snippet instead of replacing it with unsupported model text.
@@ -91,6 +91,7 @@ Supported in this MVP:
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
 - Per-session model-send confirmation that resets when the document or model destination changes.
+- Transparent long-document AI scope notice when only the first 12,000 characters are sent to the configured model service.
 - Session-only API key handling by default, with explicit opt-in persistence.
 - Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.
 - One-click original-text locating for risk evidence snippets.
