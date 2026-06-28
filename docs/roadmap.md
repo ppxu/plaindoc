@@ -15,10 +15,10 @@
 - Browser-side model settings.
 - Structured output validation.
 - Local-rule fallback when model calls fail.
+- Selectable-text PDF upload and extraction.
 
 ## 0.3 Document Ingestion
 
-- PDF text extraction.
 - OCR adapter for scanned documents.
 - Better evidence highlighting by paragraph.
 - Larger example pack.

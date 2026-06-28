@@ -264,6 +264,11 @@ textarea:focus,
   display: none;
 }
 
+.upload-strip:has(input:disabled) {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .upload-strip svg,
 .primary-action svg,
 .ghost-button svg,
@@ -280,6 +285,13 @@ textarea:focus,
 .error-message {
   margin: 0 0 12px;
   color: #a4362e;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.input-notice {
+  margin: 0 0 12px;
+  color: #315f52;
   font-size: 13px;
   line-height: 1.45;
 }

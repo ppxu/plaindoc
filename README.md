@@ -10,7 +10,7 @@ The first version focuses on rental, employment, and renovation contracts. It is
 
 ## What It Does
 
-Paste a contract or load a bundled example. PlainDoc produces:
+Paste a contract, upload a selectable-text PDF, or load a bundled example. PlainDoc produces:
 
 - A one-sentence summary.
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
@@ -57,6 +57,7 @@ To use it:
 Privacy boundary:
 
 - When AI mode is off, PlainDoc does not send document text anywhere.
+- PDF text extraction runs in your browser before analysis.
 - When AI mode is on, the document text is sent from your browser to the endpoint you configured.
 - The API key is stored in your browser localStorage and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
@@ -66,7 +67,7 @@ Privacy boundary:
 Supported in this MVP:
 
 - Paste text.
-- Upload `.txt` and `.md` files.
+- Upload selectable-text PDF, `.txt`, and `.md` files.
 - Load fictional rental, employment, and renovation examples.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
@@ -74,8 +75,7 @@ Supported in this MVP:
 
 Not yet supported:
 
-- PDF parsing.
-- OCR for scans or photos.
+- OCR for scanned PDFs or photos.
 - Server-side model proxy or account-based key storage.
 - Multi-language document packs.
 - Account sync or cloud storage.
@@ -102,7 +102,7 @@ Contributions are welcome. The easiest useful contributions are:
 - Improve local rule packs.
 - Add tests for a new document pattern.
 - Improve plain-language explanations.
-- Help implement PDF/OCR adapters.
+- Help implement OCR adapters and document ingestion edge cases.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 

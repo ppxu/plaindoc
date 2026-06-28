@@ -6,7 +6,10 @@ import { clearModelSettings, loadModelSettings, saveModelSettings } from "./anal
 import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
 import { documentExamples } from "./data/examples";
+import { isPdfFile } from "./ingest/pdfText";
 import type { AnalysisReport, DocumentKind, ModelAnalyzerSettings } from "./types";
+
+const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 export default function App() {
   const firstExample = documentExamples[0];
@@ -14,7 +17,9 @@ export default function App() {
   const [kind, setKind] = useState<DocumentKind>(firstExample.kind);
   const [selectedExampleId, setSelectedExampleId] = useState(firstExample.id);
   const [error, setError] = useState("");
+  const [inputNotice, setInputNotice] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [report, setReport] = useState<AnalysisReport>(() =>
     analyzeDocument({ text: firstExample.content, kind: firstExample.kind })
   );
@@ -27,6 +32,12 @@ export default function App() {
     setText(example.content);
     setKind(example.kind);
     setError("");
+    setInputNotice("");
+  }
+
+  function handleTextChange(nextText: string) {
+    setText(nextText);
+    setInputNotice("");
   }
 
   async function handleAnalyze() {
@@ -80,19 +91,37 @@ export default function App() {
   }
 
   async function handleUpload(file: File) {
-    const isSupported = file.name.endsWith(".txt") || file.name.endsWith(".md") || file.type.startsWith("text/");
-    if (!isSupported) {
-      setError("当前 MVP 只支持 .txt / .md / 纯文本文件。PDF 和 OCR 在路线图中。");
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError("文件超过 20MB。请先压缩、拆分或复制关键条款后再分析。");
       return;
     }
 
+    const filename = file.name.toLowerCase();
+    const isTextFile = filename.endsWith(".txt") || filename.endsWith(".md") || file.type.startsWith("text/");
+    const isPdfUpload = isPdfFile(file);
+    if (!isPdfUpload && !isTextFile) {
+      setError("当前支持 PDF、.txt、.md 和纯文本文件。扫描件图片和 OCR 在路线图中。");
+      return;
+    }
+
+    setIsUploading(true);
+    setError("");
+    setInputNotice("");
+
     try {
-      const fileText = await file.text();
+      const fileText = isPdfUpload ? await extractUploadedPdfText(file) : await file.text();
+      if (!fileText.trim()) {
+        setError("没有从文件中读取到可分析文本。如果这是扫描版 PDF，请先使用 OCR，或复制关键条款粘贴到正文框。");
+        return;
+      }
       setText(fileText);
       setSelectedExampleId("");
       setError("");
+      setInputNotice(`${isPdfUpload ? "已从 PDF 提取" : "已读取"} ${fileText.trim().length} 个字符，可继续生成风险清单。`);
     } catch {
-      setError("文件读取失败，请重试或直接粘贴文本。");
+      setError("文件读取失败。请确认 PDF 不是加密文件，或直接复制关键条款粘贴到正文框。");
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -134,9 +163,11 @@ export default function App() {
           examples={documentExamples}
           selectedExampleId={selectedExampleId}
           error={error}
+          notice={inputNotice}
           isAnalyzing={isAnalyzing}
+          isUploading={isUploading}
           modelSettings={modelSettings}
-          onTextChange={setText}
+          onTextChange={handleTextChange}
           onKindChange={setKind}
           onExampleChange={handleExampleChange}
           onAnalyze={handleAnalyze}
@@ -148,4 +179,9 @@ export default function App() {
       </main>
     </div>
   );
+}
+
+async function extractUploadedPdfText(file: File): Promise<string> {
+  const { extractTextFromPdf } = await import("./ingest/pdf");
+  return extractTextFromPdf(file);
 }

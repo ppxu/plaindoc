@@ -8,7 +8,9 @@ interface DocumentInputProps {
   examples: DocumentExample[];
   selectedExampleId: string;
   error: string;
+  notice: string;
   isAnalyzing: boolean;
+  isUploading: boolean;
   modelSettings: ModelAnalyzerSettings;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
@@ -25,7 +27,9 @@ export function DocumentInput({
   examples,
   selectedExampleId,
   error,
+  notice,
   isAnalyzing,
+  isUploading,
   modelSettings,
   onTextChange,
   onKindChange,
@@ -68,10 +72,11 @@ export function DocumentInput({
 
       <label className="upload-strip">
         <Upload aria-hidden="true" />
-        <span>上传 .txt / .md 文件</span>
+        <span>{isUploading ? "正在读取文件..." : "上传 PDF / .txt / .md 文件"}</span>
         <input
           type="file"
-          accept=".txt,.md,text/plain,text/markdown"
+          accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+          disabled={isUploading || isAnalyzing}
           onChange={(event) => {
             const file = event.currentTarget.files?.[0];
             if (file) {
@@ -98,10 +103,11 @@ export function DocumentInput({
       </label>
 
       {error ? <p className="error-message">{error}</p> : null}
+      {notice ? <p className="input-notice">{notice}</p> : null}
 
-      <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing}>
+      <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing || isUploading}>
         <Sparkles aria-hidden="true" />
-        {isAnalyzing ? "正在增强分析..." : modelSettings.enabled ? "生成 AI 增强清单" : "生成风险清单"}
+        {isUploading ? "正在读取文件..." : isAnalyzing ? "正在增强分析..." : modelSettings.enabled ? "生成 AI 增强清单" : "生成风险清单"}
       </button>
 
       <div className="privacy-note">
