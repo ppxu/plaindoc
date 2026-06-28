@@ -26,6 +26,7 @@ export interface RiskFinding {
   explanation: string;
   whyItMatters: string;
   suggestion: string;
+  modification?: string;
   evidence?: EvidenceSnippet;
 }
 

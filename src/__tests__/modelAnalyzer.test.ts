@@ -20,6 +20,7 @@ describe("model analyzer", () => {
             explanation: "条款允许对方按情况扣除全部押金。",
             whyItMatters: "这会让退租时的扣款依据变得不稳定。",
             suggestion: "要求写明可扣款项目、上限和证据材料。",
+            modification: "建议写明扣款项目、凭证和退还期限。",
             unexpected: "ignored"
           }
         ],
@@ -45,6 +46,7 @@ describe("model analyzer", () => {
     expect(report.modelName).toBe("test-model");
     expect(report.findings[0].id).toContain("model-1");
     expect(report.findings[0].evidence).toBeUndefined();
+    expect(report.findings[0].modification).toContain("退还期限");
     expect(report.checklist[0].severity).toBe("red");
     expect(report.actionPlan.priority).toBe("high");
     expect(report.actionPlan.message).toContain("\n");

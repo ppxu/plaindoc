@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { AlertTriangle, CheckCircle2, CircleAlert } from "lucide-react";
 import type { RiskFinding } from "../types";
+import { copyTextToClipboard } from "../utils/clipboard";
 
 interface RiskCardProps {
   finding: RiskFinding;
@@ -7,6 +9,12 @@ interface RiskCardProps {
 
 export function RiskCard({ finding }: RiskCardProps) {
   const Icon = finding.severity === "red" ? CircleAlert : finding.severity === "yellow" ? AlertTriangle : CheckCircle2;
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  async function copyModification() {
+    if (!finding.modification) return;
+    setCopyState((await copyTextToClipboard(finding.modification)) ? "copied" : "failed");
+  }
 
   return (
     <article className={`risk-card ${finding.severity}`}>
@@ -25,6 +33,17 @@ export function RiskCard({ finding }: RiskCardProps) {
           <dd>{finding.suggestion}</dd>
         </div>
       </dl>
+      {finding.modification ? (
+        <div className="modification-box">
+          <div>
+            <span>建议修改条款</span>
+            <button type="button" onClick={copyModification}>
+              {copyLabel(copyState)}
+            </button>
+          </div>
+          <p>{finding.modification}</p>
+        </div>
+      ) : null}
       {finding.evidence ? (
         <blockquote>
           <span>证据片段</span>
@@ -35,3 +54,8 @@ export function RiskCard({ finding }: RiskCardProps) {
   );
 }
 
+function copyLabel(state: "idle" | "copied" | "failed"): string {
+  if (state === "copied") return "已复制";
+  if (state === "failed") return "复制失败";
+  return "复制";
+}

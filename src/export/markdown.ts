@@ -14,6 +14,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
       `**为什么重要：** ${finding.whyItMatters}`,
       "",
       `**建议：** ${finding.suggestion}`,
+      finding.modification ? `\n**建议修改条款：** ${finding.modification}` : "",
       finding.evidence ? `\n> 证据片段：${finding.evidence.text}` : ""
     ].join("\n"))
     .join("\n\n") || "未命中明显风险规则。";

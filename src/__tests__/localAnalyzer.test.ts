@@ -16,6 +16,7 @@ describe("analyzeDocument", () => {
     const report = analyzeDocument({ text: example?.content ?? "", kind: "rental" });
 
     expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(true);
+    expect(report.findings.find((finding) => finding.id === "rental-broad-deposit-deduction")?.modification).toContain("押金");
     expect(report.checklist.some((item) => item.question.includes("押金"))).toBe(true);
     expect(report.actionPlan.priority).toBe("high");
     expect(report.actionPlan.message).toContain("签署前想先确认");

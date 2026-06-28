@@ -18,6 +18,7 @@
 - Selectable-text PDF upload and extraction.
 - Next-step action plan and copyable counterparty message.
 - Local report history without storing original document text.
+- Suggested clause edits for flagged risks.
 
 ## 0.3 Document Ingestion
 

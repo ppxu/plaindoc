@@ -687,6 +687,46 @@ textarea:focus,
   font-size: 13px;
 }
 
+.modification-box {
+  margin-top: 14px;
+  padding: 12px;
+  background: #fbfcfc;
+  border: 1px solid #dce8e4;
+  border-radius: 8px;
+}
+
+.modification-box > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.modification-box span {
+  color: #2d3d38;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.modification-box button {
+  min-height: 28px;
+  padding: 0 9px;
+  color: #28504a;
+  background: #fff;
+  border: 1px solid #d3e2de;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.modification-box p {
+  margin: 0;
+  color: #40504b;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 .risk-card blockquote {
   margin: 14px 0 0;
   padding: 10px 12px;

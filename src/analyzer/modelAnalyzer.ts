@@ -63,7 +63,7 @@ export async function analyzeWithModel(
             requiredJsonShape: {
               summary: "string, max 120 Chinese chars",
               findings:
-                "array, max 6 items, each has title, severity(red/yellow/green), explanation, whyItMatters, suggestion",
+                "array, max 6 items, each has title, severity(red/yellow/green), explanation, whyItMatters, suggestion, modification",
               checklist: "array, max 8 items, each has question, reason, severity(red/yellow/green)",
               actionPlan: "object with priority(low/medium/high), title, steps(max 3 strings), message",
               plainLanguage: "array, max 4 strings"
@@ -159,6 +159,7 @@ function sanitizeFindings(value: unknown): RiskFinding[] {
     const explanation = sanitizeString(item.explanation, 220);
     const whyItMatters = sanitizeString(item.whyItMatters, 220);
     const suggestion = sanitizeString(item.suggestion, 220);
+    const modification = sanitizeString(item.modification, 360);
     if (!title || !explanation || !whyItMatters || !suggestion) return [];
     return [{
       id: `model-${index + 1}-${slugify(title)}`,
@@ -166,7 +167,8 @@ function sanitizeFindings(value: unknown): RiskFinding[] {
       severity,
       explanation,
       whyItMatters,
-      suggestion
+      suggestion,
+      modification: modification || undefined
     }];
   });
 }
