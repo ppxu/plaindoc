@@ -3,11 +3,19 @@ import type { ModelAnalyzerSettings } from "../types";
 
 interface ModelSettingsPanelProps {
   settings: ModelAnalyzerSettings;
+  modelTextConsent: boolean;
   onChange: (settings: ModelAnalyzerSettings) => void;
   onClear: () => void;
+  onModelTextConsentChange: (checked: boolean) => void;
 }
 
-export function ModelSettingsPanel({ settings, onChange, onClear }: ModelSettingsPanelProps) {
+export function ModelSettingsPanel({
+  settings,
+  modelTextConsent,
+  onChange,
+  onClear,
+  onModelTextConsentChange
+}: ModelSettingsPanelProps) {
   function update(partial: Partial<ModelAnalyzerSettings>) {
     onChange({ ...settings, ...partial });
   }
@@ -69,13 +77,26 @@ export function ModelSettingsPanel({ settings, onChange, onClear }: ModelSetting
             />
           </label>
 
+          <label className="mode-toggle model-send-consent">
+            <span>
+              <BrainCircuit aria-hidden="true" />
+              本次允许发送正文给模型服务
+            </span>
+            <input
+              type="checkbox"
+              checked={modelTextConsent}
+              disabled={!settings.apiKey.trim()}
+              onChange={(event) => onModelTextConsentChange(event.target.checked)}
+            />
+          </label>
+
           <button className="clear-settings-button" type="button" onClick={onClear}>
             <Trash2 aria-hidden="true" />
             清除模型设置
           </button>
 
           <p className="model-warning">
-            开启后，待分析文本会发送到你配置的模型服务。API key 默认只保存在当前页面会话；勾选“记住 API key”后才会写入本机浏览器。
+            只有勾选本次发送确认后，待分析文本才会发送到你配置的模型服务。更换正文、样例、文件或模型端点后会自动取消确认。API key 默认只保存在当前页面会话；勾选“记住 API key”后才会写入本机浏览器。
           </p>
         </div>
       ) : null}

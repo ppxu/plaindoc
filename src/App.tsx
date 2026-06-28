@@ -11,6 +11,7 @@ import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
+import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
 import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
@@ -31,6 +32,7 @@ export default function App() {
     analyzeDocument({ text: firstExample.content, kind: firstExample.kind })
   );
   const [modelSettings, setModelSettings] = useState<ModelAnalyzerSettings>(() => loadModelSettings());
+  const [modelTextConsent, setModelTextConsent] = useState(false);
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
   const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
 
@@ -42,12 +44,14 @@ export default function App() {
     setKind(example.kind);
     setError("");
     setInputNotice("");
+    setModelTextConsent(false);
   }
 
   function handleTextChange(nextText: string) {
     setText(nextText);
     setSelectedExampleId("");
     setInputNotice("");
+    setModelTextConsent(false);
   }
 
   function handleClearWorkspace() {
@@ -59,6 +63,7 @@ export default function App() {
     setInputNotice(cleared.notice);
     setReport(cleared.report);
     setEvidenceSelection(cleared.evidenceSelection);
+    setModelTextConsent(false);
   }
 
   async function handleAnalyze() {
@@ -82,8 +87,14 @@ export default function App() {
     }
     setInputNotice(resolvedKind.notice);
 
-    if (!modelSettings.enabled) {
+    const canUseModel = canSendDocumentTextToModel(modelSettings, modelTextConsent);
+    if (!modelSettings.enabled || !canUseModel) {
       setHistory(saveReportToHistory(localReport));
+      if (modelSettings.enabled && !modelSettings.apiKey.trim()) {
+        setInputNotice("AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。");
+      } else if (modelSettings.enabled && !modelTextConsent) {
+        setInputNotice("未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。");
+      }
       return;
     }
 
@@ -117,6 +128,7 @@ export default function App() {
     setSelectedExampleId(restored.selectedExampleId);
     setError(restored.error);
     setInputNotice(restored.notice);
+    setModelTextConsent(false);
   }
 
   function handleClearHistory() {
@@ -126,6 +138,9 @@ export default function App() {
   }
 
   function handleModelSettingsChange(settings: ModelAnalyzerSettings) {
+    if (shouldRevokeModelTextConsent(modelSettings, settings)) {
+      setModelTextConsent(false);
+    }
     setModelSettings(settings);
     saveModelSettings(settings);
   }
@@ -134,6 +149,7 @@ export default function App() {
     clearModelSettings();
     const next = loadModelSettings();
     setModelSettings(next);
+    setModelTextConsent(false);
     setError("");
   }
 
@@ -169,6 +185,7 @@ export default function App() {
       }
       setError("");
       setInputNotice(buildUploadNotice(isPdfUpload, fileText, detection));
+      setModelTextConsent(false);
     } catch {
       setError("文件读取失败。请确认 PDF 不是加密文件，或直接复制关键条款粘贴到正文框。");
     } finally {
@@ -240,6 +257,7 @@ export default function App() {
           isUploading={isUploading}
           history={history}
           modelSettings={modelSettings}
+          modelTextConsent={modelTextConsent}
           evidenceSelection={evidenceSelection}
           onTextChange={handleTextChange}
           onKindChange={setKind}
@@ -251,6 +269,7 @@ export default function App() {
           onClearHistory={handleClearHistory}
           onModelSettingsChange={handleModelSettingsChange}
           onClearModelSettings={handleClearModelSettings}
+          onModelTextConsentChange={setModelTextConsent}
         />
         <ReportPanel
           report={report}

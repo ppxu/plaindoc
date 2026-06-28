@@ -16,6 +16,7 @@ interface DocumentInputProps {
   isUploading: boolean;
   history: SavedReport[];
   modelSettings: ModelAnalyzerSettings;
+  modelTextConsent: boolean;
   evidenceSelection: EvidenceSelectionTarget | null;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
@@ -27,6 +28,7 @@ interface DocumentInputProps {
   onClearHistory: () => void;
   onModelSettingsChange: (settings: ModelAnalyzerSettings) => void;
   onClearModelSettings: () => void;
+  onModelTextConsentChange: (checked: boolean) => void;
 }
 
 export function DocumentInput({
@@ -40,6 +42,7 @@ export function DocumentInput({
   isUploading,
   history,
   modelSettings,
+  modelTextConsent,
   evidenceSelection,
   onTextChange,
   onKindChange,
@@ -50,7 +53,8 @@ export function DocumentInput({
   onSelectHistory,
   onClearHistory,
   onModelSettingsChange,
-  onClearModelSettings
+  onClearModelSettings,
+  onModelTextConsentChange
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -143,8 +147,10 @@ export function DocumentInput({
 
       <ModelSettingsPanel
         settings={modelSettings}
+        modelTextConsent={modelTextConsent}
         onChange={onModelSettingsChange}
         onClear={onClearModelSettings}
+        onModelTextConsentChange={onModelTextConsentChange}
       />
 
       <label className="field text-field">
@@ -162,7 +168,7 @@ export function DocumentInput({
 
       <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing || isUploading}>
         <Sparkles aria-hidden="true" />
-        {isUploading ? "正在读取文件..." : isAnalyzing ? "正在增强分析..." : modelSettings.enabled ? "生成 AI 增强清单" : "生成风险清单"}
+        {analyzeButtonLabel(isUploading, isAnalyzing, modelSettings, modelTextConsent)}
       </button>
 
       <div className="privacy-note">
@@ -171,4 +177,18 @@ export function DocumentInput({
       </div>
     </section>
   );
+}
+
+function analyzeButtonLabel(
+  isUploading: boolean,
+  isAnalyzing: boolean,
+  modelSettings: ModelAnalyzerSettings,
+  modelTextConsent: boolean
+): string {
+  if (isUploading) return "正在读取文件...";
+  if (isAnalyzing) return "正在增强分析...";
+  if (!modelSettings.enabled) return "生成风险清单";
+  if (!modelSettings.apiKey.trim()) return "生成本地清单（缺少 API key）";
+  if (!modelTextConsent) return "生成本地清单（未确认 AI 发送）";
+  return "生成 AI 增强清单";
 }

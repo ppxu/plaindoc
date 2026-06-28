@@ -541,6 +541,18 @@ textarea:focus,
   border-radius: 8px;
 }
 
+.model-send-consent {
+  margin: 8px 0 10px;
+  padding: 10px;
+  background: #fff9f1;
+  border: 1px solid #e9cda5;
+  border-radius: 8px;
+}
+
+.model-send-consent svg {
+  color: #9c5c12;
+}
+
 .clear-settings-button {
   min-height: 36px;
   padding: 0 10px;

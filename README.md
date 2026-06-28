@@ -28,6 +28,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - One-click copy for the full Markdown report.
 - Markdown export for saving or sharing the report.
 - Optional AI-enhanced analysis with local-rule fallback.
+- Explicit per-session confirmation before sending document text to a configured model service.
 
 PlainDoc is not a legal-advice product. It is a document-reading assistant that helps ordinary people spot questions worth asking.
 
@@ -61,7 +62,8 @@ To use it:
 
 1. Enable **AI 增强分析** in the left panel.
 2. Enter an OpenAI-compatible endpoint, model name, and API key.
-3. Click **生成 AI 增强清单**.
+3. Confirm **本次允许发送正文给模型服务**.
+4. Click **生成 AI 增强清单**.
 
 Privacy boundary:
 
@@ -69,7 +71,9 @@ Privacy boundary:
 - PDF text extraction runs in your browser before analysis.
 - Recent report history is stored in your browser, deduplicates repeated analyses, and stores report conclusions and suggestions only. It does not store the original document text or evidence snippets. Restoring a history report clears the editor so stale text is not shown beside the restored report.
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
-- When AI mode is on, the document text is sent from your browser to the endpoint you configured.
+- When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
+- Changing the document text, loading an example, uploading a file, restoring a history report, clearing the workspace, or changing the model endpoint/model/API key cancels the send confirmation.
+- After confirmation, the document text is sent from your browser to the endpoint you configured.
 - The API key is session-only by default. It is written to browser localStorage only when you explicitly enable **记住 API key**, and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
 - When AI mode improves a local risk card, PlainDoc keeps the local evidence snippet instead of replacing it with unsupported model text.
@@ -86,6 +90,7 @@ Supported in this MVP:
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Per-session model-send confirmation that resets when the document or model destination changes.
 - Session-only API key handling by default, with explicit opt-in persistence.
 - Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.
 - One-click original-text locating for risk evidence snippets.
