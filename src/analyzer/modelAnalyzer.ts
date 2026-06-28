@@ -7,7 +7,7 @@ import type {
   RiskFinding,
   Severity
 } from "../types";
-import { prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
+import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
 
 interface ChatCompletionResponse {
   choices?: Array<{
@@ -87,16 +87,7 @@ export async function analyzeWithModel(
               sentChars: preparedDocument.sentLength,
               truncated: preparedDocument.truncated
             },
-            localBaseline: {
-              summary: localReport.summary,
-              status: localReport.status,
-              score: localReport.score,
-              facts: localReport.facts,
-              findings: localReport.findings,
-              checklist: localReport.checklist,
-              actionPlan: localReport.actionPlan,
-              plainLanguage: localReport.plainLanguage
-            }
+            localBaseline: prepareModelBaseline(localReport, preparedDocument)
           })
         }
       ]

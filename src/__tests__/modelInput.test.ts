@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { MAX_MODEL_DOCUMENT_CHARS, prepareModelDocumentText } from "../analyzer/modelInput";
+import { analyzeDocument } from "../analyzer/localAnalyzer";
+import { MAX_MODEL_DOCUMENT_CHARS, prepareModelBaseline, prepareModelDocumentText } from "../analyzer/modelInput";
 
 describe("prepareModelDocumentText", () => {
   it("keeps short document text unchanged", () => {
@@ -19,5 +20,20 @@ describe("prepareModelDocumentText", () => {
     expect(prepared.originalLength).toBe(MAX_MODEL_DOCUMENT_CHARS + 25);
     expect(prepared.sentLength).toBe(MAX_MODEL_DOCUMENT_CHARS);
     expect(prepared.truncated).toBe(true);
+  });
+
+  it("removes evidence snippets from the local baseline sent to a model", () => {
+    const report = analyzeDocument({
+      text: "押金 5000 元，甲方可自行扣除押金和维修费，提前退租需赔偿两个月租金。",
+      kind: "rental"
+    });
+    const preparedDocument = prepareModelDocumentText("合同正文");
+    const baseline = prepareModelBaseline(report, preparedDocument);
+    const serialized = JSON.stringify(baseline);
+
+    expect(report.findings.some((finding) => finding.evidence?.text)).toBe(true);
+    expect(serialized).not.toContain("甲方可自行扣除押金和维修费");
+    expect(serialized).not.toContain("\"evidence\"");
+    expect(serialized).toContain("rental-broad-deposit-deduction");
   });
 });
