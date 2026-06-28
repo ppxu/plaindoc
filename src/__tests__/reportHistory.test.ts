@@ -31,6 +31,44 @@ describe("report history", () => {
     expect(loadReportHistory(storage)).toHaveLength(1);
   });
 
+  it("removes evidence snippets before saving reports to history", () => {
+    const storage = createMemoryStorage();
+    const report = analyzeDocument({
+      text: "押金 5000 元，甲方可自行扣除押金和维修费，提前退租需赔偿两个月租金。",
+      kind: "rental"
+    });
+    expect(report.findings.some((finding) => finding.evidence)).toBe(true);
+
+    const saved = saveReportToHistory(report, storage);
+
+    expect(saved[0].report.findings.every((finding) => finding.evidence === undefined)).toBe(true);
+    expect(loadReportHistory(storage)[0].report.findings.every((finding) => finding.evidence === undefined)).toBe(true);
+  });
+
+  it("removes evidence snippets from older saved history data while loading", () => {
+    const storage = createMemoryStorage();
+    const report = analyzeDocument({
+      text: "押金 5000 元，甲方可自行扣除押金和维修费，提前退租需赔偿两个月租金。",
+      kind: "rental"
+    });
+    storage.setItem(
+      "plaindoc:report-history:v1",
+      JSON.stringify([
+        {
+          id: "old-history",
+          title: "租房合同 · 不建议直接签 · 20 分",
+          createdAt: "2026-06-28T00:00:00.000Z",
+          report
+        }
+      ])
+    );
+
+    const loaded = loadReportHistory(storage);
+
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0].report.findings.every((finding) => finding.evidence === undefined)).toBe(true);
+  });
+
   it("limits saved reports and ignores invalid storage data", () => {
     const storage = createMemoryStorage();
 

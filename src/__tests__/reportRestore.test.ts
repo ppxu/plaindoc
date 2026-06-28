@@ -25,5 +25,6 @@ describe("report restore", () => {
     expect(restored.error).toBe("");
     expect(restored.notice).toContain("正文框已清空");
     expect(restored.notice).toContain("历史不保存原始正文");
+    expect(restored.notice).toContain("证据片段");
   });
 });

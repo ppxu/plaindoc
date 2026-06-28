@@ -66,7 +66,7 @@ Privacy boundary:
 
 - When AI mode is off, PlainDoc does not send document text anywhere.
 - PDF text extraction runs in your browser before analysis.
-- Recent report history is stored in your browser, deduplicates repeated analyses, and does not store the original document text. Restoring a history report clears the editor so stale text is not shown beside the restored report.
+- Recent report history is stored in your browser, deduplicates repeated analyses, and stores report conclusions and suggestions only. It does not store the original document text or evidence snippets. Restoring a history report clears the editor so stale text is not shown beside the restored report.
 - When AI mode is on, the document text is sent from your browser to the endpoint you configured.
 - The API key is session-only by default. It is written to browser localStorage only when you explicitly enable **记住 API key**, and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
@@ -90,7 +90,7 @@ Supported in this MVP:
 - Suggested clause edits for common risk patterns.
 - Copyable clause-edit pack.
 - Copyable next-step message draft for counterparties.
-- Deduplicated local report history with editor clearing on restore and one-click clear.
+- Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - Markdown report export.
 
 Not yet supported:

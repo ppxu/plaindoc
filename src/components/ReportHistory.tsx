@@ -32,7 +32,7 @@ export function ReportHistory({ items, onSelect, onClear }: ReportHistoryProps) 
           </button>
         ))}
       </div>
-      <p>历史只保存在本机浏览器，保存报告不保存原始正文。</p>
+      <p>历史只保存在本机浏览器，保存报告结论和建议，不保存原始正文或证据片段。</p>
     </section>
   );
 }

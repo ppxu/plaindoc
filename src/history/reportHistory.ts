@@ -12,7 +12,7 @@ export function loadReportHistory(storage: Storage | undefined = getBrowserStora
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isSavedReport).slice(0, MAX_HISTORY_ITEMS);
+    return parsed.filter(isSavedReport).map(redactSavedReport).slice(0, MAX_HISTORY_ITEMS);
   } catch {
     return [];
   }
@@ -22,14 +22,15 @@ export function saveReportToHistory(
   report: AnalysisReport,
   storage: Storage | undefined = getBrowserStorage()
 ): SavedReport[] {
+  const historyReport = redactReportForHistory(report);
   const entry: SavedReport = {
     id: createId(),
-    title: createReportTitle(report),
+    title: createReportTitle(historyReport),
     createdAt: new Date().toISOString(),
-    report
+    report: historyReport
   };
 
-  const fingerprint = createReportFingerprint(report);
+  const fingerprint = createReportFingerprint(historyReport);
   const next = [
     entry,
     ...loadReportHistory(storage).filter((item) => createReportFingerprint(item.report) !== fingerprint)
@@ -48,6 +49,21 @@ export function clearReportHistory(storage: Storage | undefined = getBrowserStor
 function writeReportHistory(items: SavedReport[], storage: Storage | undefined) {
   if (!storage) return;
   storage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+function redactSavedReport(item: SavedReport): SavedReport {
+  return {
+    ...item,
+    report: redactReportForHistory(item.report)
+  };
+}
+
+function redactReportForHistory(report: AnalysisReport): AnalysisReport {
+  return {
+    ...report,
+    facts: report.facts.map(({ evidence, ...fact }) => fact),
+    findings: report.findings.map(({ evidence, ...finding }) => finding)
+  };
 }
 
 function createReportTitle(report: AnalysisReport): string {
