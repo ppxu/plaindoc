@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { FileText, FolderOpen, ShieldCheck, Sparkles, Upload } from "lucide-react";
+import { FileText, FolderOpen, ShieldCheck, Sparkles, Trash2, Upload } from "lucide-react";
 import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
@@ -22,6 +22,7 @@ interface DocumentInputProps {
   onExampleChange: (id: string) => void;
   onAnalyze: () => void;
   onUpload: (file: File) => void;
+  onClearWorkspace: () => void;
   onSelectHistory: (item: SavedReport) => void;
   onClearHistory: () => void;
   onModelSettingsChange: (settings: ModelAnalyzerSettings) => void;
@@ -45,6 +46,7 @@ export function DocumentInput({
   onExampleChange,
   onAnalyze,
   onUpload,
+  onClearWorkspace,
   onSelectHistory,
   onClearHistory,
   onModelSettingsChange,
@@ -107,22 +109,35 @@ export function DocumentInput({
         </select>
       </label>
 
-      <label className="upload-strip">
-        <Upload aria-hidden="true" />
-        <span>{isUploading ? "正在读取文件..." : "上传 PDF / .txt / .md 文件"}</span>
-        <input
-          type="file"
-          accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
-          disabled={isUploading || isAnalyzing}
-          onChange={(event) => {
-            const file = event.currentTarget.files?.[0];
-            if (file) {
-              onUpload(file);
-            }
-            event.currentTarget.value = "";
-          }}
-        />
-      </label>
+      <div className="workspace-actions">
+        <label className="upload-strip">
+          <Upload aria-hidden="true" />
+          <span>{isUploading ? "正在读取文件..." : "上传 PDF / .txt / .md 文件"}</span>
+          <input
+            type="file"
+            accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+            disabled={isUploading || isAnalyzing}
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0];
+              if (file) {
+                onUpload(file);
+              }
+              event.currentTarget.value = "";
+            }}
+          />
+        </label>
+        <button
+          className="clear-workspace-button"
+          type="button"
+          onClick={onClearWorkspace}
+          disabled={isUploading || isAnalyzing || !text.trim()}
+          title="清空当前文件正文和报告"
+          aria-label="清空当前文件正文和报告"
+        >
+          <Trash2 aria-hidden="true" />
+          <span>清空当前文件</span>
+        </button>
+      </div>
 
       <ReportHistory items={history} onSelect={onSelectHistory} onClear={onClearHistory} />
 

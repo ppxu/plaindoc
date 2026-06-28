@@ -11,6 +11,7 @@ import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
+import { createClearedWorkspaceState } from "./state/workspaceReset";
 import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
 import { resolveEvidenceSelection } from "./utils/evidenceSelection";
@@ -47,6 +48,17 @@ export default function App() {
     setText(nextText);
     setSelectedExampleId("");
     setInputNotice("");
+  }
+
+  function handleClearWorkspace() {
+    const cleared = createClearedWorkspaceState();
+    setText(cleared.text);
+    setKind(cleared.kind);
+    setSelectedExampleId(cleared.selectedExampleId);
+    setError(cleared.error);
+    setInputNotice(cleared.notice);
+    setReport(cleared.report);
+    setEvidenceSelection(cleared.evidenceSelection);
   }
 
   async function handleAnalyze() {
@@ -234,6 +246,7 @@ export default function App() {
           onExampleChange={handleExampleChange}
           onAnalyze={handleAnalyze}
           onUpload={handleUpload}
+          onClearWorkspace={handleClearWorkspace}
           onSelectHistory={handleSelectHistory}
           onClearHistory={handleClearHistory}
           onModelSettingsChange={handleModelSettingsChange}
