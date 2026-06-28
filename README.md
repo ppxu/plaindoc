@@ -6,6 +6,8 @@ The first version focuses on rental, employment, and renovation contracts. It is
 
 > Know what can hurt you before you sign.
 
+![PlainDoc desktop screenshot](docs/assets/plaindoc-desktop.png)
+
 ## What It Does
 
 Paste a contract or load a bundled example. PlainDoc produces:
@@ -92,4 +94,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 MIT
-
