@@ -19,6 +19,7 @@
 - Next-step action plan and copyable counterparty message.
 - Local report history without storing original document text.
 - Suggested clause edits for flagged risks.
+- Copyable clause-edit pack for all proposed changes.
 
 ## 0.3 Document Ingestion
 

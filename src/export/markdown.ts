@@ -1,4 +1,5 @@
 import type { AnalysisReport } from "../types";
+import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
@@ -26,6 +27,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
   const actionSteps = report.actionPlan.steps
     .map((step, index) => `${index + 1}. ${step}`)
     .join("\n") || "暂无下一步建议。";
+  const clauseEdits = clauseEditsToText(getClauseEdits(report.findings));
 
   return [
     "# PlainDoc 文件阅读报告",
@@ -41,6 +43,9 @@ export function reportToMarkdown(report: AnalysisReport): string {
     "",
     "## 风险提示",
     findings,
+    "",
+    "## 修改条款包",
+    clauseEdits,
     "",
     "## 签署前问题清单",
     checklist,

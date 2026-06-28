@@ -3,6 +3,7 @@ import type { AnalysisReport } from "../types";
 import { reportToMarkdown } from "../export/markdown";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
+import { ClauseEditPack } from "./ClauseEditPack";
 import { RiskCard } from "./RiskCard";
 
 interface ReportPanelProps {
@@ -65,6 +66,8 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: Re
           )}
         </div>
       </section>
+
+      <ClauseEditPack findings={report.findings} />
 
       <section className="report-section">
         <p className="section-label">Facts</p>

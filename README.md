@@ -16,6 +16,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
 - Red/yellow/green risk cards with evidence snippets.
 - Suggested clause edits for flagged risks.
+- A copyable clause-edit pack for sending all proposed changes together.
 - A signing checklist you can copy before talking to the other party.
 - A next-step action plan and a message draft you can send back for clarification.
 - Plain-language explanations for non-experts.
@@ -76,6 +77,7 @@ Supported in this MVP:
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
 - Suggested clause edits for common risk patterns.
+- Copyable clause-edit pack.
 - Copyable next-step message draft for counterparties.
 - Local report history with one-click clear.
 - Markdown report export.
