@@ -1,6 +1,7 @@
 import { FileText, FolderOpen, Sparkles, Upload } from "lucide-react";
-import type { DocumentExample, DocumentKind, ModelAnalyzerSettings } from "../types";
+import type { DocumentExample, DocumentKind, ModelAnalyzerSettings, SavedReport } from "../types";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
+import { ReportHistory } from "./ReportHistory";
 
 interface DocumentInputProps {
   text: string;
@@ -11,12 +12,15 @@ interface DocumentInputProps {
   notice: string;
   isAnalyzing: boolean;
   isUploading: boolean;
+  history: SavedReport[];
   modelSettings: ModelAnalyzerSettings;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
   onExampleChange: (id: string) => void;
   onAnalyze: () => void;
   onUpload: (file: File) => void;
+  onSelectHistory: (item: SavedReport) => void;
+  onClearHistory: () => void;
   onModelSettingsChange: (settings: ModelAnalyzerSettings) => void;
   onClearModelSettings: () => void;
 }
@@ -30,12 +34,15 @@ export function DocumentInput({
   notice,
   isAnalyzing,
   isUploading,
+  history,
   modelSettings,
   onTextChange,
   onKindChange,
   onExampleChange,
   onAnalyze,
   onUpload,
+  onSelectHistory,
+  onClearHistory,
   onModelSettingsChange,
   onClearModelSettings
 }: DocumentInputProps) {
@@ -86,6 +93,8 @@ export function DocumentInput({
           }}
         />
       </label>
+
+      <ReportHistory items={history} onSelect={onSelectHistory} onClear={onClearHistory} />
 
       <ModelSettingsPanel
         settings={modelSettings}

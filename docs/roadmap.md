@@ -17,6 +17,7 @@
 - Local-rule fallback when model calls fail.
 - Selectable-text PDF upload and extraction.
 - Next-step action plan and copyable counterparty message.
+- Local report history without storing original document text.
 
 ## 0.3 Document Ingestion
 

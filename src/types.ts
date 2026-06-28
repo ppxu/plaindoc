@@ -60,6 +60,13 @@ export interface AnalysisReport {
   disclaimer: string;
 }
 
+export interface SavedReport {
+  id: string;
+  title: string;
+  createdAt: string;
+  report: AnalysisReport;
+}
+
 export interface DocumentExample {
   id: string;
   title: string;

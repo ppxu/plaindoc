@@ -6,8 +6,9 @@ import { clearModelSettings, loadModelSettings, saveModelSettings } from "./anal
 import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
 import { documentExamples } from "./data/examples";
+import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { isPdfFile } from "./ingest/pdfText";
-import type { AnalysisReport, DocumentKind, ModelAnalyzerSettings } from "./types";
+import type { AnalysisReport, DocumentKind, ModelAnalyzerSettings, SavedReport } from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
@@ -25,6 +26,7 @@ export default function App() {
     analyzeDocument({ text: firstExample.content, kind: firstExample.kind })
   );
   const [modelSettings, setModelSettings] = useState<ModelAnalyzerSettings>(() => loadModelSettings());
+  const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
 
   function handleExampleChange(id: string) {
     const example = documentExamples.find((item) => item.id === id);
@@ -57,6 +59,7 @@ export default function App() {
     setReport(localReport);
 
     if (!modelSettings.enabled) {
+      setHistory(saveReportToHistory(localReport));
       return;
     }
 
@@ -64,19 +67,36 @@ export default function App() {
     try {
       const modelReport = await analyzeWithModel({ text, kind }, modelSettings, localReport);
       setReport(modelReport);
+      setHistory(saveReportToHistory(modelReport));
       if (!modelSettings.apiKey.trim()) {
         setError("AI 增强已开启，但缺少 API key，已回退到本地分析。");
       }
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "模型调用失败。";
-      setReport({
+      const fallbackReport = {
         ...localReport,
         notice: `AI 增强失败，已回退到本地规则分析：${message}`
-      });
+      };
+      setReport(fallbackReport);
+      setHistory(saveReportToHistory(fallbackReport));
       setError(`AI 增强失败，已回退到本地分析：${message}`);
     } finally {
       setIsAnalyzing(false);
     }
+  }
+
+  function handleSelectHistory(item: SavedReport) {
+    setReport(item.report);
+    setKind(item.report.documentKind);
+    setSelectedExampleId("");
+    setError("");
+    setInputNotice(`已恢复本地历史报告：${item.title}。历史不保存原始正文，如需重新分析请重新粘贴或上传文件。`);
+  }
+
+  function handleClearHistory() {
+    setHistory(clearReportHistory());
+    setInputNotice("已清空本地报告历史。");
+    setError("");
   }
 
   function handleModelSettingsChange(settings: ModelAnalyzerSettings) {
@@ -171,12 +191,15 @@ export default function App() {
           notice={inputNotice}
           isAnalyzing={isAnalyzing}
           isUploading={isUploading}
+          history={history}
           modelSettings={modelSettings}
           onTextChange={handleTextChange}
           onKindChange={setKind}
           onExampleChange={handleExampleChange}
           onAnalyze={handleAnalyze}
           onUpload={handleUpload}
+          onSelectHistory={handleSelectHistory}
+          onClearHistory={handleClearHistory}
           onModelSettingsChange={handleModelSettingsChange}
           onClearModelSettings={handleClearModelSettings}
         />
