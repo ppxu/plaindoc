@@ -72,6 +72,7 @@ function kindLabel(kind: DocumentKind): string {
     employment: "劳动协议",
     renovation: "装修合同",
     loan: "借款合同",
+    insurance: "保险保单",
     unknown: "文件"
   }[kind];
 }
@@ -82,6 +83,7 @@ function kindShortLabel(kind: DocumentKind): string {
     employment: "劳动协议",
     renovation: "装修合同",
     loan: "借款合同",
+    insurance: "保险保单",
     unknown: "文件"
   }[kind];
 }

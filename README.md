@@ -2,7 +2,7 @@
 
 PlainDoc turns everyday professional documents into plain-language risk notes and signing checklists.
 
-The first version focuses on rental, employment, renovation, and loan contracts. It is local-first, open-source, and runnable without API keys. An optional AI-enhanced mode can call an OpenAI-compatible model service that the user configures.
+The first version focuses on rental, employment, renovation, loan, and insurance documents. It is local-first, open-source, and runnable without API keys. An optional AI-enhanced mode can call an OpenAI-compatible model service that the user configures.
 
 > Know what can hurt you before you sign.
 
@@ -73,8 +73,9 @@ Supported in this MVP:
 
 - Paste text.
 - Upload selectable-text PDF, `.txt`, and `.md` files.
-- Load fictional rental, employment, renovation, and loan examples.
+- Load fictional rental, employment, renovation, loan, and insurance examples.
 - Analyze common loan and borrowing clauses.
+- Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
 - Suggested clause edits for common risk patterns.
@@ -96,6 +97,7 @@ Not yet supported:
 - An employee wants to understand non-compete, penalty, and resignation notice clauses.
 - A homeowner wants to check renovation payment milestones, change orders, and acceptance rules.
 - A borrower wants to understand real borrowing cost, prepayment fees, overdue charges, and acceleration clauses.
+- An insurance buyer wants to understand waiting periods, existing-condition exclusions, renewal stability, and claim notice deadlines.
 
 ## Disclaimer
 
@@ -121,7 +123,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Suggested GitHub Topics
 
-`documents`, `contracts`, `plain-language`, `risk-checklist`, `local-first`, `loans`, `react`, `vite`, `open-source`
+`documents`, `contracts`, `plain-language`, `risk-checklist`, `local-first`, `loans`, `insurance`, `react`, `vite`, `open-source`
 
 ## License
 

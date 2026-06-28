@@ -80,7 +80,9 @@ function extractFacts(text: string): ExtractedFact[] {
     ["违约责任", ["违约", "赔偿"]],
     ["验收/退还", ["验收", "退还"]],
     ["借款成本", ["利息", "服务费", "罚息"]],
-    ["提前还款", ["提前还款", "手续费"]]
+    ["提前还款", ["提前还款", "手续费"]],
+    ["保障/免责", ["保险", "免责", "拒赔"]],
+    ["理赔通知", ["理赔", "通知保险人"]]
   ] as const;
 
   const obligationFacts = obligations.flatMap(([label, terms]) => {
@@ -148,6 +150,7 @@ function summarize(kind: AnalyzerInput["kind"], findingCount: number, facts: Ext
     employment: "这份劳动文件",
     renovation: "这份装修文件",
     loan: "这份借款文件",
+    insurance: "这份保险文件",
     unknown: "这份文件"
   }[kind];
 
@@ -162,6 +165,7 @@ function buildPlainLanguage(kind: AnalyzerInput["kind"], findingCount: number): 
     employment: "把它当成一张离职成本表来看：重点盯住竞业限制、违约金、加班和离职通知期。",
     renovation: "把它当成一张付款和验收控制表来看：重点盯住付款节点、增项确认、延期责任和验收标准。",
     loan: "把它当成一张真实借款成本表来看：重点盯住实际到账金额、服务费、提前还款、逾期费用和一次性到期条件。",
+    insurance: "把它当成一张保障边界表来看：重点盯住等待期、既往症、免责条款、续保条件和理赔通知。",
     unknown: "先把它当成一份责任分配表来看：谁付钱、谁负责、什么时候结束、违约会怎样。"
   }[kind];
 

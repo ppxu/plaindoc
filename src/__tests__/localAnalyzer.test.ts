@@ -47,4 +47,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.find((finding) => finding.id === "loan-fees-deducted-from-principal")?.modification).toContain("本金");
     expect(report.actionPlan.priority).toBe("high");
   });
+
+  it("flags waiting-period and renewal risks in insurance policies", () => {
+    const example = documentExamples.find((item) => item.kind === "insurance");
+    const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });
+
+    expect(report.summary).toContain("保险文件");
+    expect(report.findings.some((finding) => finding.id === "insurance-broad-waiting-period-exclusion")).toBe(true);
+    expect(report.findings.some((finding) => finding.id === "insurance-renewal-not-guaranteed")).toBe(true);
+    expect(report.findings.find((finding) => finding.id === "insurance-short-claim-notice-window")?.modification).toContain("合理期限");
+    expect(report.actionPlan.priority).toBe("high");
+  });
 });
