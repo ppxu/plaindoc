@@ -22,7 +22,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - A signing checklist you can copy before talking to the other party.
 - A next-step action plan and a message draft you can send back for clarification.
 - Plain-language explanations for non-experts.
-- Local report history for revisiting recent analyses.
+- Deduplicated local report history for revisiting recent analyses.
 - One-click copy for the full Markdown report.
 - Markdown export for saving or sharing the report.
 - Optional AI-enhanced analysis with local-rule fallback.
@@ -65,7 +65,7 @@ Privacy boundary:
 
 - When AI mode is off, PlainDoc does not send document text anywhere.
 - PDF text extraction runs in your browser before analysis.
-- Recent report history is stored in your browser and does not store the original document text.
+- Recent report history is stored in your browser, deduplicates repeated analyses, and does not store the original document text.
 - When AI mode is on, the document text is sent from your browser to the endpoint you configured.
 - The API key is stored in your browser localStorage and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
@@ -85,7 +85,7 @@ Supported in this MVP:
 - Suggested clause edits for common risk patterns.
 - Copyable clause-edit pack.
 - Copyable next-step message draft for counterparties.
-- Local report history with one-click clear.
+- Deduplicated local report history with one-click clear.
 - Markdown report export.
 
 Not yet supported:

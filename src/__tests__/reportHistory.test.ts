@@ -20,11 +20,25 @@ describe("report history", () => {
     expect(loadReportHistory(storage)).toEqual([]);
   });
 
-  it("limits saved reports and ignores invalid storage data", () => {
+  it("deduplicates repeated saves of the same report", () => {
     const storage = createMemoryStorage();
     const report = analyzeDocument({ text: "装修款分三期支付，验收后支付尾款。", kind: "renovation" });
 
     for (let index = 0; index < 10; index += 1) {
+      saveReportToHistory(report, storage);
+    }
+
+    expect(loadReportHistory(storage)).toHaveLength(1);
+  });
+
+  it("limits saved reports and ignores invalid storage data", () => {
+    const storage = createMemoryStorage();
+
+    for (let index = 0; index < 10; index += 1) {
+      const report = analyzeDocument({
+        text: `装修款第 ${index + 1} 版，工程总价 ${120000 + index} 元，签约当日支付总价 60% 作为首期款，验收后支付尾款。`,
+        kind: "renovation"
+      });
       saveReportToHistory(report, storage);
     }
 

@@ -17,7 +17,7 @@
 - Local-rule fallback when model calls fail.
 - Selectable-text PDF upload and extraction.
 - Next-step action plan and copyable counterparty message.
-- Local report history without storing original document text.
+- Deduplicated local report history without storing original document text.
 - Suggested clause edits for flagged risks.
 - Copyable clause-edit pack for all proposed changes.
 - Copyable full Markdown report.

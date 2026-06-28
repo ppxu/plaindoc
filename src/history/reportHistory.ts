@@ -29,7 +29,11 @@ export function saveReportToHistory(
     report
   };
 
-  const next = [entry, ...loadReportHistory(storage)].slice(0, MAX_HISTORY_ITEMS);
+  const fingerprint = createReportFingerprint(report);
+  const next = [
+    entry,
+    ...loadReportHistory(storage).filter((item) => createReportFingerprint(item.report) !== fingerprint)
+  ].slice(0, MAX_HISTORY_ITEMS);
   writeReportHistory(next, storage);
   return next;
 }
@@ -82,6 +86,29 @@ function isAnalysisReport(value: unknown): value is AnalysisReport {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+function createReportFingerprint(report: AnalysisReport): string {
+  return JSON.stringify({
+    documentKind: report.documentKind,
+    source: report.source,
+    modelName: report.modelName ?? "",
+    status: report.status,
+    score: report.score,
+    summary: report.summary,
+    wordCount: report.wordCount,
+    facts: report.facts.map((fact) => ({
+      label: fact.label,
+      value: fact.value
+    })),
+    findings: report.findings.map((finding) => ({
+      id: finding.id,
+      title: finding.title,
+      severity: finding.severity,
+      evidence: finding.evidence?.text ?? ""
+    })),
+    checklist: report.checklist.map((item) => item.question)
+  });
 }
 
 function createId(): string {
