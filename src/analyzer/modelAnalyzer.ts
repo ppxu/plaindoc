@@ -24,6 +24,16 @@ interface ModelReportPayload {
   plainLanguage?: unknown;
 }
 
+interface ModelFindingPatch {
+  localFindingId?: string;
+  title: string;
+  severity: Severity;
+  explanation: string;
+  whyItMatters: string;
+  suggestion: string;
+  modification?: string;
+}
+
 export async function analyzeWithModel(
   input: AnalyzerInput,
   settings: ModelAnalyzerSettings,
@@ -63,7 +73,7 @@ export async function analyzeWithModel(
             requiredJsonShape: {
               summary: "string, max 120 Chinese chars",
               findings:
-                "array, max 6 items, each has title, severity(red/yellow/green), explanation, whyItMatters, suggestion, modification",
+                "array, max 6 items, each has localFindingId(optional, copy from localBaseline.findings[].id when improving one local risk), title, severity(red/yellow/green), explanation, whyItMatters, suggestion, modification",
               checklist: "array, max 8 items, each has question, reason, severity(red/yellow/green)",
               actionPlan: "object with priority(low/medium/high), title, steps(max 3 strings), message",
               plainLanguage: "array, max 4 strings"
@@ -114,13 +124,13 @@ export function mergeModelPayload(
   return {
     ...localReport,
     summary: summary || localReport.summary,
-    findings: findings.length ? findings : localReport.findings,
+    findings: mergeFindings(localReport.findings, findings),
     checklist: checklist.length ? checklist : localReport.checklist,
     actionPlan: actionPlan ?? localReport.actionPlan,
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
     modelName,
-    notice: "AI 增强已开启：报告结合了本地规则和你配置的模型服务。"
+    notice: "AI 增强已开启：报告结合了本地规则和你配置的模型服务；本地证据片段会被保留。"
   };
 }
 
@@ -150,10 +160,11 @@ function parseModelPayload(content: string): ModelReportPayload {
   }
 }
 
-function sanitizeFindings(value: unknown): RiskFinding[] {
+function sanitizeFindings(value: unknown): ModelFindingPatch[] {
   if (!Array.isArray(value)) return [];
-  return value.slice(0, 6).flatMap((item, index) => {
+  return value.slice(0, 6).flatMap((item) => {
     if (!isRecord(item)) return [];
+    const localFindingId = sanitizeString(item.localFindingId, 120);
     const title = sanitizeString(item.title, 70);
     const severity = sanitizeSeverity(item.severity);
     const explanation = sanitizeString(item.explanation, 220);
@@ -162,7 +173,7 @@ function sanitizeFindings(value: unknown): RiskFinding[] {
     const modification = sanitizeString(item.modification, 360);
     if (!title || !explanation || !whyItMatters || !suggestion) return [];
     return [{
-      id: `model-${index + 1}-${slugify(title)}`,
+      localFindingId: localFindingId || undefined,
       title,
       severity,
       explanation,
@@ -171,6 +182,40 @@ function sanitizeFindings(value: unknown): RiskFinding[] {
       modification: modification || undefined
     }];
   });
+}
+
+function mergeFindings(localFindings: RiskFinding[], modelFindings: ModelFindingPatch[]): RiskFinding[] {
+  if (!modelFindings.length) return localFindings;
+
+  const unusedModelFindings = [...modelFindings];
+  const enhancedLocalFindings = localFindings.map((localFinding) => {
+    const modelIndex = unusedModelFindings.findIndex((finding) => finding.localFindingId === localFinding.id);
+    if (modelIndex === -1) return localFinding;
+    const [modelFinding] = unusedModelFindings.splice(modelIndex, 1);
+    return {
+      ...localFinding,
+      title: modelFinding.title,
+      severity: modelFinding.severity,
+      explanation: modelFinding.explanation,
+      whyItMatters: modelFinding.whyItMatters,
+      suggestion: modelFinding.suggestion,
+      modification: modelFinding.modification || localFinding.modification,
+      evidence: localFinding.evidence
+    };
+  });
+
+  const remainingSlots = Math.max(0, 6 - enhancedLocalFindings.length);
+  const supplementalFindings = unusedModelFindings.slice(0, remainingSlots).map((finding, index) => ({
+    id: `model-${index + 1}-${slugify(finding.title)}`,
+    title: finding.title,
+    severity: finding.severity,
+    explanation: finding.explanation,
+    whyItMatters: finding.whyItMatters,
+    suggestion: finding.suggestion,
+    modification: finding.modification
+  }));
+
+  return [...enhancedLocalFindings, ...supplementalFindings];
 }
 
 function sanitizeChecklist(value: unknown): ChecklistItem[] {

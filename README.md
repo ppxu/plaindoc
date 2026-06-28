@@ -53,7 +53,7 @@ npm run build
 
 ## AI-Enhanced Mode
 
-PlainDoc works without a model by default. The browser runs local heuristic rules first, then optionally asks your configured model service to improve the summary, risk cards, checklist, and plain-language explanation.
+PlainDoc works without a model by default. The browser runs local heuristic rules first, then optionally asks your configured model service to improve the summary, risk cards, checklist, and plain-language explanation. AI-enhanced findings are conservatively merged with the local baseline so evidence snippets from local rules stay attached to the relevant risk cards.
 
 To use it:
 
@@ -69,6 +69,7 @@ Privacy boundary:
 - When AI mode is on, the document text is sent from your browser to the endpoint you configured.
 - The API key is stored in your browser localStorage and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
+- When AI mode improves a local risk card, PlainDoc keeps the local evidence snippet instead of replacing it with unsupported model text.
 
 ## Current Scope
 
@@ -82,6 +83,7 @@ Supported in this MVP:
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.
 - Suggested clause edits for common risk patterns.
 - Copyable clause-edit pack.
 - Copyable next-step message draft for counterparties.

@@ -14,6 +14,7 @@
 - Optional OpenAI-compatible analyzer.
 - Browser-side model settings.
 - Structured output validation.
+- Conservative model/local merge that preserves local evidence snippets.
 - Local-rule fallback when model calls fail.
 - Selectable-text PDF upload and extraction.
 - Next-step action plan and copyable counterparty message.
