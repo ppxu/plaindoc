@@ -9,6 +9,7 @@ import { ReportPanel } from "./components/ReportPanel";
 import { getDocumentKindLabel } from "./data/documentKinds";
 import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
+import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
 import type { AnalysisReport, DocumentKind, ModelAnalyzerSettings, SavedReport } from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
@@ -95,11 +96,13 @@ export default function App() {
   }
 
   function handleSelectHistory(item: SavedReport) {
-    setReport(item.report);
-    setKind(item.report.documentKind);
-    setSelectedExampleId("");
-    setError("");
-    setInputNotice(`已恢复本地历史报告：${item.title}。历史不保存原始正文，如需重新分析请重新粘贴或上传文件。`);
+    const restored = restoreSavedReport(item);
+    setReport(restored.report);
+    setKind(restored.kind);
+    setText(restored.text);
+    setSelectedExampleId(restored.selectedExampleId);
+    setError(restored.error);
+    setInputNotice(restored.notice);
   }
 
   function handleClearHistory() {
