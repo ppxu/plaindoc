@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { AlertTriangle, CheckCircle2, CircleAlert } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CircleAlert, Search } from "lucide-react";
 import type { RiskFinding } from "../types";
 import { copyTextToClipboard } from "../utils/clipboard";
 
 interface RiskCardProps {
   finding: RiskFinding;
+  onRevealEvidence?: (finding: RiskFinding) => void;
 }
 
-export function RiskCard({ finding }: RiskCardProps) {
+export function RiskCard({ finding, onRevealEvidence }: RiskCardProps) {
   const Icon = finding.severity === "red" ? CircleAlert : finding.severity === "yellow" ? AlertTriangle : CheckCircle2;
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
@@ -46,7 +47,15 @@ export function RiskCard({ finding }: RiskCardProps) {
       ) : null}
       {finding.evidence ? (
         <blockquote>
-          <span>证据片段</span>
+          <div className="evidence-heading">
+            <span>证据片段</span>
+            {onRevealEvidence ? (
+              <button type="button" onClick={() => onRevealEvidence(finding)}>
+                <Search aria-hidden="true" />
+                定位原文
+              </button>
+            ) : null}
+          </div>
           {finding.evidence.text}
         </blockquote>
       ) : null}

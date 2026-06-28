@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ClipboardCheck, Download, ShieldCheck } from "lucide-react";
-import type { AnalysisReport } from "../types";
+import type { AnalysisReport, RiskFinding } from "../types";
 import { reportToMarkdown } from "../export/markdown";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { ActionPlan } from "./ActionPlan";
@@ -13,9 +13,10 @@ interface ReportPanelProps {
   report: AnalysisReport;
   onCopyChecklist: () => Promise<boolean>;
   onCopyActionMessage: () => Promise<boolean>;
+  onRevealEvidence?: (finding: RiskFinding) => void;
 }
 
-export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: ReportPanelProps) {
+export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRevealEvidence }: ReportPanelProps) {
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
@@ -80,7 +81,9 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: Re
         <h3>风险提示</h3>
         <div className="risk-list">
           {report.findings.length ? (
-            report.findings.map((finding) => <RiskCard key={finding.id} finding={finding} />)
+            report.findings.map((finding) => (
+              <RiskCard key={finding.id} finding={finding} onRevealEvidence={onRevealEvidence} />
+            ))
           ) : (
             <div className="quiet-state">
               <ShieldCheck aria-hidden="true" />

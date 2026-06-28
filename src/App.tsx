@@ -11,8 +11,9 @@ import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
-import type { AnalysisReport, DocumentKind, ModelAnalyzerSettings, SavedReport } from "./types";
+import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
+import { resolveEvidenceSelection } from "./utils/evidenceSelection";
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
@@ -30,6 +31,7 @@ export default function App() {
   );
   const [modelSettings, setModelSettings] = useState<ModelAnalyzerSettings>(() => loadModelSettings());
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
+  const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
 
   function handleExampleChange(id: string) {
     const example = documentExamples.find((item) => item.id === id);
@@ -173,6 +175,23 @@ export default function App() {
     return copyTextToClipboard(report.actionPlan.message);
   }
 
+  function handleRevealEvidence(finding: RiskFinding) {
+    if (!finding.evidence) return;
+    const selection = resolveEvidenceSelection(text, finding.evidence);
+    if (selection.ok) {
+      setEvidenceSelection({ start: selection.start, end: selection.end, token: Date.now() });
+      setError("");
+      setInputNotice(`已在正文框中选中「${finding.title}」的证据片段。`);
+      return;
+    }
+
+    const message =
+      selection.reason === "missing_text"
+        ? "当前正文框为空，无法定位证据片段。历史报告不保存原始正文，请重新粘贴或上传文件后再分析。"
+        : "当前正文与这份报告的证据片段不一致。请重新生成风险清单后再定位原文。";
+    setInputNotice(message);
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -209,6 +228,7 @@ export default function App() {
           isUploading={isUploading}
           history={history}
           modelSettings={modelSettings}
+          evidenceSelection={evidenceSelection}
           onTextChange={handleTextChange}
           onKindChange={setKind}
           onExampleChange={handleExampleChange}
@@ -219,7 +239,12 @@ export default function App() {
           onModelSettingsChange={handleModelSettingsChange}
           onClearModelSettings={handleClearModelSettings}
         />
-        <ReportPanel report={report} onCopyChecklist={copyChecklist} onCopyActionMessage={copyActionMessage} />
+        <ReportPanel
+          report={report}
+          onCopyChecklist={copyChecklist}
+          onCopyActionMessage={copyActionMessage}
+          onRevealEvidence={handleRevealEvidence}
+        />
       </main>
     </div>
   );

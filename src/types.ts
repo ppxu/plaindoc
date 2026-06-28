@@ -12,6 +12,12 @@ export interface EvidenceSnippet {
   end: number;
 }
 
+export interface EvidenceSelectionTarget {
+  start: number;
+  end: number;
+  token: number;
+}
+
 export interface ExtractedFact {
   label: string;
   value: string;

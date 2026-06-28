@@ -16,6 +16,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
 - Red/yellow/green risk cards with evidence snippets.
+- One-click evidence locating back to the original text in the editor.
 - A priority brief that surfaces the first issues to negotiate.
 - Suggested clause edits for flagged risks.
 - A copyable clause-edit pack for sending all proposed changes together.
@@ -84,6 +85,7 @@ Supported in this MVP:
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
 - Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.
+- One-click original-text locating for risk evidence snippets.
 - Suggested clause edits for common risk patterns.
 - Copyable clause-edit pack.
 - Copyable next-step message draft for counterparties.

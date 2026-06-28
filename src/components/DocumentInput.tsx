@@ -1,5 +1,6 @@
+import { useEffect, useRef } from "react";
 import { FileText, FolderOpen, ShieldCheck, Sparkles, Upload } from "lucide-react";
-import type { DocumentExample, DocumentKind, ModelAnalyzerSettings, SavedReport } from "../types";
+import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
@@ -15,6 +16,7 @@ interface DocumentInputProps {
   isUploading: boolean;
   history: SavedReport[];
   modelSettings: ModelAnalyzerSettings;
+  evidenceSelection: EvidenceSelectionTarget | null;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
   onExampleChange: (id: string) => void;
@@ -37,6 +39,7 @@ export function DocumentInput({
   isUploading,
   history,
   modelSettings,
+  evidenceSelection,
   onTextChange,
   onKindChange,
   onExampleChange,
@@ -48,6 +51,16 @@ export function DocumentInput({
   onClearModelSettings
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!evidenceSelection) return;
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.focus();
+    textarea.setSelectionRange(evidenceSelection.start, evidenceSelection.end);
+    textarea.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [evidenceSelection]);
 
   return (
     <section className="input-panel" aria-label="Document input">
@@ -122,6 +135,7 @@ export function DocumentInput({
       <label className="field text-field">
         <span>文件正文</span>
         <textarea
+          ref={textareaRef}
           value={text}
           onChange={(event) => onTextChange(event.target.value)}
           placeholder="粘贴合同、协议或条款文字..."
