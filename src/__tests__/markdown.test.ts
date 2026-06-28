@@ -10,6 +10,7 @@ describe("reportToMarkdown", () => {
     const markdown = reportToMarkdown(report);
 
     expect(markdown).toContain("# PlainDoc 文件阅读报告");
+    expect(markdown).toContain("## 优先处理");
     expect(markdown).toContain("## 风险提示");
     expect(markdown).toContain("**建议修改条款：**");
     expect(markdown).toContain("## 修改条款包");

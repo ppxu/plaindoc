@@ -16,6 +16,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
 - Red/yellow/green risk cards with evidence snippets.
+- A priority brief that surfaces the first issues to negotiate.
 - Suggested clause edits for flagged risks.
 - A copyable clause-edit pack for sending all proposed changes together.
 - A signing checklist you can copy before talking to the other party.

@@ -1,5 +1,6 @@
 import type { AnalysisReport } from "../types";
 import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
+import { priorityBriefToText } from "./priorityBrief";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
@@ -40,6 +41,9 @@ export function reportToMarkdown(report: AnalysisReport): string {
     "",
     "## 关键事实",
     facts,
+    "",
+    "## 优先处理",
+    priorityBriefToText(report),
     "",
     "## 风险提示",
     findings,

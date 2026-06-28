@@ -21,6 +21,7 @@
 - Suggested clause edits for flagged risks.
 - Copyable clause-edit pack for all proposed changes.
 - Copyable full Markdown report.
+- Priority brief for the first issues to negotiate.
 - Loan and borrowing contract rule pack.
 - Insurance policy rule pack.
 - Document-kind coverage panel backed by shared metadata.

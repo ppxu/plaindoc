@@ -6,6 +6,7 @@ import { copyTextToClipboard } from "../utils/clipboard";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClauseEditPack } from "./ClauseEditPack";
+import { PriorityBrief } from "./PriorityBrief";
 import { RiskCard } from "./RiskCard";
 
 interface ReportPanelProps {
@@ -71,6 +72,8 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: Re
           <textarea readOnly value={markdownReport} aria-label="完整 Markdown 报告" />
         </div>
       ) : null}
+
+      <PriorityBrief report={report} />
 
       <section className="report-section">
         <p className="section-label">Risks</p>
