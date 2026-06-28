@@ -37,4 +37,14 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "renovation-front-loaded-payment")).toBe(true);
     expect(report.facts.length).toBeGreaterThan(0);
   });
+
+  it("flags stacked charges and acceleration in loan agreements", () => {
+    const example = documentExamples.find((item) => item.kind === "loan");
+    const report = analyzeDocument({ text: example?.content ?? "", kind: "loan" });
+
+    expect(report.findings.some((finding) => finding.id === "loan-stacked-overdue-charges")).toBe(true);
+    expect(report.findings.some((finding) => finding.id === "loan-broad-acceleration-clause")).toBe(true);
+    expect(report.findings.find((finding) => finding.id === "loan-fees-deducted-from-principal")?.modification).toContain("本金");
+    expect(report.actionPlan.priority).toBe("high");
+  });
 });

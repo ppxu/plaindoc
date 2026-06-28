@@ -62,6 +62,7 @@ export function DocumentInput({
           <option value="rental">租房合同</option>
           <option value="employment">劳动协议</option>
           <option value="renovation">装修合同</option>
+          <option value="loan">借款/贷款合同</option>
           <option value="unknown">不确定</option>
         </select>
       </label>

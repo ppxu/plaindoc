@@ -1,4 +1,4 @@
-export type DocumentKind = "rental" | "employment" | "renovation" | "unknown";
+export type DocumentKind = "rental" | "employment" | "renovation" | "loan" | "unknown";
 
 export type Severity = "red" | "yellow" | "green";
 

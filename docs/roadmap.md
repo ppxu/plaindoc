@@ -20,6 +20,7 @@
 - Local report history without storing original document text.
 - Suggested clause edits for flagged risks.
 - Copyable clause-edit pack for all proposed changes.
+- Loan and borrowing contract rule pack.
 
 ## 0.3 Document Ingestion
 
@@ -37,7 +38,7 @@
 
 - Insurance policy pack.
 - Medical report explainer pack.
-- Loan and mortgage pack.
+- Mortgage pack.
 - School and government notice pack.
 
 ## 0.6 Community
