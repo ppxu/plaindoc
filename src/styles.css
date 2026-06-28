@@ -682,6 +682,68 @@ textarea:focus,
   line-height: 1.5;
 }
 
+.action-plan {
+  margin-top: 14px;
+  padding: 16px;
+  background: #f8fbfa;
+  border: 1px solid #dfeae6;
+  border-left: 5px solid var(--teal);
+  border-radius: 10px;
+}
+
+.action-plan.high {
+  border-left-color: var(--red);
+}
+
+.action-plan.medium {
+  border-left-color: var(--yellow);
+}
+
+.action-plan.low {
+  border-left-color: var(--green);
+}
+
+.action-plan strong {
+  display: block;
+  color: #22332e;
+  line-height: 1.45;
+}
+
+.action-plan ol {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.action-plan li {
+  color: #40504b;
+  line-height: 1.52;
+}
+
+.message-draft {
+  margin-top: 14px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #dce8e4;
+  border-radius: 9px;
+}
+
+.message-draft span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.message-draft p {
+  margin: 0;
+  color: #34443f;
+  line-height: 1.58;
+  white-space: pre-line;
+}
+
 .plain-language {
   background: #fbfcfc;
 }

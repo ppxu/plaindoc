@@ -1,15 +1,17 @@
 import { Download, ShieldCheck } from "lucide-react";
 import type { AnalysisReport } from "../types";
 import { reportToMarkdown } from "../export/markdown";
+import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { RiskCard } from "./RiskCard";
 
 interface ReportPanelProps {
   report: AnalysisReport;
-  onCopyChecklist: () => void;
+  onCopyChecklist: () => Promise<boolean>;
+  onCopyActionMessage: () => Promise<boolean>;
 }
 
-export function ReportPanel({ report, onCopyChecklist }: ReportPanelProps) {
+export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage }: ReportPanelProps) {
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
 
@@ -82,6 +84,8 @@ export function ReportPanel({ report, onCopyChecklist }: ReportPanelProps) {
       </section>
 
       <Checklist items={report.checklist} onCopy={onCopyChecklist} />
+
+      <ActionPlan plan={report.actionPlan} onCopyMessage={onCopyActionMessage} />
 
       <section className="report-section plain-language">
         <p className="section-label">Plain Language</p>

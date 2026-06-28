@@ -17,6 +17,8 @@ describe("analyzeDocument", () => {
 
     expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(true);
     expect(report.checklist.some((item) => item.question.includes("押金"))).toBe(true);
+    expect(report.actionPlan.priority).toBe("high");
+    expect(report.actionPlan.message).toContain("签署前想先确认");
   });
 
   it("flags vague non-compete compensation in employment agreements", () => {
@@ -35,4 +37,3 @@ describe("analyzeDocument", () => {
     expect(report.facts.length).toBeGreaterThan(0);
   });
 });
-

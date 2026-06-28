@@ -1,4 +1,5 @@
 import type {
+  ActionPlan,
   AnalysisReport,
   AnalyzerInput,
   ChecklistItem,
@@ -19,6 +20,7 @@ interface ModelReportPayload {
   summary?: unknown;
   findings?: unknown;
   checklist?: unknown;
+  actionPlan?: unknown;
   plainLanguage?: unknown;
 }
 
@@ -63,6 +65,7 @@ export async function analyzeWithModel(
               findings:
                 "array, max 6 items, each has title, severity(red/yellow/green), explanation, whyItMatters, suggestion",
               checklist: "array, max 8 items, each has question, reason, severity(red/yellow/green)",
+              actionPlan: "object with priority(low/medium/high), title, steps(max 3 strings), message",
               plainLanguage: "array, max 4 strings"
             },
             documentKind: input.kind,
@@ -74,6 +77,7 @@ export async function analyzeWithModel(
               facts: localReport.facts,
               findings: localReport.findings,
               checklist: localReport.checklist,
+              actionPlan: localReport.actionPlan,
               plainLanguage: localReport.plainLanguage
             }
           })
@@ -103,6 +107,7 @@ export function mergeModelPayload(
 ): AnalysisReport {
   const findings = sanitizeFindings(payload.findings);
   const checklist = sanitizeChecklist(payload.checklist);
+  const actionPlan = sanitizeActionPlan(payload.actionPlan);
   const plainLanguage = sanitizeStringList(payload.plainLanguage, 4, 180);
   const summary = sanitizeString(payload.summary, 120);
 
@@ -111,10 +116,25 @@ export function mergeModelPayload(
     summary: summary || localReport.summary,
     findings: findings.length ? findings : localReport.findings,
     checklist: checklist.length ? checklist : localReport.checklist,
+    actionPlan: actionPlan ?? localReport.actionPlan,
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
     modelName,
     notice: "AI 增强已开启：报告结合了本地规则和你配置的模型服务。"
+  };
+}
+
+function sanitizeActionPlan(value: unknown): ActionPlan | undefined {
+  if (!isRecord(value)) return undefined;
+  const title = sanitizeString(value.title, 90);
+  const steps = sanitizeStringList(value.steps, 3, 140);
+  const message = sanitizeMessage(value.message, 700);
+  if (!title || steps.length === 0 || !message) return undefined;
+  return {
+    priority: sanitizePriority(value.priority),
+    title,
+    steps,
+    message
   };
 }
 
@@ -179,8 +199,21 @@ function sanitizeString(value: unknown, maxLength: number): string {
   return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
 
+function sanitizeMessage(value: unknown, maxLength: number): string {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+    .slice(0, maxLength);
+}
+
 function sanitizeSeverity(value: unknown): Severity {
   return value === "red" || value === "yellow" || value === "green" ? value : "yellow";
+}
+
+function sanitizePriority(value: unknown): ActionPlan["priority"] {
+  return value === "low" || value === "medium" || value === "high" ? value : "medium";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

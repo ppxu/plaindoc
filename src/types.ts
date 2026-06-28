@@ -35,6 +35,13 @@ export interface ChecklistItem {
   severity: Severity;
 }
 
+export interface ActionPlan {
+  priority: "low" | "medium" | "high";
+  title: string;
+  steps: string[];
+  message: string;
+}
+
 export interface AnalysisReport {
   summary: string;
   status: ReportStatus;
@@ -42,6 +49,7 @@ export interface AnalysisReport {
   facts: ExtractedFact[];
   findings: RiskFinding[];
   checklist: ChecklistItem[];
+  actionPlan: ActionPlan;
   plainLanguage: string[];
   generatedAt: string;
   documentKind: DocumentKind;

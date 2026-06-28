@@ -1,4 +1,5 @@
 import type { AnalysisReport, AnalyzerInput, ExtractedFact, ReportStatus } from "../types";
+import { buildActionPlan } from "./actionPlan";
 import { checklistFromRules, runRules } from "./rules";
 import { countWords, findDateMatches, findEvidence, findMoneyMatches } from "./patterns";
 
@@ -25,6 +26,7 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
     facts,
     findings,
     checklist,
+    actionPlan: buildActionPlan(input.kind, findings, checklist),
     plainLanguage: buildPlainLanguage(input.kind, findings.length),
     generatedAt: new Date().toISOString(),
     documentKind: input.kind,
@@ -42,6 +44,12 @@ function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
     facts: [],
     findings: [],
     checklist: [],
+    actionPlan: {
+      priority: "medium",
+      title: "请先提供可分析的文件内容",
+      steps: ["粘贴文件正文，或上传 PDF、.txt、.md 文件。", "确认文件类型后再生成风险清单。", "重要决定请咨询合格专业人士。"],
+      message: "你好，我需要先拿到完整文件正文，确认金额、期限、退出条件和违约责任后，再继续签署流程。"
+    },
     plainLanguage: ["PlainDoc 需要读取文件文字后才能生成风险提示。"],
     generatedAt: new Date().toISOString(),
     documentKind: kind,

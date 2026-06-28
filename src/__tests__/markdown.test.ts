@@ -12,8 +12,9 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("# PlainDoc 文件阅读报告");
     expect(markdown).toContain("## 风险提示");
     expect(markdown).toContain("## 签署前问题清单");
+    expect(markdown).toContain("## 下一步行动");
+    expect(markdown).toContain("### 可复制给对方的消息");
     expect(markdown).toContain("## 免责声明");
     expect(markdown).toContain(report.disclaimer);
   });
 });
-

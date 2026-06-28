@@ -16,6 +16,7 @@
 - Structured output validation.
 - Local-rule fallback when model calls fail.
 - Selectable-text PDF upload and extraction.
+- Next-step action plan and copyable counterparty message.
 
 ## 0.3 Document Ingestion
 

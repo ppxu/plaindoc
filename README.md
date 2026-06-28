@@ -16,6 +16,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
 - Red/yellow/green risk cards with evidence snippets.
 - A signing checklist you can copy before talking to the other party.
+- A next-step action plan and a message draft you can send back for clarification.
 - Plain-language explanations for non-experts.
 - Markdown export for saving or sharing the report.
 - Optional AI-enhanced analysis with local-rule fallback.
@@ -71,6 +72,7 @@ Supported in this MVP:
 - Load fictional rental, employment, and renovation examples.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Copyable next-step message draft for counterparties.
 - Markdown report export.
 
 Not yet supported:
@@ -102,6 +104,7 @@ Contributions are welcome. The easiest useful contributions are:
 - Improve local rule packs.
 - Add tests for a new document pattern.
 - Improve plain-language explanations.
+- Improve action-plan and counterparty-message templates.
 - Help implement OCR adapters and document ingestion edge cases.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -8,6 +8,7 @@ import { ReportPanel } from "./components/ReportPanel";
 import { documentExamples } from "./data/examples";
 import { isPdfFile } from "./ingest/pdfText";
 import type { AnalysisReport, DocumentKind, ModelAnalyzerSettings } from "./types";
+import { copyTextToClipboard } from "./utils/clipboard";
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
@@ -125,11 +126,15 @@ export default function App() {
     }
   }
 
-  async function copyChecklist() {
+  async function copyChecklist(): Promise<boolean> {
     const checklistText = report.checklist
       .map((item, index) => `${index + 1}. ${item.question}\n   ${item.reason}`)
       .join("\n");
-    await navigator.clipboard.writeText(checklistText);
+    return copyTextToClipboard(checklistText);
+  }
+
+  async function copyActionMessage(): Promise<boolean> {
+    return copyTextToClipboard(report.actionPlan.message);
   }
 
   return (
@@ -175,7 +180,7 @@ export default function App() {
           onModelSettingsChange={handleModelSettingsChange}
           onClearModelSettings={handleClearModelSettings}
         />
-        <ReportPanel report={report} onCopyChecklist={copyChecklist} />
+        <ReportPanel report={report} onCopyChecklist={copyChecklist} onCopyActionMessage={copyActionMessage} />
       </main>
     </div>
   );

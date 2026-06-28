@@ -22,6 +22,10 @@ export function reportToMarkdown(report: AnalysisReport): string {
     .map((item, index) => `${index + 1}. ${item.question}\n   - ${item.reason}`)
     .join("\n") || "暂无检查项。";
 
+  const actionSteps = report.actionPlan.steps
+    .map((step, index) => `${index + 1}. ${step}`)
+    .join("\n") || "暂无下一步建议。";
+
   return [
     "# PlainDoc 文件阅读报告",
     "",
@@ -40,12 +44,29 @@ export function reportToMarkdown(report: AnalysisReport): string {
     "## 签署前问题清单",
     checklist,
     "",
+    "## 下一步行动",
+    `**优先级：** ${priorityLabel(report.actionPlan.priority)}`,
+    `**建议：** ${report.actionPlan.title}`,
+    "",
+    actionSteps,
+    "",
+    "### 可复制给对方的消息",
+    report.actionPlan.message,
+    "",
     "## 大白话解释",
     ...report.plainLanguage.map((line) => `- ${line}`),
     "",
     "## 免责声明",
     report.disclaimer
   ].join("\n");
+}
+
+function priorityLabel(priority: AnalysisReport["actionPlan"]["priority"]): string {
+  return {
+    high: "高",
+    medium: "中",
+    low: "低"
+  }[priority];
 }
 
 function sourceLabel(report: AnalysisReport): string {

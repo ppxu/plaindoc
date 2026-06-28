@@ -1,12 +1,19 @@
+import { useState } from "react";
 import { ClipboardCheck } from "lucide-react";
 import type { ChecklistItem } from "../types";
 
 interface ChecklistProps {
   items: ChecklistItem[];
-  onCopy: () => void;
+  onCopy: () => Promise<boolean>;
 }
 
 export function Checklist({ items, onCopy }: ChecklistProps) {
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  async function handleCopy() {
+    setCopyState((await onCopy()) ? "copied" : "failed");
+  }
+
   return (
     <section className="report-section checklist-section">
       <div className="section-row">
@@ -14,9 +21,9 @@ export function Checklist({ items, onCopy }: ChecklistProps) {
           <p className="section-label">Checklist</p>
           <h3>签署前问题清单</h3>
         </div>
-        <button className="ghost-button" type="button" onClick={onCopy}>
+        <button className="ghost-button" type="button" onClick={handleCopy}>
           <ClipboardCheck aria-hidden="true" />
-          复制清单
+          {copyLabel(copyState, "复制清单")}
         </button>
       </div>
       <ol className="checklist">
@@ -31,3 +38,8 @@ export function Checklist({ items, onCopy }: ChecklistProps) {
   );
 }
 
+function copyLabel(state: "idle" | "copied" | "failed", idleText: string): string {
+  if (state === "copied") return "已复制";
+  if (state === "failed") return "复制失败";
+  return idleText;
+}

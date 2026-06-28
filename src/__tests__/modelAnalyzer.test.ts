@@ -30,6 +30,12 @@ describe("model analyzer", () => {
             severity: "red"
           }
         ],
+        actionPlan: {
+          priority: "high",
+          title: "先确认押金扣除边界",
+          steps: ["要求写明扣款项目。", "要求补充扣款证据。", "确认后再签署。"],
+          message: "你好，签署前想确认押金扣除边界。\n请写进合同正文。"
+        },
         plainLanguage: ["先把押金怎么扣问清楚，再决定是否签。"]
       },
       "test-model"
@@ -40,6 +46,8 @@ describe("model analyzer", () => {
     expect(report.findings[0].id).toContain("model-1");
     expect(report.findings[0].evidence).toBeUndefined();
     expect(report.checklist[0].severity).toBe("red");
+    expect(report.actionPlan.priority).toBe("high");
+    expect(report.actionPlan.message).toContain("\n");
     expect(report.score).toBe(localReport.score);
   });
 
