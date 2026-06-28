@@ -28,6 +28,8 @@ export function reportToMarkdown(report: AnalysisReport): string {
     `**摘要：** ${report.summary}`,
     `**风险阅读分：** ${report.score}/100`,
     `**状态：** ${statusLabel(report.status)}`,
+    `**分析来源：** ${sourceLabel(report)}`,
+    report.notice ? `**说明：** ${report.notice}` : "",
     "",
     "## 关键事实",
     facts,
@@ -46,6 +48,13 @@ export function reportToMarkdown(report: AnalysisReport): string {
   ].join("\n");
 }
 
+function sourceLabel(report: AnalysisReport): string {
+  if (report.source === "model") {
+    return report.modelName ? `AI 增强（${report.modelName}）` : "AI 增强";
+  }
+  return "本地规则";
+}
+
 function severityLabel(severity: "red" | "yellow" | "green"): string {
   return {
     red: "红色",
@@ -61,4 +70,3 @@ function statusLabel(status: AnalysisReport["status"]): string {
     do_not_sign_directly: "不建议直接签"
   }[status];
 }
-

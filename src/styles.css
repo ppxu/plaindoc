@@ -205,7 +205,8 @@ a {
 }
 
 select,
-textarea {
+textarea,
+.compact-field input {
   width: 100%;
   color: var(--ink);
   background: #fbfcfc;
@@ -228,9 +229,20 @@ textarea {
 }
 
 select:focus,
-textarea:focus {
+textarea:focus,
+.compact-field input:focus {
   border-color: rgba(18, 124, 113, 0.62);
   box-shadow: 0 0 0 4px rgba(18, 124, 113, 0.12);
+}
+
+.compact-field {
+  margin-bottom: 10px;
+}
+
+.compact-field input {
+  min-height: 40px;
+  padding: 0 12px;
+  outline: none;
 }
 
 .upload-strip {
@@ -292,6 +304,11 @@ textarea:focus {
   background: var(--teal-dark);
 }
 
+.primary-action:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
 .privacy-note {
   display: flex;
   align-items: flex-start;
@@ -300,6 +317,69 @@ textarea:focus {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.model-settings {
+  margin: 0 0 16px;
+  padding: 14px;
+  background: #f7faf9;
+  border: 1px solid #dce8e4;
+  border-radius: 10px;
+}
+
+.mode-toggle {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #263b36;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mode-toggle span,
+.clear-settings-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mode-toggle svg,
+.clear-settings-button svg {
+  width: 16px;
+  height: 16px;
+  color: var(--teal);
+}
+
+.mode-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--teal);
+}
+
+.model-settings-body {
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid #dfebe7;
+}
+
+.clear-settings-button {
+  min-height: 36px;
+  padding: 0 10px;
+  color: #29403a;
+  background: #fff;
+  border: 1px solid #d6e3df;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.model-warning {
+  margin: 10px 0 0;
+  color: #60706b;
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .report-panel {
@@ -362,6 +442,16 @@ textarea:focus {
   background: #fbfcfc;
   border-bottom: 1px solid var(--line);
   font-size: 13px;
+}
+
+.report-notice {
+  margin: 0;
+  padding: 12px 24px;
+  color: #36524b;
+  background: #edf6f3;
+  border-bottom: 1px solid #d7e6e1;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .ghost-button {
@@ -672,6 +762,7 @@ textarea:focus {
   .report-section,
   .report-hero,
   .report-actions,
+  .report-notice,
   .disclaimer {
     padding-left: 16px;
     padding-right: 16px;

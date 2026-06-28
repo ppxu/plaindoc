@@ -4,6 +4,8 @@ export type Severity = "red" | "yellow" | "green";
 
 export type ReportStatus = "safe_to_review" | "needs_attention" | "do_not_sign_directly";
 
+export type AnalysisSource = "local" | "model";
+
 export interface EvidenceSnippet {
   text: string;
   start: number;
@@ -44,6 +46,9 @@ export interface AnalysisReport {
   generatedAt: string;
   documentKind: DocumentKind;
   wordCount: number;
+  source: AnalysisSource;
+  modelName?: string;
+  notice?: string;
   disclaimer: string;
 }
 
@@ -60,3 +65,9 @@ export interface AnalyzerInput {
   kind: DocumentKind;
 }
 
+export interface ModelAnalyzerSettings {
+  enabled: boolean;
+  baseUrl: string;
+  model: string;
+  apiKey: string;
+}

@@ -1,5 +1,6 @@
 import { FileText, FolderOpen, Sparkles, Upload } from "lucide-react";
-import type { DocumentExample, DocumentKind } from "../types";
+import type { DocumentExample, DocumentKind, ModelAnalyzerSettings } from "../types";
+import { ModelSettingsPanel } from "./ModelSettingsPanel";
 
 interface DocumentInputProps {
   text: string;
@@ -7,11 +8,15 @@ interface DocumentInputProps {
   examples: DocumentExample[];
   selectedExampleId: string;
   error: string;
+  isAnalyzing: boolean;
+  modelSettings: ModelAnalyzerSettings;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
   onExampleChange: (id: string) => void;
   onAnalyze: () => void;
   onUpload: (file: File) => void;
+  onModelSettingsChange: (settings: ModelAnalyzerSettings) => void;
+  onClearModelSettings: () => void;
 }
 
 export function DocumentInput({
@@ -20,11 +25,15 @@ export function DocumentInput({
   examples,
   selectedExampleId,
   error,
+  isAnalyzing,
+  modelSettings,
   onTextChange,
   onKindChange,
   onExampleChange,
   onAnalyze,
-  onUpload
+  onUpload,
+  onModelSettingsChange,
+  onClearModelSettings
 }: DocumentInputProps) {
   return (
     <section className="input-panel" aria-label="Document input">
@@ -73,6 +82,12 @@ export function DocumentInput({
         />
       </label>
 
+      <ModelSettingsPanel
+        settings={modelSettings}
+        onChange={onModelSettingsChange}
+        onClear={onClearModelSettings}
+      />
+
       <label className="field text-field">
         <span>文件正文</span>
         <textarea
@@ -84,16 +99,15 @@ export function DocumentInput({
 
       {error ? <p className="error-message">{error}</p> : null}
 
-      <button className="primary-action" type="button" onClick={onAnalyze}>
+      <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing}>
         <Sparkles aria-hidden="true" />
-        生成风险清单
+        {isAnalyzing ? "正在增强分析..." : modelSettings.enabled ? "生成 AI 增强清单" : "生成风险清单"}
       </button>
 
       <div className="privacy-note">
         <FolderOpen aria-hidden="true" />
-        <span>当前版本在浏览器本地处理文本，不上传文件。</span>
+        <span>{modelSettings.enabled ? "默认先做本地分析；开启 AI 增强后才会调用你配置的模型服务。" : "当前在浏览器本地处理文本，不上传文件。"}</span>
       </div>
     </section>
   );
 }
-

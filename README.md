@@ -2,7 +2,7 @@
 
 PlainDoc turns everyday professional documents into plain-language risk notes and signing checklists.
 
-The first version focuses on rental, employment, and renovation contracts. It is local-first, open-source, and runnable without API keys.
+The first version focuses on rental, employment, and renovation contracts. It is local-first, open-source, and runnable without API keys. An optional AI-enhanced mode can call an OpenAI-compatible model service that the user configures.
 
 > Know what can hurt you before you sign.
 
@@ -18,6 +18,7 @@ Paste a contract or load a bundled example. PlainDoc produces:
 - A signing checklist you can copy before talking to the other party.
 - Plain-language explanations for non-experts.
 - Markdown export for saving or sharing the report.
+- Optional AI-enhanced analysis with local-rule fallback.
 
 PlainDoc is not a legal-advice product. It is a document-reading assistant that helps ordinary people spot questions worth asking.
 
@@ -43,6 +44,23 @@ npm test
 npm run build
 ```
 
+## AI-Enhanced Mode
+
+PlainDoc works without a model by default. The browser runs local heuristic rules first, then optionally asks your configured model service to improve the summary, risk cards, checklist, and plain-language explanation.
+
+To use it:
+
+1. Enable **AI 增强分析** in the left panel.
+2. Enter an OpenAI-compatible endpoint, model name, and API key.
+3. Click **生成 AI 增强清单**.
+
+Privacy boundary:
+
+- When AI mode is off, PlainDoc does not send document text anywhere.
+- When AI mode is on, the document text is sent from your browser to the endpoint you configured.
+- The API key is stored in your browser localStorage and can be cleared from the UI.
+- If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
+
 ## Current Scope
 
 Supported in this MVP:
@@ -51,13 +69,14 @@ Supported in this MVP:
 - Upload `.txt` and `.md` files.
 - Load fictional rental, employment, and renovation examples.
 - Local heuristic analysis with no API key.
+- Optional OpenAI-compatible model enhancement.
 - Markdown report export.
 
 Not yet supported:
 
 - PDF parsing.
 - OCR for scans or photos.
-- LLM-backed analysis.
+- Server-side model proxy or account-based key storage.
 - Multi-language document packs.
 - Account sync or cloud storage.
 

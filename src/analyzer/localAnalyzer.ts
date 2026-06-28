@@ -29,6 +29,7 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
     generatedAt: new Date().toISOString(),
     documentKind: input.kind,
     wordCount,
+    source: "local",
     disclaimer: DISCLAIMER
   };
 }
@@ -45,6 +46,7 @@ function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
     generatedAt: new Date().toISOString(),
     documentKind: kind,
     wordCount: 0,
+    source: "local",
     disclaimer: DISCLAIMER
   };
 }

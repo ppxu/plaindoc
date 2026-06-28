@@ -9,31 +9,36 @@
 - Markdown export.
 - Open-source launch materials.
 
-## 0.2 Document Ingestion
+## 0.2 AI-Enhanced Mode
+
+- Optional OpenAI-compatible analyzer.
+- Browser-side model settings.
+- Structured output validation.
+- Local-rule fallback when model calls fail.
+
+## 0.3 Document Ingestion
 
 - PDF text extraction.
 - OCR adapter for scanned documents.
 - Better evidence highlighting by paragraph.
 - Larger example pack.
 
-## 0.3 Model Adapter
+## 0.4 Model Adapter
 
-- Optional OpenAI-compatible analyzer.
 - Optional local LLM analyzer.
-- Structured output validation.
 - Side-by-side local heuristic and model results.
+- Server-side model proxy for safer API key handling.
 
-## 0.4 Domain Packs
+## 0.5 Domain Packs
 
 - Insurance policy pack.
 - Medical report explainer pack.
 - Loan and mortgage pack.
 - School and government notice pack.
 
-## 0.5 Community
+## 0.6 Community
 
 - Rule contribution templates.
 - Example review checklist.
 - Benchmark set for false positives and false negatives.
 - GitHub Pages demo build.
-

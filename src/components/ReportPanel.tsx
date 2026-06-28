@@ -38,12 +38,16 @@ export function ReportPanel({ report, onCopyChecklist }: ReportPanelProps) {
       </div>
 
       <div className="report-actions">
-        <span>{redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {report.wordCount} 字符线索</span>
+        <span>
+          {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {report.wordCount} 字符线索 · {sourceText(report)}
+        </span>
         <button className="ghost-button" type="button" onClick={downloadMarkdown}>
           <Download aria-hidden="true" />
           导出 Markdown
         </button>
       </div>
+
+      {report.notice ? <p className="report-notice">{report.notice}</p> : null}
 
       <section className="report-section">
         <p className="section-label">Risks</p>
@@ -90,6 +94,13 @@ export function ReportPanel({ report, onCopyChecklist }: ReportPanelProps) {
       <p className="disclaimer">{report.disclaimer}</p>
     </section>
   );
+}
+
+function sourceText(report: AnalysisReport): string {
+  if (report.source === "model") {
+    return report.modelName ? `AI 增强：${report.modelName}` : "AI 增强";
+  }
+  return "本地规则";
 }
 
 function statusText(status: AnalysisReport["status"]): string {
