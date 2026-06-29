@@ -14,6 +14,7 @@ import { isPdfFile } from "./ingest/pdfText";
 import { createAnalysisRunTracker } from "./state/analysisRun";
 import { createDraftTextState } from "./state/draftText";
 import { createExampleSelectionState } from "./state/exampleSelection";
+import { createKindSelectionState } from "./state/kindSelection";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createUploadedTextState } from "./state/uploadedText";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
@@ -72,7 +73,15 @@ export default function App() {
 
   function handleKindChange(nextKind: DocumentKind) {
     invalidateCurrentAnalysis();
-    setKind(nextKind);
+    const selected = createKindSelectionState({ text, nextKind });
+    setText(selected.text);
+    setKind(selected.kind);
+    setSelectedExampleId(selected.selectedExampleId);
+    setError(selected.error);
+    setInputNotice(selected.notice);
+    setReport(selected.report);
+    setEvidenceSelection(selected.evidenceSelection);
+    setModelTextConsent(selected.modelTextConsent);
   }
 
   function handleClearWorkspace() {

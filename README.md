@@ -95,6 +95,7 @@ Supported in this MVP:
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.
 - Switching bundled examples immediately refreshes the local-rule report so the demo text and report stay aligned.
+- Changing the document type immediately regenerates the local-rule report with that rule pack.
 - Automatically detect the closest supported document type for uploaded or uncertain text.
 - Analyze common loan and borrowing clauses.
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.

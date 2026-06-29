@@ -23,6 +23,7 @@
 - Local-rule fallback when model calls fail.
 - Selectable-text PDF upload and extraction.
 - Instant local report refresh after successful PDF, `.txt`, and `.md` uploads.
+- Instant local report refresh when manually switching document type.
 - Next-step action plan and copyable counterparty message.
 - Deduplicated local report history without storing original document text or evidence snippets, clearing the editor when a report is restored.
 - One-click current-workspace clearing for sensitive document text and the current report.
