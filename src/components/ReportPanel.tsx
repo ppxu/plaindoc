@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ClipboardCheck, Download, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
+import { buildReportMarkdownFilename } from "../export/downloadFilename";
 import { reportToMarkdown } from "../export/markdown";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { ActionPlan } from "./ActionPlan";
@@ -31,7 +32,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "plaindoc-report.md";
+    anchor.download = buildReportMarkdownFilename(report);
     anchor.click();
     URL.revokeObjectURL(url);
   }

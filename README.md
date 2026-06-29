@@ -26,7 +26,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - Deduplicated local report history for revisiting recent analyses.
 - One-click current-workspace clearing after reviewing sensitive documents.
 - One-click copy for the full Markdown report.
-- Markdown export for saving or sharing the report.
+- Markdown export with document-type and timestamped filenames for saving or sharing the report.
 - Optional AI-enhanced analysis with local-rule fallback.
 - Explicit per-session confirmation before sending document text to a configured model service.
 
@@ -101,7 +101,7 @@ Supported in this MVP:
 - Copyable next-step message draft for counterparties.
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - One-click current-workspace clearing for sensitive document text and the current report.
-- Markdown report export.
+- Markdown report export with readable timestamped filenames.
 
 Not yet supported:
 
