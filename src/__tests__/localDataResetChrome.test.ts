@@ -5,6 +5,8 @@ import documentInputSource from "../components/DocumentInput.tsx?raw";
 describe("local data reset chrome", () => {
   it("wires a one-click local data clearing action into the input panel", () => {
     expect(appSource).toContain("handleClearLocalData");
+    expect(appSource).toContain("confirmLocalDataReset()");
+    expect(appSource).toContain("确定要清除本机数据吗？");
     expect(appSource).toContain("clearLocalStoredData()");
     expect(appSource).toContain("createLocalDataResetState()");
     expect(appSource).toContain("onClearLocalData={handleClearLocalData}");

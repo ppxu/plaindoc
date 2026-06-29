@@ -100,6 +100,9 @@ export default function App() {
   }
 
   function handleClearLocalData() {
+    if (!confirmLocalDataReset()) {
+      return;
+    }
     invalidateCurrentAnalysis();
     clearLocalStoredData();
     const reset = createLocalDataResetState();
@@ -432,4 +435,10 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
     kind: selectedKind,
     notice: `已识别为${getDocumentKindLabel(detection.kind)}，当前规则包匹配。`
   };
+}
+
+function confirmLocalDataReset(): boolean {
+  return window.confirm(
+    "确定要清除本机数据吗？\n\n这会清空当前正文、当前报告、最近报告历史、模型设置和 AI 发送确认。离线应用缓存不会被删除。"
+  );
 }
