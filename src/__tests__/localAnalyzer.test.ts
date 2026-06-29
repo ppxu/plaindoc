@@ -235,6 +235,15 @@ describe("analyzeDocument", () => {
     expect(factValues).toContain("二万元");
   });
 
+  it("does not flag guaranteed insurance renewal as not guaranteed", () => {
+    const report = analyzeDocument({
+      text: "保险条款约定本产品保证续保 6 年，保证续保期间内保险人不得因被保险人发生理赔而拒绝续保。",
+      kind: "insurance"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "insurance-renewal-not-guaranteed")).toBe(false);
+  });
+
   it("flags waiting-period and renewal risks in insurance policies", () => {
     const example = documentExamples.find((item) => item.kind === "insurance");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });
