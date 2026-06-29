@@ -274,6 +274,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "loan-broad-acceleration-clause")).toBe(false);
   });
 
+  it("does not flag loan acceleration with written notice and cure period", () => {
+    const report = analyzeDocument({
+      text: "借款合同约定借款人逾期达到 10 日后，出借人应先书面催告并给予 5 日宽限期；宽限期届满仍未清偿的，出借人才可宣布剩余借款提前到期。",
+      kind: "loan"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "loan-broad-acceleration-clause")).toBe(false);
+  });
+
   it("extracts Chinese ten-thousand-unit and decimal money amounts without truncation", () => {
     const report = analyzeDocument({
       text: "借款本金为人民币 10 万元，平台服务费为1.5万元，逾期后还需支付罚息。",

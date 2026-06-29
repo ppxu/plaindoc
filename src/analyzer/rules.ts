@@ -202,7 +202,7 @@ export const ruleDefinitions: RuleDefinition[] = [
     terms: ["全部借款立即到期", "任何一期逾期", "一次性清偿"],
     requiredTerms: ["逾期"],
     supportingTerms: ["全部借款立即到期", "立即到期", "提前到期", "任何一期逾期", "一次性清偿剩余本金"],
-    excludedTerms: ["借款期限届满时", "到期时", "期限届满时"],
+    excludedTerms: ["借款期限届满时", "到期时", "期限届满时", "宽限期届满仍未清偿", "补救期内清偿", "经出借人书面催告后仍未"],
     title: "一次性到期条件过宽",
     severity: "red",
     explanation: "合同允许出借方在轻微或短期逾期时宣布全部借款提前到期，借款人可能被迫一次性还清全部余额。",
