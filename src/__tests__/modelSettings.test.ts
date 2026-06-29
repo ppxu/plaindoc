@@ -52,6 +52,21 @@ describe("model settings", () => {
     clearModelSettings(storage);
     expect(loadModelSettings(storage).enabled).toBe(false);
   });
+
+  it("ignores browser storage write and removal failures", () => {
+    const storage = createFailingStorage({ failSetItem: true, failRemoveItem: true });
+    const settings: ModelAnalyzerSettings = {
+      enabled: true,
+      baseUrl: "https://example.com/v1",
+      model: "custom-model",
+      apiKey: "secret",
+      rememberApiKey: true
+    };
+
+    expect(() => saveModelSettings(settings, storage)).not.toThrow();
+    expect(() => clearModelSettings(storage)).not.toThrow();
+    expect(loadModelSettings(storage)).toEqual(expect.objectContaining({ enabled: false, apiKey: "" }));
+  });
 });
 
 function createMemoryStorage(): Storage {
@@ -69,6 +84,31 @@ function createMemoryStorage(): Storage {
     },
     setItem: (key: string, value: string) => {
       values.set(key, value);
+    }
+  };
+}
+
+function createFailingStorage({
+  failSetItem = false,
+  failRemoveItem = false
+}: {
+  failSetItem?: boolean;
+  failRemoveItem?: boolean;
+}): Storage {
+  const storage = createMemoryStorage();
+  return {
+    ...storage,
+    removeItem: (key: string) => {
+      if (failRemoveItem) {
+        throw new Error("remove blocked");
+      }
+      storage.removeItem(key);
+    },
+    setItem: (key: string, value: string) => {
+      if (failSetItem) {
+        throw new Error("quota exceeded");
+      }
+      storage.setItem(key, value);
     }
   };
 }

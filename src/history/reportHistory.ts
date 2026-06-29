@@ -40,15 +40,22 @@ export function saveReportToHistory(
 }
 
 export function clearReportHistory(storage: Storage | undefined = getBrowserStorage()): SavedReport[] {
-  if (storage) {
+  if (!storage) return [];
+  try {
     storage.removeItem(STORAGE_KEY);
+  } catch {
+    // Browser storage can be unavailable or quota-blocked; clearing current UI state should still work.
   }
   return [];
 }
 
 function writeReportHistory(items: SavedReport[], storage: Storage | undefined) {
   if (!storage) return;
-  storage.setItem(STORAGE_KEY, JSON.stringify(items));
+  try {
+    storage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Keep the in-memory history returned to the UI even if persistence is blocked.
+  }
 }
 
 function redactSavedReport(item: SavedReport): SavedReport {
@@ -138,5 +145,9 @@ function getBrowserStorage() {
   if (typeof window === "undefined") {
     return undefined;
   }
-  return window.localStorage;
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
 }

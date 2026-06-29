@@ -85,6 +85,19 @@ describe("report history", () => {
     storage.setItem("plaindoc:report-history:v1", JSON.stringify([{ broken: true }]));
     expect(loadReportHistory(storage)).toEqual([]);
   });
+
+  it("keeps the current in-memory history when browser storage writes fail", () => {
+    const storage = createFailingStorage({ failSetItem: true, failRemoveItem: true });
+    const report = analyzeDocument({ text: "押金 5000 元，提前退租需赔偿两个月租金。", kind: "rental" });
+
+    expect(() => saveReportToHistory(report, storage)).not.toThrow();
+    const saved = saveReportToHistory(report, storage);
+
+    expect(saved).toHaveLength(1);
+    expect(saved[0].report.documentKind).toBe("rental");
+    expect(() => clearReportHistory(storage)).not.toThrow();
+    expect(clearReportHistory(storage)).toEqual([]);
+  });
 });
 
 function createMemoryStorage(): Storage {
@@ -102,6 +115,31 @@ function createMemoryStorage(): Storage {
     },
     setItem: (key: string, value: string) => {
       values.set(key, value);
+    }
+  };
+}
+
+function createFailingStorage({
+  failSetItem = false,
+  failRemoveItem = false
+}: {
+  failSetItem?: boolean;
+  failRemoveItem?: boolean;
+}): Storage {
+  const storage = createMemoryStorage();
+  return {
+    ...storage,
+    removeItem: (key: string) => {
+      if (failRemoveItem) {
+        throw new Error("remove blocked");
+      }
+      storage.removeItem(key);
+    },
+    setItem: (key: string, value: string) => {
+      if (failSetItem) {
+        throw new Error("quota exceeded");
+      }
+      storage.setItem(key, value);
     }
   };
 }

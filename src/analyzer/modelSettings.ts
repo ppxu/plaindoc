@@ -29,12 +29,20 @@ export function loadModelSettings(storage: Storage | undefined = getBrowserStora
 
 export function saveModelSettings(settings: ModelAnalyzerSettings, storage: Storage | undefined = getBrowserStorage()) {
   if (!storage) return;
-  storage.setItem(STORAGE_KEY, JSON.stringify(toStoredModelSettings(settings)));
+  try {
+    storage.setItem(STORAGE_KEY, JSON.stringify(toStoredModelSettings(settings)));
+  } catch {
+    // Model settings should remain usable in memory even when browser persistence is blocked.
+  }
 }
 
 export function clearModelSettings(storage: Storage | undefined = getBrowserStorage()) {
   if (!storage) return;
-  storage.removeItem(STORAGE_KEY);
+  try {
+    storage.removeItem(STORAGE_KEY);
+  } catch {
+    // Clearing the visible settings should not fail just because persistence is blocked.
+  }
 }
 
 function normalizeModelSettings(settings: Partial<ModelAnalyzerSettings>): ModelAnalyzerSettings {
@@ -69,5 +77,9 @@ function getBrowserStorage() {
   if (typeof window === "undefined") {
     return undefined;
   }
-  return window.localStorage;
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
 }
