@@ -34,6 +34,16 @@ describe("reportToMarkdown", () => {
     expect(markdown).not.toContain("字符线索");
   });
 
+  it("explains that exported reports are not full document copies", () => {
+    const example = documentExamples[0];
+    const report = analyzeDocument({ text: example.content, kind: example.kind });
+    const markdown = reportToMarkdown(report);
+
+    expect(markdown).toContain("**导出范围：**");
+    expect(markdown).toContain("不包含原始全文");
+    expect(markdown).toContain("分享前请确认");
+  });
+
   it("exports coverage limits when no risk rule matched", () => {
     const report = analyzeDocument({
       text: "租房合同约定押金为人民币 5000 元，租期届满且水电结清后，甲方应在 7 日内退还剩余押金。",
