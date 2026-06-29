@@ -40,6 +40,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "rental-large-early-exit-penalty")).toBe(false);
   });
 
+  it("does not flag capped early exit terms as high penalty risk", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定乙方提前退租应提前 30 日书面通知甲方；甲方可要求乙方承担实际空置损失，但违约金最高不超过一个月租金，押金扣除、违约金和实际损失不得重复计算。",
+      kind: "rental"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "rental-large-early-exit-penalty")).toBe(false);
+  });
+
   it("does not run other document-type rule packs for a known rental contract", () => {
     const report = analyzeDocument({
       text: "租房合同约定押金可直接扣除，提前退租需书面通知并承担违约金和赔偿责任。",
