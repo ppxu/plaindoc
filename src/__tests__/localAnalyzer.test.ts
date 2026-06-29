@@ -193,6 +193,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "loan-costly-prepayment")).toBe(false);
   });
 
+  it("does not flag single capped overdue interest as stacked charges", () => {
+    const report = analyzeDocument({
+      text: "借款合同约定逾期时仅按实际逾期本金计收罚息，不重复收取违约金、催收费或其他费用。",
+      kind: "loan"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "loan-stacked-overdue-charges")).toBe(false);
+  });
+
   it("extracts Chinese ten-thousand-unit and decimal money amounts without truncation", () => {
     const report = analyzeDocument({
       text: "借款本金为人民币 10 万元，平台服务费为1.5万元，逾期后还需支付罚息。",
