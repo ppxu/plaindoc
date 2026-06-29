@@ -78,6 +78,7 @@ Privacy boundary:
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
 - The local data reset button clears the visible document text, current report, recent report history, stored model settings, remembered API key opt-in state, and current AI send confirmation. It does not remove the application-shell cache used for offline reopening.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
+- Remote model endpoints must use HTTPS before PlainDoc will send document text or API keys. PlainDoc allows HTTP only for local model endpoints such as `http://localhost` or `http://127.0.0.1`.
 - Before AI sending, PlainDoc locally checks whether the visible text appears to contain common sensitive data categories such as phone numbers, email addresses, ID numbers, or bank card numbers. It only shows category labels and does not store or display the matched values. You can generate a local redacted copy that replaces those values with placeholders before confirming model sending.
 - Changing the document text, loading an example, uploading a file, restoring a history report, clearing the workspace, or changing the model endpoint/model/API key cancels the send confirmation.
 - After confirmation, PlainDoc sends up to the first 12,000 characters of the document text from your browser to the endpoint you configured. The full document is still analyzed locally, and long AI-enhanced reports include a notice when the model only received the front section.
@@ -107,6 +108,7 @@ Supported in this MVP:
 - Optional OpenAI-compatible model enhancement.
 - Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.
+- HTTPS-required remote model endpoints, with HTTP allowed only for local model endpoints.
 - Transparent long-document AI scope notice when only the first 12,000 characters are sent to the configured model service.
 - Automatic AI request timeout with local-rule fallback.
 - Cancelable in-flight AI analysis with request abort and stale-result protection.

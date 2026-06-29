@@ -653,6 +653,17 @@ textarea:focus,
   border-radius: 8px;
 }
 
+.model-endpoint-warning {
+  margin: -2px 0 10px;
+  padding: 9px 10px;
+  color: #6f3529;
+  background: #fff4ef;
+  border: 1px solid #e6b8aa;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .model-sensitive-warning > div {
   display: flex;
   align-items: center;

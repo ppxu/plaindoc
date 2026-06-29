@@ -1,4 +1,5 @@
 import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
+import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "../analyzer/modelEndpointSecurity";
 import type { SensitiveTextSummary } from "../privacy/sensitiveText";
 import type { ModelAnalyzerSettings } from "../types";
 
@@ -21,6 +22,9 @@ export function ModelSettingsPanel({
   onModelTextConsentChange,
   onRedactSensitiveText
 }: ModelSettingsPanelProps) {
+  const endpointSecurity = getModelEndpointSecurity(settings.baseUrl);
+  const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
+
   function update(partial: Partial<ModelAnalyzerSettings>) {
     onChange({ ...settings, ...partial });
   }
@@ -49,6 +53,7 @@ export function ModelSettingsPanel({
               placeholder="https://api.openai.com/v1"
             />
           </label>
+          {endpointSecurityWarning ? <p className="model-endpoint-warning">{endpointSecurityWarning}</p> : null}
 
           <label className="field compact-field">
             <span>模型</span>
@@ -105,7 +110,7 @@ export function ModelSettingsPanel({
             <input
               type="checkbox"
               checked={modelTextConsent}
-              disabled={!settings.apiKey.trim()}
+              disabled={!settings.apiKey.trim() || !endpointSecurity.ok}
               onChange={(event) => onModelTextConsentChange(event.target.checked)}
             />
           </label>

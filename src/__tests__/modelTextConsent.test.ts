@@ -16,6 +16,8 @@ describe("model text consent", () => {
     expect(canSendDocumentTextToModel(baseSettings, false)).toBe(false);
     expect(canSendDocumentTextToModel({ ...baseSettings, enabled: false }, true)).toBe(false);
     expect(canSendDocumentTextToModel({ ...baseSettings, apiKey: " " }, true)).toBe(false);
+    expect(canSendDocumentTextToModel({ ...baseSettings, baseUrl: "http://example.com/v1" }, true)).toBe(false);
+    expect(canSendDocumentTextToModel({ ...baseSettings, baseUrl: "http://localhost:11434/v1" }, true)).toBe(true);
   });
 
   it("revokes confirmation when the model destination or credential changes", () => {

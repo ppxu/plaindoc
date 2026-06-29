@@ -8,6 +8,7 @@ import type {
   Severity
 } from "../types";
 import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
+import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "./modelEndpointSecurity";
 
 interface ChatCompletionResponse {
   choices?: Array<{
@@ -53,6 +54,11 @@ export async function analyzeWithModel(
       ...localReport,
       notice: "AI 增强未启用或缺少 API key，当前使用本地规则分析。"
     };
+  }
+
+  const endpointSecurity = getModelEndpointSecurity(settings.baseUrl);
+  if (!endpointSecurity.ok) {
+    throw new Error(modelEndpointSecurityMessage(endpointSecurity));
   }
 
   const preparedDocument = prepareModelDocumentText(input.text);

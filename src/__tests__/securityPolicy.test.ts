@@ -6,6 +6,7 @@ describe("security policy", () => {
   it("documents the current AI and local data boundaries", () => {
     expect(securityPolicy).toContain("AI-enhanced mode is optional");
     expect(securityPolicy).toContain("本次允许发送正文给模型服务");
+    expect(securityPolicy).toContain("Remote model endpoints must use HTTPS");
     expect(securityPolicy).toContain("session-only by default");
     expect(securityPolicy).toContain("localStorage");
     expect(securityPolicy).toContain("does not store original document text or evidence snippets");

@@ -3,6 +3,7 @@ import { Github, LockKeyhole, ScrollText } from "lucide-react";
 import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
 import { analyzeWithModel } from "./analyzer/modelAnalyzer";
+import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "./analyzer/modelEndpointSecurity";
 import { clearModelSettings, loadModelSettings, saveModelSettings } from "./analyzer/modelSettings";
 import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
@@ -136,6 +137,13 @@ export default function App() {
       setSelectedExampleId("");
     }
     setInputNotice(resolvedKind.notice);
+
+    const endpointSecurity = getModelEndpointSecurity(modelSettings.baseUrl);
+    if (modelSettings.enabled && !endpointSecurity.ok) {
+      setHistory(saveReportToHistory(localReport));
+      setInputNotice(modelEndpointSecurityMessage(endpointSecurity));
+      return;
+    }
 
     const canUseModel = canSendDocumentTextToModel(modelSettings, modelTextConsent);
     if (!modelSettings.enabled || !canUseModel) {

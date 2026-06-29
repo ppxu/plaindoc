@@ -135,6 +135,29 @@ describe("model analyzer", () => {
     expect(report.summary).toBe("模型摘要");
   });
 
+  it("blocks insecure remote HTTP model endpoints before sending text or API keys", async () => {
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      analyzeWithModel(
+        { text: "甲方可扣除押金。", kind: "rental" },
+        {
+          enabled: true,
+          baseUrl: "http://example.test/v1",
+          model: "test-model",
+          apiKey: "test-key",
+          rememberApiKey: false
+        },
+        localReport,
+        { timeoutMs: 0 }
+      )
+    ).rejects.toThrow("远程模型 endpoint 必须使用 HTTPS");
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("times out a hanging model request", async () => {
     vi.useFakeTimers();
     const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });

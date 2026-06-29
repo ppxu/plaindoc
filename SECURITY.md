@@ -10,6 +10,8 @@ PlainDoc runs local-rule analysis in the browser. When AI mode is off, it does n
 
 AI-enhanced mode is optional. It sends document text only after the user enables AI settings and confirms **本次允许发送正文给模型服务** for the current document/model destination. PlainDoc sends at most the first 12,000 characters to the configured OpenAI-compatible endpoint; the full text is still analyzed locally.
 
+Remote model endpoints must use HTTPS before PlainDoc sends document text or API keys. HTTP endpoints are allowed only for local model services on `localhost`, `127.0.0.1`, or `[::1]`.
+
 API keys are session-only by default. They are written to browser localStorage only when the user explicitly enables persistent storage, and can be cleared from the UI.
 
 Recent report history is stored in the browser and does not store original document text or evidence snippets. It keeps report conclusions and suggestions so users can revisit recent analyses without retaining raw contract text.
