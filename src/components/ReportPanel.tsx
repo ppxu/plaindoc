@@ -61,6 +61,9 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
         <span>
           {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {report.wordCount} 字符线索 · {sourceText(report)}
         </span>
+        <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          报告已更新：{statusText(report.status)}，阅读分 {report.score}，{redCount} 个红色风险，{yellowCount} 个黄色提醒。
+        </span>
         <div className="report-action-buttons">
           <button className="ghost-button" type="button" onClick={copyReport}>
             <ClipboardCheck aria-hidden="true" />

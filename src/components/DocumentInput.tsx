@@ -75,7 +75,7 @@ export function DocumentInput({
   }, [evidenceSelection]);
 
   return (
-    <section className="input-panel" aria-label="Document input">
+    <section className="input-panel" aria-label="Document input" aria-busy={isAnalyzing || isUploading}>
       <div className="panel-heading">
         <div>
           <p className="section-label">Document</p>
@@ -171,8 +171,16 @@ export function DocumentInput({
         />
       </label>
 
-      {error ? <p className="error-message">{error}</p> : null}
-      {notice ? <p className="input-notice">{notice}</p> : null}
+      {error ? (
+        <p className="error-message" role="alert" aria-live="assertive">
+          {error}
+        </p>
+      ) : null}
+      {notice ? (
+        <p className="input-notice" role="status" aria-live="polite">
+          {notice}
+        </p>
+      ) : null}
 
       <div className="analysis-actions">
         <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing || isUploading}>
