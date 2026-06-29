@@ -30,6 +30,7 @@
 - One-click original-text locating for risk evidence snippets.
 - Paragraph-level fallback when a risk evidence snippet was lightly edited but nearby context remains in the current text.
 - Canceling AI analysis aborts the browser model request and ignores stale results.
+- Automatic model request timeout with local-rule fallback.
 - Priority brief for the first issues to negotiate.
 - Loan and borrowing contract rule pack.
 - Insurance policy rule pack.

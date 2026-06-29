@@ -79,6 +79,7 @@ Privacy boundary:
 - The local baseline sent to the model omits evidence snippets, so extracted raw evidence from outside the sent text range is not included in the model request.
 - If the document or model settings change while an AI request is still in flight, the stale model result is ignored instead of replacing the current report.
 - You can cancel an in-flight AI analysis. PlainDoc asks the browser to abort the model request, keeps the current report on the local-rule result, and still ignores any canceled model result if it returns later.
+- AI model requests automatically time out instead of leaving the page stuck in analysis; timeout failures fall back to the local-rule report.
 - The API key is session-only by default. It is written to browser localStorage only when you explicitly enable **记住 API key**, and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
 - When AI mode improves a local risk card, PlainDoc keeps the local evidence snippet instead of replacing it with unsupported model text.
@@ -98,6 +99,7 @@ Supported in this MVP:
 - Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.
 - Transparent long-document AI scope notice when only the first 12,000 characters are sent to the configured model service.
+- Automatic AI request timeout with local-rule fallback.
 - Cancelable in-flight AI analysis with request abort and stale-result protection.
 - Session-only API key handling by default, with explicit opt-in persistence.
 - Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.

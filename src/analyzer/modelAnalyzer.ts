@@ -37,7 +37,10 @@ interface ModelFindingPatch {
 
 interface AnalyzeWithModelOptions {
   signal?: AbortSignal;
+  timeoutMs?: number;
 }
+
+export const MODEL_REQUEST_TIMEOUT_MS = 45_000;
 
 export async function analyzeWithModel(
   input: AnalyzerInput,
@@ -53,65 +56,117 @@ export async function analyzeWithModel(
   }
 
   const preparedDocument = prepareModelDocumentText(input.text);
-  const response = await fetch(`${settings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
-    method: "POST",
-    signal: options.signal,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${settings.apiKey.trim()}`
+  const requestAbort = createModelRequestAbort(options);
+
+  try {
+    const response = await fetch(`${settings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
+      method: "POST",
+      signal: requestAbort.signal,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${settings.apiKey.trim()}`
+      },
+      body: JSON.stringify({
+        model: settings.model.trim(),
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: [
+              "You are PlainDoc, a cautious document-reading assistant for ordinary people.",
+              "Return strict JSON only. Do not provide legal, medical, or financial advice.",
+              "Flag ambiguous obligations, payment terms, penalties, one-sided discretion, and missing acceptance criteria.",
+              "Use concise Chinese."
+            ].join(" ")
+          },
+          {
+            role: "user",
+            content: JSON.stringify({
+              task: "Improve this local baseline report. Keep it practical and plain-language.",
+              requiredJsonShape: {
+                summary: "string, max 120 Chinese chars",
+                findings:
+                  "array, max 6 items, each has localFindingId(optional, copy from localBaseline.findings[].id when improving one local risk), title, severity(red/yellow/green), explanation, whyItMatters, suggestion, modification",
+                checklist: "array, max 8 items, each has question, reason, severity(red/yellow/green)",
+                actionPlan: "object with priority(low/medium/high), title, steps(max 3 strings), message",
+                plainLanguage: "array, max 4 strings"
+              },
+              documentKind: input.kind,
+              documentText: preparedDocument.text,
+              documentTextScope: {
+                originalChars: preparedDocument.originalLength,
+                sentChars: preparedDocument.sentLength,
+                truncated: preparedDocument.truncated
+              },
+              localBaseline: prepareModelBaseline(localReport, preparedDocument)
+            })
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`模型服务返回 ${response.status}。`);
+    }
+
+    const data = (await response.json()) as ChatCompletionResponse;
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) {
+      throw new Error("模型没有返回可读取的内容。");
+    }
+
+    const payload = parseModelPayload(content);
+    return mergeModelPayload(localReport, payload, settings.model.trim(), preparedDocument);
+  } catch (caught) {
+    if (requestAbort.didTimeout()) {
+      throw new Error(`模型请求超时（${Math.ceil(requestAbort.timeoutMs / 1000)} 秒）。`);
+    }
+    throw caught;
+  } finally {
+    requestAbort.clear();
+  }
+}
+
+function createModelRequestAbort(options: AnalyzeWithModelOptions): {
+  signal?: AbortSignal;
+  timeoutMs: number;
+  clear: () => void;
+  didTimeout: () => boolean;
+} {
+  const timeoutMs = options.timeoutMs ?? MODEL_REQUEST_TIMEOUT_MS;
+  if (timeoutMs <= 0) {
+    return {
+      signal: options.signal,
+      timeoutMs,
+      clear: () => undefined,
+      didTimeout: () => false
+    };
+  }
+
+  const controller = new AbortController();
+  let timedOut = false;
+  const abortFromExternalSignal = () => controller.abort();
+  const timeoutId = globalThis.setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+
+  if (options.signal?.aborted) {
+    abortFromExternalSignal();
+  } else {
+    options.signal?.addEventListener("abort", abortFromExternalSignal, { once: true });
+  }
+
+  return {
+    signal: controller.signal,
+    timeoutMs,
+    clear: () => {
+      globalThis.clearTimeout(timeoutId);
+      options.signal?.removeEventListener("abort", abortFromExternalSignal);
     },
-    body: JSON.stringify({
-      model: settings.model.trim(),
-      temperature: 0.2,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: [
-            "You are PlainDoc, a cautious document-reading assistant for ordinary people.",
-            "Return strict JSON only. Do not provide legal, medical, or financial advice.",
-            "Flag ambiguous obligations, payment terms, penalties, one-sided discretion, and missing acceptance criteria.",
-            "Use concise Chinese."
-          ].join(" ")
-        },
-        {
-          role: "user",
-          content: JSON.stringify({
-            task: "Improve this local baseline report. Keep it practical and plain-language.",
-            requiredJsonShape: {
-              summary: "string, max 120 Chinese chars",
-              findings:
-                "array, max 6 items, each has localFindingId(optional, copy from localBaseline.findings[].id when improving one local risk), title, severity(red/yellow/green), explanation, whyItMatters, suggestion, modification",
-              checklist: "array, max 8 items, each has question, reason, severity(red/yellow/green)",
-              actionPlan: "object with priority(low/medium/high), title, steps(max 3 strings), message",
-              plainLanguage: "array, max 4 strings"
-            },
-            documentKind: input.kind,
-            documentText: preparedDocument.text,
-            documentTextScope: {
-              originalChars: preparedDocument.originalLength,
-              sentChars: preparedDocument.sentLength,
-              truncated: preparedDocument.truncated
-            },
-            localBaseline: prepareModelBaseline(localReport, preparedDocument)
-          })
-        }
-      ]
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`模型服务返回 ${response.status}。`);
-  }
-
-  const data = (await response.json()) as ChatCompletionResponse;
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) {
-    throw new Error("模型没有返回可读取的内容。");
-  }
-
-  const payload = parseModelPayload(content);
-  return mergeModelPayload(localReport, payload, settings.model.trim(), preparedDocument);
+    didTimeout: () => timedOut
+  };
 }
 
 export function mergeModelPayload(

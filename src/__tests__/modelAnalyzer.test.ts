@@ -3,6 +3,7 @@ import { analyzeDocument } from "../analyzer/localAnalyzer";
 import { analyzeWithModel, mergeModelPayload } from "../analyzer/modelAnalyzer";
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
@@ -127,10 +128,74 @@ describe("model analyzer", () => {
         rememberApiKey: false
       },
       localReport,
-      { signal: controller.signal }
+      { signal: controller.signal, timeoutMs: 0 }
     );
 
     expect(fetchMock).toHaveBeenCalledOnce();
     expect(report.summary).toBe("模型摘要");
+  });
+
+  it("times out a hanging model request", async () => {
+    vi.useFakeTimers();
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    const fetchMock = vi.fn((_url: string | URL | Request, init?: RequestInit) => {
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => {
+          reject(new DOMException("Aborted", "AbortError"));
+        });
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = analyzeWithModel(
+      { text: "甲方可扣除押金。", kind: "rental" },
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "test-key",
+        rememberApiKey: false
+      },
+      localReport,
+      { timeoutMs: 100 }
+    );
+
+    const expectation = expect(result).rejects.toThrow("模型请求超时");
+    await vi.advanceTimersByTimeAsync(100);
+    await expectation;
+  });
+
+  it("keeps the timeout active while reading a hanging model response body", async () => {
+    vi.useFakeTimers();
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    const fetchMock = vi.fn((_url: string | URL | Request, init?: RequestInit) => {
+      return Promise.resolve({
+        ok: true,
+        json: () =>
+          new Promise<unknown>((_resolve, reject) => {
+            init?.signal?.addEventListener("abort", () => {
+              reject(new DOMException("Aborted", "AbortError"));
+            });
+          })
+      } as Response);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = analyzeWithModel(
+      { text: "甲方可扣除押金。", kind: "rental" },
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "test-key",
+        rememberApiKey: false
+      },
+      localReport,
+      { timeoutMs: 100 }
+    );
+
+    const expectation = expect(result).rejects.toThrow("模型请求超时");
+    await vi.advanceTimersByTimeAsync(100);
+    await expectation;
   });
 });
