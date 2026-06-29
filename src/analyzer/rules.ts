@@ -127,6 +127,8 @@ export const ruleDefinitions: RuleDefinition[] = [
     id: "renovation-acceptance-deemed-pass",
     kinds: ["renovation", "unknown"],
     terms: ["即视为验收合格", "内部验收标准", "支付尾款"],
+    requiredTerms: ["验收"],
+    supportingTerms: ["即视为验收合格", "视为验收合格", "内部验收标准", "入住", "摆放家具"],
     title: "验收合格条件偏向承包方",
     severity: "yellow",
     explanation: "合同把入住、摆放家具或付款等行为视为验收合格，可能压缩业主后续维权空间。",

@@ -98,6 +98,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "renovation-open-ended-change-orders")).toBe(false);
   });
 
+  it("does not flag signed renovation acceptance milestones as deemed pass", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定工程完工后由双方按合同标准共同验收，双方签字确认验收合格后支付尾款。",
+      kind: "renovation"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "renovation-acceptance-deemed-pass")).toBe(false);
+  });
+
   it("extracts percentage facts for payment milestones and rate clauses", () => {
     const report = analyzeDocument({
       text: "装修合同约定工程总价为人民币 20 万元，签约当日支付总价60%作为首期款，竣工验收后支付40%尾款。",
