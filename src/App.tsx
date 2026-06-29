@@ -12,6 +12,7 @@ import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./hi
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
 import { createAnalysisRunTracker } from "./state/analysisRun";
+import { createDraftTextState } from "./state/draftText";
 import { createExampleSelectionState } from "./state/exampleSelection";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createUploadedTextState } from "./state/uploadedText";
@@ -58,10 +59,15 @@ export default function App() {
 
   function handleTextChange(nextText: string) {
     invalidateCurrentAnalysis();
-    setText(nextText);
-    setSelectedExampleId("");
-    setInputNotice("");
-    setModelTextConsent(false);
+    const draft = createDraftTextState({ text: nextText, selectedKind: kind });
+    setText(draft.text);
+    setKind(draft.kind);
+    setSelectedExampleId(draft.selectedExampleId);
+    setError(draft.error);
+    setInputNotice(draft.notice);
+    setReport(draft.report);
+    setEvidenceSelection(draft.evidenceSelection);
+    setModelTextConsent(draft.modelTextConsent);
   }
 
   function handleKindChange(nextKind: DocumentKind) {

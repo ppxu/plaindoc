@@ -90,6 +90,7 @@ Privacy boundary:
 Supported in this MVP:
 
 - Paste text.
+- Pasted or edited text immediately refreshes the local-rule report so the visible report stays aligned with the editor.
 - Upload selectable-text PDF, `.txt`, and `.md` files.
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.

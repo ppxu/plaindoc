@@ -3,6 +3,7 @@
 ## 0.1 Public MVP
 
 - Local text analysis.
+- Instant local report refresh while pasting or editing document text.
 - Rental, employment, and renovation rule packs.
 - Bundled fictional examples.
 - Copyable checklist.
