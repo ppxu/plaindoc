@@ -1,5 +1,10 @@
 import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
 import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "../analyzer/modelEndpointSecurity";
+import {
+  applyModelProviderPreset,
+  modelProviderPresets,
+  type ModelProviderPresetId
+} from "../analyzer/modelProviderPresets";
 import { normalizeModelSettingsForRuntime } from "../analyzer/modelSettings";
 import type { SensitiveTextSummary } from "../privacy/sensitiveText";
 import type { ModelAnalyzerSettings } from "../types";
@@ -31,6 +36,10 @@ export function ModelSettingsPanel({
     onChange({ ...settings, ...partial });
   }
 
+  function applyPreset(presetId: ModelProviderPresetId) {
+    onChange(applyModelProviderPreset(settings, presetId));
+  }
+
   return (
     <section className="model-settings" aria-label="AI enhanced analysis settings">
       <label className="mode-toggle">
@@ -47,6 +56,15 @@ export function ModelSettingsPanel({
 
       {settings.enabled ? (
         <div className="model-settings-body">
+          <div className="model-provider-presets" aria-label="AI model service presets">
+            {modelProviderPresets.map((preset) => (
+              <button key={preset.id} type="button" onClick={() => applyPreset(preset.id)}>
+                <span>{preset.label}</span>
+                <small>{preset.description}</small>
+              </button>
+            ))}
+          </div>
+
           <label className="field compact-field">
             <span>OpenAI-compatible endpoint</span>
             <input
