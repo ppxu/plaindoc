@@ -11,6 +11,7 @@ import {
   modelServiceStatusMessage,
   shouldRetryWithoutResponseFormat
 } from "./modelServiceErrors";
+import { parseFirstJsonObject } from "./modelJson";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionProbeResponse {
@@ -75,6 +76,12 @@ export async function testModelConnection(
         message: "模型服务已响应，但没有返回 OpenAI-compatible chat completions 格式。请检查 endpoint 是否以 /v1 结尾、模型名是否正确。"
       };
     }
+    if (!isExpectedProbeConfirmation(content)) {
+      return {
+        ok: false,
+        message: "模型服务已响应，但没有返回连接测试所需的 JSON 确认。请检查模型名是否正确，或换用支持 chat completions 的模型。"
+      };
+    }
 
     return {
       ok: true,
@@ -127,6 +134,16 @@ function fetchModelConnectionTest(
       ]
     })
   });
+}
+
+function isExpectedProbeConfirmation(content: string): boolean {
+  try {
+    const parsed = JSON.parse(content) as { ok?: unknown };
+    return parsed.ok === true;
+  } catch {
+    const parsed = parseFirstJsonObject(content) as { ok?: unknown } | undefined;
+    return parsed?.ok === true;
+  }
 }
 
 function createConnectionTestAbort(options: ModelConnectionTestOptions): {
