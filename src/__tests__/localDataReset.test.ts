@@ -39,6 +39,27 @@ describe("local data reset", () => {
     expect(loadModelSettings(storage)).toEqual(DEFAULT_MODEL_SETTINGS);
     expect(loadReportHistory(storage)).toEqual([]);
   });
+
+  it("does not fail when browser localStorage access is blocked", () => {
+    const previousWindow = globalThis.window;
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: {
+        get localStorage() {
+          throw new Error("storage blocked");
+        }
+      }
+    });
+
+    try {
+      expect(() => clearLocalStoredData()).not.toThrow();
+    } finally {
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: previousWindow
+      });
+    }
+  });
 });
 
 function createMemoryStorage(): Storage {
