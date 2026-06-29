@@ -48,6 +48,19 @@ describe("analyzeDocument", () => {
     expect(report.actionPlan.priority).toBe("high");
   });
 
+  it("extracts Chinese ten-thousand-unit and decimal money amounts without truncation", () => {
+    const report = analyzeDocument({
+      text: "借款本金为人民币 10 万元，平台服务费为1.5万元，逾期后还需支付罚息。",
+      kind: "loan"
+    });
+    const factValues = report.facts.map((fact) => fact.value);
+
+    expect(factValues).toContain("人民币 10 万元");
+    expect(factValues).toContain("1.5万元");
+    expect(factValues).not.toContain("人民币 10");
+    expect(factValues).not.toContain("5万元");
+  });
+
   it("flags waiting-period and renewal risks in insurance policies", () => {
     const example = documentExamples.find((item) => item.kind === "insurance");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });
