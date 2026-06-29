@@ -4,7 +4,8 @@ import modelSettingsPanelSource from "../components/ModelSettingsPanel.tsx?raw";
 
 describe("model endpoint security chrome", () => {
   it("surfaces endpoint security checks before model sending", () => {
-    expect(appSource).toContain("getModelEndpointSecurity(modelSettings.baseUrl)");
+    expect(appSource).toContain("normalizeModelSettingsForRuntime(modelSettings)");
+    expect(appSource).toContain("getModelEndpointSecurity(runtimeModelSettings.baseUrl)");
     expect(appSource).toContain("modelEndpointSecurityMessage(endpointSecurity)");
 
     expect(modelSettingsPanelSource).toContain("getModelEndpointSecurity(settings.baseUrl)");

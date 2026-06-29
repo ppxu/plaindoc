@@ -21,7 +21,7 @@ export function loadModelSettings(storage: Storage | undefined = getBrowserStora
       return DEFAULT_MODEL_SETTINGS;
     }
     const parsed = JSON.parse(raw) as Partial<ModelAnalyzerSettings>;
-    return normalizeModelSettings(parsed);
+    return normalizeStoredModelSettings(parsed);
   } catch {
     return DEFAULT_MODEL_SETTINGS;
   }
@@ -45,19 +45,27 @@ export function clearModelSettings(storage: Storage | undefined = getBrowserStor
   }
 }
 
-function normalizeModelSettings(settings: Partial<ModelAnalyzerSettings>): ModelAnalyzerSettings {
+export function normalizeModelSettingsForRuntime(settings: Partial<ModelAnalyzerSettings>): ModelAnalyzerSettings {
   const rememberApiKey = Boolean(settings.rememberApiKey);
   return {
     enabled: Boolean(settings.enabled),
     baseUrl: cleanText(settings.baseUrl, DEFAULT_MODEL_SETTINGS.baseUrl),
     model: cleanText(settings.model, DEFAULT_MODEL_SETTINGS.model),
-    apiKey: rememberApiKey && typeof settings.apiKey === "string" ? settings.apiKey : "",
+    apiKey: typeof settings.apiKey === "string" ? settings.apiKey : "",
     rememberApiKey
   };
 }
 
+function normalizeStoredModelSettings(settings: Partial<ModelAnalyzerSettings>): ModelAnalyzerSettings {
+  const normalized = normalizeModelSettingsForRuntime(settings);
+  return {
+    ...normalized,
+    apiKey: normalized.rememberApiKey && typeof settings.apiKey === "string" ? settings.apiKey : ""
+  };
+}
+
 function toStoredModelSettings(settings: ModelAnalyzerSettings): ModelAnalyzerSettings {
-  const normalized = normalizeModelSettings(settings);
+  const normalized = normalizeStoredModelSettings(settings);
   if (normalized.rememberApiKey) {
     return normalized;
   }

@@ -9,6 +9,7 @@ import type {
 } from "../types";
 import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
 import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "./modelEndpointSecurity";
+import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionResponse {
   choices?: Array<{
@@ -49,14 +50,15 @@ export async function analyzeWithModel(
   localReport: AnalysisReport,
   options: AnalyzeWithModelOptions = {}
 ): Promise<AnalysisReport> {
-  if (!settings.enabled || !settings.apiKey.trim()) {
+  const runtimeSettings = normalizeModelSettingsForRuntime(settings);
+  if (!runtimeSettings.enabled || !runtimeSettings.apiKey.trim()) {
     return {
       ...localReport,
       notice: "AI 增强未启用或缺少 API key，当前使用本地规则分析。"
     };
   }
 
-  const endpointSecurity = getModelEndpointSecurity(settings.baseUrl);
+  const endpointSecurity = getModelEndpointSecurity(runtimeSettings.baseUrl);
   if (!endpointSecurity.ok) {
     throw new Error(modelEndpointSecurityMessage(endpointSecurity));
   }
@@ -65,15 +67,15 @@ export async function analyzeWithModel(
   const requestAbort = createModelRequestAbort(options);
 
   try {
-    const response = await fetch(`${settings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
+    const response = await fetch(`${runtimeSettings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
       method: "POST",
       signal: requestAbort.signal,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${settings.apiKey.trim()}`
+        Authorization: `Bearer ${runtimeSettings.apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: settings.model.trim(),
+        model: runtimeSettings.model,
         temperature: 0.2,
         response_format: { type: "json_object" },
         messages: [
@@ -133,7 +135,7 @@ export async function analyzeWithModel(
     }
 
     const payload = parseModelPayload(content);
-    return mergeModelPayload(localReport, payload, settings.model.trim(), preparedDocument);
+    return mergeModelPayload(localReport, payload, runtimeSettings.model, preparedDocument);
   } catch (caught) {
     if (requestAbort.didTimeout()) {
       throw new Error(`模型请求超时（${Math.ceil(requestAbort.timeoutMs / 1000)} 秒）。`);

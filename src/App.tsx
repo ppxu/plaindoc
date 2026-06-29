@@ -4,7 +4,7 @@ import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
 import { analyzeWithModel } from "./analyzer/modelAnalyzer";
 import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "./analyzer/modelEndpointSecurity";
-import { clearModelSettings, loadModelSettings, saveModelSettings } from "./analyzer/modelSettings";
+import { clearModelSettings, loadModelSettings, normalizeModelSettingsForRuntime, saveModelSettings } from "./analyzer/modelSettings";
 import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
 import { getDocumentKindLabel } from "./data/documentKinds";
@@ -159,7 +159,8 @@ export default function App() {
     }
     setInputNotice(resolvedKind.notice);
 
-    const endpointSecurity = getModelEndpointSecurity(modelSettings.baseUrl);
+    const runtimeModelSettings = normalizeModelSettingsForRuntime(modelSettings);
+    const endpointSecurity = getModelEndpointSecurity(runtimeModelSettings.baseUrl);
     if (modelSettings.enabled && !endpointSecurity.ok) {
       setHistory(saveReportToHistory(localReport));
       setInputNotice(modelEndpointSecurityMessage(endpointSecurity));
