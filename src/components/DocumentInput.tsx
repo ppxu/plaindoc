@@ -4,6 +4,7 @@ import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnaly
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
+import { detectSensitiveText } from "../privacy/sensitiveText";
 
 interface DocumentInputProps {
   text: string;
@@ -60,6 +61,7 @@ export function DocumentInput({
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const sensitiveTextSummary = detectSensitiveText(text);
 
   useEffect(() => {
     if (!evidenceSelection) return;
@@ -150,6 +152,7 @@ export function DocumentInput({
       <ModelSettingsPanel
         settings={modelSettings}
         modelTextConsent={modelTextConsent}
+        sensitiveTextSummary={sensitiveTextSummary}
         onChange={onModelSettingsChange}
         onClear={onClearModelSettings}
         onModelTextConsentChange={onModelTextConsentChange}

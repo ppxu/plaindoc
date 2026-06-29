@@ -1,9 +1,11 @@
-import { BrainCircuit, KeyRound, Trash2 } from "lucide-react";
+import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
+import type { SensitiveTextSummary } from "../privacy/sensitiveText";
 import type { ModelAnalyzerSettings } from "../types";
 
 interface ModelSettingsPanelProps {
   settings: ModelAnalyzerSettings;
   modelTextConsent: boolean;
+  sensitiveTextSummary: SensitiveTextSummary;
   onChange: (settings: ModelAnalyzerSettings) => void;
   onClear: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
@@ -12,6 +14,7 @@ interface ModelSettingsPanelProps {
 export function ModelSettingsPanel({
   settings,
   modelTextConsent,
+  sensitiveTextSummary,
   onChange,
   onClear,
   onModelTextConsentChange
@@ -76,6 +79,18 @@ export function ModelSettingsPanel({
               onChange={(event) => update({ rememberApiKey: event.target.checked })}
             />
           </label>
+
+          {sensitiveTextSummary.hasSensitiveText ? (
+            <div className="model-sensitive-warning" role="alert">
+              <div>
+                <ShieldAlert aria-hidden="true" />
+                <strong>发送前建议先脱敏</strong>
+              </div>
+              <p>
+                当前正文可能包含{sensitiveTextSummary.labels.join("、")}。PlainDoc 只在本地显示类别提醒，不保存或展示具体敏感值；勾选发送确认前，请先删除或替换不必要的个人信息。
+              </p>
+            </div>
+          ) : null}
 
           <label className="mode-toggle model-send-consent">
             <span>

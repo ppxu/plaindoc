@@ -28,6 +28,7 @@ Paste a contract, upload a selectable-text PDF, or load a bundled example. Plain
 - One-click copy for the full Markdown report.
 - Markdown export with document-type and timestamped filenames for saving or sharing the report.
 - Optional AI-enhanced analysis with local-rule fallback.
+- Local sensitive-data preflight warning before AI model sending.
 - Explicit per-session confirmation before sending document text to a configured model service.
 
 PlainDoc is not a legal-advice product. It is a document-reading assistant that helps ordinary people spot questions worth asking.
@@ -72,6 +73,7 @@ Privacy boundary:
 - Recent report history is stored in your browser, deduplicates repeated analyses, and stores report conclusions and suggestions only. It does not store the original document text or evidence snippets. Restoring a history report clears the editor so stale text is not shown beside the restored report.
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
+- Before AI sending, PlainDoc locally checks whether the visible text appears to contain common sensitive data categories such as phone numbers, email addresses, ID numbers, or bank card numbers. It only shows category labels and does not store or display the matched values.
 - Changing the document text, loading an example, uploading a file, restoring a history report, clearing the workspace, or changing the model endpoint/model/API key cancels the send confirmation.
 - After confirmation, PlainDoc sends up to the first 12,000 characters of the document text from your browser to the endpoint you configured. The full document is still analyzed locally, and long AI-enhanced reports include a notice when the model only received the front section.
 - The local baseline sent to the model omits evidence snippets, so extracted raw evidence from outside the sent text range is not included in the model request.
@@ -93,6 +95,7 @@ Supported in this MVP:
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Local sensitive-data category warning before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.
 - Transparent long-document AI scope notice when only the first 12,000 characters are sent to the configured model service.
 - Cancelable in-flight AI analysis with stale-result protection.
