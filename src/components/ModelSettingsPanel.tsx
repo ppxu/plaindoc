@@ -1,5 +1,6 @@
 import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
 import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "../analyzer/modelEndpointSecurity";
+import { normalizeModelSettingsForRuntime } from "../analyzer/modelSettings";
 import type { SensitiveTextSummary } from "../privacy/sensitiveText";
 import type { ModelAnalyzerSettings } from "../types";
 
@@ -22,7 +23,8 @@ export function ModelSettingsPanel({
   onModelTextConsentChange,
   onRedactSensitiveText
 }: ModelSettingsPanelProps) {
-  const endpointSecurity = getModelEndpointSecurity(settings.baseUrl);
+  const runtimeSettings = normalizeModelSettingsForRuntime(settings);
+  const endpointSecurity = getModelEndpointSecurity(runtimeSettings.baseUrl);
   const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
 
   function update(partial: Partial<ModelAnalyzerSettings>) {
@@ -110,7 +112,7 @@ export function ModelSettingsPanel({
             <input
               type="checkbox"
               checked={modelTextConsent}
-              disabled={!settings.apiKey.trim() || !endpointSecurity.ok}
+              disabled={!runtimeSettings.apiKey.trim() || !endpointSecurity.ok}
               onChange={(event) => onModelTextConsentChange(event.target.checked)}
             />
           </label>
