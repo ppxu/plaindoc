@@ -13,4 +13,15 @@ describe("report history clearing chrome", () => {
     expect(reportHistorySource).toContain("aria-label=\"清空本地报告历史\"");
     expect(reportHistorySource).toContain("onClear");
   });
+
+  it("invalidates any active analysis before clearing saved reports", () => {
+    const clearHandlerIndex = appSource.indexOf("function handleClearHistory()");
+    const invalidateIndex = appSource.indexOf("invalidateCurrentAnalysis();", clearHandlerIndex);
+    const clearHistoryIndex = appSource.indexOf("clearReportHistory()", clearHandlerIndex);
+
+    expect(clearHandlerIndex).toBeGreaterThanOrEqual(0);
+    expect(invalidateIndex).toBeGreaterThan(clearHandlerIndex);
+    expect(clearHistoryIndex).toBeGreaterThan(clearHandlerIndex);
+    expect(invalidateIndex).toBeLessThan(clearHistoryIndex);
+  });
 });

@@ -246,6 +246,7 @@ export default function App() {
     if (!confirmReportHistoryClear()) {
       return;
     }
+    invalidateCurrentAnalysis();
     setHistory(clearReportHistory());
     setInputNotice("已清空本地报告历史。");
     setError("");
