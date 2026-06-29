@@ -9,6 +9,7 @@ describe("uploaded text state", () => {
     const state = createUploadedTextState({
       text,
       isPdfUpload: false,
+      fileName: "loan-device-installment.md",
       fallbackKind: "unknown"
     });
 
@@ -19,6 +20,7 @@ describe("uploaded text state", () => {
     expect(state.report.findings.some((finding) => finding.id === "loan-fees-deducted-from-principal")).toBe(true);
     expect(state.error).toBe("");
     expect(state.notice).toContain("已读取");
+    expect(state.notice).toContain("loan-device-installment.md");
     expect(state.notice).toContain("已自动识别为借款/贷款合同");
     expect(state.notice).toContain("已生成本地规则报告");
     expect(state.evidenceSelection).toBeNull();
@@ -38,5 +40,21 @@ describe("uploaded text state", () => {
     expect(state.report.documentKind).toBe("rental");
     expect(state.notice).toContain("暂未识别出明确文件类型");
     expect(state.notice).toContain("已按租房合同生成本地规则报告");
+  });
+
+  it("shortens very long uploaded file names in the visible notice", () => {
+    const text = documentExamples.find((example) => example.id === "rental-deposit")?.content ?? "";
+    const longFileName = `${"very-long-contract-version-name-".repeat(4)}.pdf`;
+
+    const state = createUploadedTextState({
+      text,
+      isPdfUpload: true,
+      fileName: longFileName,
+      fallbackKind: "unknown"
+    });
+
+    expect(state.notice).toContain("已从 PDF 提取");
+    expect(state.notice).toContain("...");
+    expect(state.notice).not.toContain(longFileName);
   });
 });

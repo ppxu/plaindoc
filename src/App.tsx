@@ -326,7 +326,7 @@ export default function App() {
         setError("没有从文件中读取到可分析文本。如果这是扫描版 PDF，请先使用 OCR，或复制关键条款粘贴到正文框。");
         return;
       }
-      const uploaded = createUploadedTextState({ text: fileText, isPdfUpload, fallbackKind: kind });
+      const uploaded = createUploadedTextState({ text: fileText, isPdfUpload, fileName: file.name, fallbackKind: kind });
       setText(uploaded.text);
       setSelectedExampleId(uploaded.selectedExampleId);
       setKind(uploaded.kind);
