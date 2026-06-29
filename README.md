@@ -27,6 +27,7 @@ Paste a contract, upload a selectable-text PDF, or load one of the bundled ficti
 - One-click current-workspace clearing after reviewing sensitive documents.
 - One-click copy for the full Markdown report.
 - Markdown export with document-type and timestamped filenames for saving or sharing the report.
+- Print-friendly report view for saving as PDF or bringing to an offline discussion.
 - Optional AI-enhanced analysis with local-rule fallback.
 - Local sensitive-data preflight warning and one-click redacted copy before AI model sending.
 - Explicit per-session confirmation before sending document text to a configured model service.
@@ -110,6 +111,7 @@ Supported in this MVP:
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - One-click current-workspace clearing for sensitive document text and the current report.
 - Markdown report export with readable timestamped filenames.
+- Print-friendly report output for browser printing or saving as PDF.
 - GitHub Pages-ready metadata, social preview image, and web app manifest.
 
 Not yet supported:

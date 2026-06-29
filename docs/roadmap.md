@@ -27,6 +27,7 @@
 - Suggested clause edits for flagged risks.
 - Copyable clause-edit pack for all proposed changes.
 - Copyable full Markdown report.
+- Print-friendly report output for browser printing or saving as PDF.
 - One-click original-text locating for risk evidence snippets.
 - Paragraph-level fallback when a risk evidence snippet was lightly edited but nearby context remains in the current text.
 - Canceling AI analysis aborts the browser model request and ignores stale results.

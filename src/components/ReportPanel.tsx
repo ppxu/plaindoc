@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ClipboardCheck, Download, ShieldCheck } from "lucide-react";
+import { ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
 import { buildReportMarkdownFilename } from "../export/downloadFilename";
 import { reportToMarkdown } from "../export/markdown";
+import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
@@ -19,6 +20,7 @@ interface ReportPanelProps {
 
 export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRevealEvidence }: ReportPanelProps) {
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
+  const [printState, setPrintState] = useState<"idle" | "failed">("idle");
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
   const markdownReport = reportToMarkdown(report);
@@ -35,6 +37,10 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
     anchor.download = buildReportMarkdownFilename(report);
     anchor.click();
     URL.revokeObjectURL(url);
+  }
+
+  function printCurrentReport() {
+    setPrintState(printReport() ? "idle" : "failed");
   }
 
   return (
@@ -64,10 +70,15 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
             <Download aria-hidden="true" />
             导出 Markdown
           </button>
+          <button className="ghost-button" type="button" onClick={printCurrentReport}>
+            <Printer aria-hidden="true" />
+            打印/保存 PDF
+          </button>
         </div>
       </div>
 
       {report.notice ? <p className="report-notice">{report.notice}</p> : null}
+      {printState === "failed" ? <p className="report-notice">当前浏览器不支持自动打开打印窗口，请使用浏览器菜单打印。</p> : null}
       {copyReportState === "failed" ? (
         <div className="report-copy-fallback">
           <span>浏览器没有允许自动复制。可以在这里手动全选复制完整报告。</span>
