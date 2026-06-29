@@ -72,6 +72,17 @@ describe("analyzeDocument", () => {
     expect(factValues).not.toContain("5万元");
   });
 
+  it("extracts Chinese numeral and formal money amounts", () => {
+    const report = analyzeDocument({
+      text: "借款本金为人民币壹拾万元整，逾期违约金为二万元，借款人应按期偿还。",
+      kind: "loan"
+    });
+    const factValues = report.facts.map((fact) => fact.value);
+
+    expect(factValues).toContain("人民币壹拾万元整");
+    expect(factValues).toContain("二万元");
+  });
+
   it("flags waiting-period and renewal risks in insurance policies", () => {
     const example = documentExamples.find((item) => item.kind === "insurance");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });

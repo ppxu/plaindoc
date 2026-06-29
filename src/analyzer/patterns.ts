@@ -1,8 +1,13 @@
 import type { EvidenceSnippet } from "../types";
 
 const MONEY_NUMBER_PATTERN = String.raw`(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?`;
+const CHINESE_MONEY_NUMBER_PATTERN = String.raw`[零〇一二两三四五六七八九十百千万亿壹贰叁肆伍陆柒捌玖拾佰仟萬億]+`;
 const MONEY_PATTERN = new RegExp(
-  String.raw`(?:人民币|¥|￥)\s?${MONEY_NUMBER_PATTERN}(?:\s?万)?(?:\s?(?:元|块))?|${MONEY_NUMBER_PATTERN}\s?(?:万\s?(?:元|块)?|元|块|人民币)`,
+  [
+    String.raw`(?:人民币|¥|￥)\s?${MONEY_NUMBER_PATTERN}(?:\s?万)?(?:\s?(?:元|块))?`,
+    String.raw`${MONEY_NUMBER_PATTERN}\s?(?:万\s?(?:元|块)?|元|块|人民币)`,
+    String.raw`(?:人民币)?\s?${CHINESE_MONEY_NUMBER_PATTERN}\s?(?:元|块)(?:整)?`
+  ].join("|"),
   "g"
 );
 const PERCENTAGE_PATTERN = /\d+(?:\.\d+)?\s?%|百分之[零〇一二两三四五六七八九十百千万点]+/g;
