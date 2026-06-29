@@ -44,7 +44,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
   }
 
   return (
-    <section className="report-panel" aria-label="Analysis report">
+    <section id="report-panel" className="report-panel" aria-label="Analysis report" tabIndex={-1}>
       <div className="report-hero">
         <div>
           <p className="section-label">Report</p>

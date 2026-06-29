@@ -302,6 +302,9 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#report-panel">
+        跳到报告
+      </a>
       <header className="topbar">
         <div className="brand">
           <div className="brand-mark">
