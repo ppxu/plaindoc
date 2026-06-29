@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Github, LockKeyhole, ScrollText } from "lucide-react";
 import { detectDocumentKind, type DocumentKindDetection } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
@@ -11,6 +11,7 @@ import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
+import { createAnalysisRunTracker } from "./state/analysisRun";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
 import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
@@ -21,6 +22,7 @@ const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 export default function App() {
   const firstExample = documentExamples[0];
+  const analysisRunTracker = useRef(createAnalysisRunTracker());
   const [text, setText] = useState(firstExample.content);
   const [kind, setKind] = useState<DocumentKind>(firstExample.kind);
   const [selectedExampleId, setSelectedExampleId] = useState(firstExample.id);
@@ -39,6 +41,7 @@ export default function App() {
   function handleExampleChange(id: string) {
     const example = documentExamples.find((item) => item.id === id);
     if (!example) return;
+    invalidateCurrentAnalysis();
     setSelectedExampleId(id);
     setText(example.content);
     setKind(example.kind);
@@ -48,13 +51,20 @@ export default function App() {
   }
 
   function handleTextChange(nextText: string) {
+    invalidateCurrentAnalysis();
     setText(nextText);
     setSelectedExampleId("");
     setInputNotice("");
     setModelTextConsent(false);
   }
 
+  function handleKindChange(nextKind: DocumentKind) {
+    invalidateCurrentAnalysis();
+    setKind(nextKind);
+  }
+
   function handleClearWorkspace() {
+    invalidateCurrentAnalysis();
     const cleared = createClearedWorkspaceState();
     setText(cleared.text);
     setKind(cleared.kind);
@@ -67,6 +77,7 @@ export default function App() {
   }
 
   async function handleAnalyze() {
+    const runId = analysisRunTracker.current.begin();
     if (!text.trim()) {
       setError("请先粘贴文件内容、选择样例或上传文本文件。");
       return;
@@ -101,12 +112,18 @@ export default function App() {
     setIsAnalyzing(true);
     try {
       const modelReport = await analyzeWithModel({ text, kind: resolvedKind.kind }, modelSettings, localReport);
+      if (!analysisRunTracker.current.isCurrent(runId)) {
+        return;
+      }
       setReport(modelReport);
       setHistory(saveReportToHistory(modelReport));
       if (!modelSettings.apiKey.trim()) {
         setError("AI 增强已开启，但缺少 API key，已回退到本地分析。");
       }
     } catch (caught) {
+      if (!analysisRunTracker.current.isCurrent(runId)) {
+        return;
+      }
       const message = caught instanceof Error ? caught.message : "模型调用失败。";
       const fallbackReport = {
         ...localReport,
@@ -116,11 +133,14 @@ export default function App() {
       setHistory(saveReportToHistory(fallbackReport));
       setError(`AI 增强失败，已回退到本地分析：${message}`);
     } finally {
-      setIsAnalyzing(false);
+      if (analysisRunTracker.current.isCurrent(runId)) {
+        setIsAnalyzing(false);
+      }
     }
   }
 
   function handleSelectHistory(item: SavedReport) {
+    invalidateCurrentAnalysis();
     const restored = restoreSavedReport(item);
     setReport(restored.report);
     setKind(restored.kind);
@@ -138,6 +158,7 @@ export default function App() {
   }
 
   function handleModelSettingsChange(settings: ModelAnalyzerSettings) {
+    invalidateCurrentAnalysis();
     if (shouldRevokeModelTextConsent(modelSettings, settings)) {
       setModelTextConsent(false);
     }
@@ -146,6 +167,7 @@ export default function App() {
   }
 
   function handleClearModelSettings() {
+    invalidateCurrentAnalysis();
     clearModelSettings();
     const next = loadModelSettings();
     setModelSettings(next);
@@ -154,6 +176,7 @@ export default function App() {
   }
 
   async function handleUpload(file: File) {
+    invalidateCurrentAnalysis();
     if (file.size > MAX_UPLOAD_BYTES) {
       setError("文件超过 20MB。请先压缩、拆分或复制关键条款后再分析。");
       return;
@@ -221,6 +244,16 @@ export default function App() {
     setInputNotice(message);
   }
 
+  function handleModelTextConsentChange(checked: boolean) {
+    invalidateCurrentAnalysis();
+    setModelTextConsent(checked);
+  }
+
+  function invalidateCurrentAnalysis() {
+    analysisRunTracker.current.invalidate();
+    setIsAnalyzing(false);
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -260,7 +293,7 @@ export default function App() {
           modelTextConsent={modelTextConsent}
           evidenceSelection={evidenceSelection}
           onTextChange={handleTextChange}
-          onKindChange={setKind}
+          onKindChange={handleKindChange}
           onExampleChange={handleExampleChange}
           onAnalyze={handleAnalyze}
           onUpload={handleUpload}
@@ -269,7 +302,7 @@ export default function App() {
           onClearHistory={handleClearHistory}
           onModelSettingsChange={handleModelSettingsChange}
           onClearModelSettings={handleClearModelSettings}
-          onModelTextConsentChange={setModelTextConsent}
+          onModelTextConsentChange={handleModelTextConsentChange}
         />
         <ReportPanel
           report={report}
