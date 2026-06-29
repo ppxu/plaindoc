@@ -27,6 +27,7 @@
 - Copyable clause-edit pack for all proposed changes.
 - Copyable full Markdown report.
 - One-click original-text locating for risk evidence snippets.
+- Paragraph-level fallback when a risk evidence snippet was lightly edited but nearby context remains in the current text.
 - Priority brief for the first issues to negotiate.
 - Loan and borrowing contract rule pack.
 - Insurance policy rule pack.
@@ -36,7 +37,7 @@
 ## 0.3 Document Ingestion
 
 - OCR adapter for scanned documents.
-- Better evidence highlighting by paragraph.
+- Better evidence highlighting by paragraph across restored, edited, and model-enhanced reports.
 - Larger example pack.
 
 ## 0.4 Model Adapter

@@ -233,7 +233,11 @@ export default function App() {
     if (selection.ok) {
       setEvidenceSelection({ start: selection.start, end: selection.end, token: Date.now() });
       setError("");
-      setInputNotice(`已在正文框中选中「${finding.title}」的证据片段。`);
+      setInputNotice(
+        selection.match === "paragraph"
+          ? `原证据片段未完全匹配，已在正文框中选中「${finding.title}」的相关段落。`
+          : `已在正文框中选中「${finding.title}」的证据片段。`
+      );
       return;
     }
 
