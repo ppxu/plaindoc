@@ -202,6 +202,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "loan-stacked-overdue-charges")).toBe(false);
   });
 
+  it("does not flag scheduled balloon repayment as broad acceleration", () => {
+    const report = analyzeDocument({
+      text: "借款合同约定借款期限届满时，借款人应一次性清偿剩余本金和按实际占用天数计算的利息。",
+      kind: "loan"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "loan-broad-acceleration-clause")).toBe(false);
+  });
+
   it("extracts Chinese ten-thousand-unit and decimal money amounts without truncation", () => {
     const report = analyzeDocument({
       text: "借款本金为人民币 10 万元，平台服务费为1.5万元，逾期后还需支付罚息。",
