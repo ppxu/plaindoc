@@ -275,6 +275,7 @@ export default function App() {
     setModelTextConsent(false);
     setModelConnectionStatus(null);
     setError("");
+    setInputNotice("已清除模型设置和 AI 发送确认。");
   }
 
   async function handleTestModelConnection() {
