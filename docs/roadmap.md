@@ -36,12 +36,13 @@
 - Insurance policy rule pack.
 - Document-kind coverage panel backed by shared metadata.
 - Local document-type detection for pasted and uploaded text.
+- Initial expanded example pack with two fictional scenarios per supported document type.
 
 ## 0.3 Document Ingestion
 
 - OCR adapter for scanned documents.
 - Better evidence highlighting by paragraph across restored, edited, and model-enhanced reports.
-- Larger example pack.
+- Larger example pack with more edge cases and regional variants.
 
 ## 0.4 Model Adapter
 

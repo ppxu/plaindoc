@@ -10,7 +10,7 @@ The first version focuses on rental, employment, renovation, loan, and insurance
 
 ## What It Does
 
-Paste a contract, upload a selectable-text PDF, or load a bundled example. PlainDoc produces:
+Paste a contract, upload a selectable-text PDF, or load one of the bundled fictional scenarios. PlainDoc produces:
 
 - A one-sentence summary.
 - Key facts such as money, dates, obligations, penalties, and acceptance terms.
@@ -90,7 +90,7 @@ Supported in this MVP:
 
 - Paste text.
 - Upload selectable-text PDF, `.txt`, and `.md` files.
-- Load fictional rental, employment, renovation, loan, and insurance examples.
+- Load ten fictional rental, employment, renovation, loan, and insurance examples.
 - Automatically detect the closest supported document type for uploaded or uncertain text.
 - Analyze common loan and borrowing clauses.
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
