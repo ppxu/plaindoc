@@ -81,6 +81,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "employment-non-compete-vague-compensation")).toBe(false);
   });
 
+  it("does not flag statutory thirty-day resignation notice as long notice", () => {
+    const report = analyzeDocument({
+      text: "劳动协议约定员工离职按适用法律法规执行，提前 30 日以书面通知公司并完成合理交接。",
+      kind: "employment"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "employment-long-notice")).toBe(false);
+  });
+
   it("does not flag ordinary employment compensation wording as high liquidated damages", () => {
     const report = analyzeDocument({
       text: "劳动协议约定员工因故意或重大过失造成实际损失的，应按可证明的实际损失承担赔偿责任。",
