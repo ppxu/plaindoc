@@ -10,7 +10,7 @@ describe("priority brief", () => {
     const priorityFindings = getPriorityFindings(report.findings);
 
     expect(priorityFindings).toHaveLength(3);
-    expect(priorityFindings.every((finding) => finding.severity === "red")).toBe(true);
+    expect(priorityFindings.map((finding) => finding.severity)).toEqual(["red", "red", "yellow"]);
     expect(priorityFindings[0]?.title).toBe("提前退租成本可能偏高");
   });
 

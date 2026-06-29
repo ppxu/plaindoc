@@ -22,6 +22,21 @@ describe("analyzeDocument", () => {
     expect(report.actionPlan.message).toContain("签署前想先确认");
   });
 
+  it("does not run other document-type rule packs for a known rental contract", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定押金可直接扣除，提前退租需书面通知并承担违约金和赔偿责任。",
+      kind: "rental"
+    });
+    const findingIds = report.findings.map((finding) => finding.id);
+    const checklistQuestions = report.checklist.map((item) => item.question);
+
+    expect(findingIds).toContain("rental-broad-deposit-deduction");
+    expect(findingIds).not.toContain("employment-long-notice");
+    expect(findingIds).not.toContain("employment-high-liquidated-damages");
+    expect(checklistQuestions.some((question) => question.includes("离职通知期"))).toBe(false);
+    expect(checklistQuestions.some((question) => question.includes("触发违约金"))).toBe(false);
+  });
+
   it("flags vague non-compete compensation in employment agreements", () => {
     const example = documentExamples.find((item) => item.kind === "employment");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "employment" });

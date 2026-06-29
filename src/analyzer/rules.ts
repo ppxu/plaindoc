@@ -223,7 +223,7 @@ export const ruleDefinitions: RuleDefinition[] = [
 
 export function runRules(text: string, kind: DocumentKind): RiskFinding[] {
   return ruleDefinitions
-    .filter((rule) => rule.kinds.includes(kind) || rule.kinds.includes("unknown"))
+    .filter((rule) => isRuleEnabledForKind(rule, kind))
     .filter((rule) => includesAny(text, rule.terms))
     .map((rule) => ({
       id: rule.id,
@@ -239,11 +239,15 @@ export function runRules(text: string, kind: DocumentKind): RiskFinding[] {
 
 export function checklistFromRules(text: string, kind: DocumentKind) {
   return ruleDefinitions
-    .filter((rule) => rule.kinds.includes(kind) || rule.kinds.includes("unknown"))
+    .filter((rule) => isRuleEnabledForKind(rule, kind))
     .filter((rule) => includesAny(text, rule.terms))
     .map((rule) => ({
       question: rule.checklistQuestion,
       reason: rule.whyItMatters,
       severity: rule.severity
     }));
+}
+
+function isRuleEnabledForKind(rule: RuleDefinition, kind: DocumentKind): boolean {
+  return kind === "unknown" ? rule.kinds.includes("unknown") : rule.kinds.includes(kind);
 }
