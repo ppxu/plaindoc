@@ -175,6 +175,15 @@ describe("analyzeDocument", () => {
     expect(report.actionPlan.priority).toBe("high");
   });
 
+  it("does not flag separately paid loan service fees as deducted principal", () => {
+    const report = analyzeDocument({
+      text: "借款合同约定借款本金为人民币 10 万元，平台服务费为 500 元，由借款人另行支付，不从借款本金中扣除。",
+      kind: "loan"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "loan-fees-deducted-from-principal")).toBe(false);
+  });
+
   it("extracts Chinese ten-thousand-unit and decimal money amounts without truncation", () => {
     const report = analyzeDocument({
       text: "借款本金为人民币 10 万元，平台服务费为1.5万元，逾期后还需支付罚息。",

@@ -7,6 +7,7 @@ interface RuleDefinition {
   terms: string[];
   requiredTerms?: string[];
   supportingTerms?: string[];
+  excludedTerms?: string[];
   title: string;
   severity: Severity;
   explanation: string;
@@ -141,6 +142,9 @@ export const ruleDefinitions: RuleDefinition[] = [
     id: "loan-fees-deducted-from-principal",
     kinds: ["loan", "unknown"],
     terms: ["服务费", "账户管理费", "从借款本金中扣除"],
+    requiredTerms: ["服务费"],
+    supportingTerms: ["从借款本金中扣除", "借款本金中扣除", "本金中扣除", "直接从借款本金", "预先扣除", "放款时扣除"],
+    excludedTerms: ["不从借款本金中扣除", "不得从借款本金中扣除", "不从本金中扣除", "不得从本金中扣除"],
     title: "费用可能先从本金中扣除",
     severity: "red",
     explanation: "合同允许出借方在放款时扣除服务费、管理费或咨询费，但还款本金和利息仍按名义借款金额计算。",
@@ -267,6 +271,10 @@ function isRuleEnabledForKind(rule: RuleDefinition, kind: DocumentKind): boolean
 }
 
 function matchesRule(text: string, rule: RuleDefinition): boolean {
+  if (rule.excludedTerms?.length && includesAny(text, rule.excludedTerms)) {
+    return false;
+  }
+
   if (!rule.requiredTerms?.length) {
     return includesAny(text, rule.terms);
   }
