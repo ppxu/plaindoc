@@ -12,11 +12,19 @@ describe("security policy", () => {
     expect(securityPolicy).toContain("does not store original document text or evidence snippets");
     expect(securityPolicy).toContain("The local data reset action clears the visible document text");
     expect(securityPolicy).toContain("Offline app caching stores PlainDoc application files");
-    expect(securityPolicy).toContain("first 12,000 characters");
+    expect(securityPolicy).toContain("beginning and ending portions");
+    expect(securityPolicy).toContain("untrusted content");
     expect(securityPolicy).toContain("local redacted copy");
   });
 
   it("is discoverable from the README", () => {
     expect(readme).toContain("[SECURITY.md](SECURITY.md)");
+  });
+
+  it("keeps the README aligned with the implemented AI sending scope", () => {
+    expect(readme).toContain("beginning and ending portions");
+    expect(readme).toContain("untrusted document content");
+    expect(readme).not.toContain("only received the front section");
+    expect(readme).not.toContain("first 12,000 characters");
   });
 });

@@ -8,7 +8,9 @@ Please open a private security advisory on GitHub if the repository is hosted th
 
 PlainDoc runs local-rule analysis in the browser. When AI mode is off, it does not upload document text to any PlainDoc server and does not require an API key.
 
-AI-enhanced mode is optional. It sends document text only after the user enables AI settings and confirms **本次允许发送正文给模型服务** for the current document/model destination. PlainDoc sends at most the first 12,000 characters to the configured OpenAI-compatible endpoint; the full text is still analyzed locally.
+AI-enhanced mode is optional. It sends document text only after the user enables AI settings and confirms **本次允许发送正文给模型服务** for the current document/model destination. PlainDoc sends at most 12,000 characters from the beginning and ending portions of the document text to the configured OpenAI-compatible endpoint; the full text is still analyzed locally.
+
+Document text is treated as untrusted content in model prompts. PlainDoc instructs the model not to follow instructions embedded inside the document, reveal prompts or API keys, or change the required JSON report shape.
 
 Remote model endpoints must use HTTPS before PlainDoc sends document text or API keys. HTTP endpoints are allowed only for local model services on `localhost`, `127.0.0.1`, or `[::1]`.
 
