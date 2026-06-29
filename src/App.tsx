@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Github, LockKeyhole, ScrollText } from "lucide-react";
-import { detectDocumentKind, type DocumentKindDetection } from "./analyzer/documentKindDetector";
+import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
 import { analyzeWithModel } from "./analyzer/modelAnalyzer";
 import { clearModelSettings, loadModelSettings, saveModelSettings } from "./analyzer/modelSettings";
@@ -14,6 +14,7 @@ import { isPdfFile } from "./ingest/pdfText";
 import { createAnalysisRunTracker } from "./state/analysisRun";
 import { createExampleSelectionState } from "./state/exampleSelection";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
+import { createUploadedTextState } from "./state/uploadedText";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
 import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
@@ -213,15 +214,15 @@ export default function App() {
         setError("没有从文件中读取到可分析文本。如果这是扫描版 PDF，请先使用 OCR，或复制关键条款粘贴到正文框。");
         return;
       }
-      setText(fileText);
-      setSelectedExampleId("");
-      const detection = detectDocumentKind(fileText);
-      if (detection.kind !== "unknown") {
-        setKind(detection.kind);
-      }
-      setError("");
-      setInputNotice(buildUploadNotice(isPdfUpload, fileText, detection));
-      setModelTextConsent(false);
+      const uploaded = createUploadedTextState({ text: fileText, isPdfUpload, fallbackKind: kind });
+      setText(uploaded.text);
+      setSelectedExampleId(uploaded.selectedExampleId);
+      setKind(uploaded.kind);
+      setError(uploaded.error);
+      setInputNotice(uploaded.notice);
+      setReport(uploaded.report);
+      setEvidenceSelection(uploaded.evidenceSelection);
+      setModelTextConsent(uploaded.modelTextConsent);
     } catch {
       setError("文件读取失败。请确认 PDF 不是加密文件，或直接复制关键条款粘贴到正文框。");
     } finally {
@@ -387,12 +388,4 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
     kind: selectedKind,
     notice: `已识别为${getDocumentKindLabel(detection.kind)}，当前规则包匹配。`
   };
-}
-
-function buildUploadNotice(isPdfUpload: boolean, text: string, detection: DocumentKindDetection): string {
-  const prefix = `${isPdfUpload ? "已从 PDF 提取" : "已读取"} ${text.trim().length} 个字符`;
-  if (detection.kind === "unknown") {
-    return `${prefix}，暂未识别出明确文件类型。你可以选择文件类型后生成风险清单。`;
-  }
-  return `${prefix}，已自动识别为${getDocumentKindLabel(detection.kind)}。如不准确，可手动修改文件类型。`;
 }
