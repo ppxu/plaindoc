@@ -85,6 +85,8 @@ export const ruleDefinitions: RuleDefinition[] = [
     id: "employment-high-liquidated-damages",
     kinds: ["employment", "unknown"],
     terms: ["违约金", "200000", "赔偿"],
+    requiredTerms: ["违约金"],
+    supportingTerms: ["200000", "200,000", "20 万", "20万", "二十万", "贰拾万", "壹拾万", "十万"],
     title: "违约金金额较高",
     severity: "red",
     explanation: "协议设置了较高违约金，并可能要求继续赔偿额外损失。",

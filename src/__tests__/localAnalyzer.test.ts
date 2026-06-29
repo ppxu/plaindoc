@@ -63,6 +63,15 @@ describe("analyzeDocument", () => {
     expect(report.status).toBe("do_not_sign_directly");
   });
 
+  it("does not flag ordinary employment compensation wording as high liquidated damages", () => {
+    const report = analyzeDocument({
+      text: "劳动协议约定员工因故意或重大过失造成实际损失的，应按可证明的实际损失承担赔偿责任。",
+      kind: "employment"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "employment-high-liquidated-damages")).toBe(false);
+  });
+
   it("flags front-loaded renovation payment risk", () => {
     const example = documentExamples.find((item) => item.kind === "renovation");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "renovation" });
