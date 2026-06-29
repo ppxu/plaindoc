@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import serviceWorkerSource from "../../public/sw.js?raw";
 import mainSource from "../main.tsx?raw";
-import { createServiceWorkerRegistration } from "../pwa/serviceWorkerRegistration";
+import { checkForServiceWorkerUpdate, createServiceWorkerRegistration } from "../pwa/serviceWorkerRegistration";
 
 describe("service worker registration", () => {
   it("uses the Vite base path for the script URL and registration scope", () => {
@@ -21,6 +21,20 @@ describe("service worker registration", () => {
   it("registers the service worker from the app entrypoint", () => {
     expect(mainSource).toContain('from "./pwa/serviceWorkerRegistration"');
     expect(mainSource).toContain("registerServiceWorker()");
+  });
+
+  it("checks for service worker updates without failing the registration flow", async () => {
+    const update = vi.fn().mockResolvedValue(undefined);
+    await expect(
+      checkForServiceWorkerUpdate({ update } as unknown as ServiceWorkerRegistration)
+    ).resolves.toBeUndefined();
+    expect(update).toHaveBeenCalledOnce();
+
+    const blockedUpdate = vi.fn().mockRejectedValue(new Error("update blocked"));
+    await expect(
+      checkForServiceWorkerUpdate({ update: blockedUpdate } as unknown as ServiceWorkerRegistration)
+    ).resolves.toBeUndefined();
+    expect(blockedUpdate).toHaveBeenCalledOnce();
   });
 
   it("ships a GitHub Pages-scoped service worker cache", () => {
