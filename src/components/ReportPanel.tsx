@@ -6,6 +6,7 @@ import { buildReportMarkdownFilename } from "../export/downloadFilename";
 import { reportToMarkdown } from "../export/markdown";
 import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
+import { formatTextScale } from "../report/textScale";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClauseEditPack } from "./ClauseEditPack";
@@ -63,7 +64,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
 
       <div className="report-actions">
         <span>
-          {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {report.wordCount} 字符线索 · {sourceText(report)}
+          {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {formatTextScale(report.wordCount)} · {sourceText(report)}
         </span>
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           报告已更新：{statusText(report.status)}，阅读分 {report.score}，{redCount} 个红色风险，{yellowCount} 个黄色提醒。

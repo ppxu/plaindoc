@@ -2,6 +2,7 @@ import type { AnalysisReport } from "../types";
 import { getDocumentKindLabel } from "../data/documentKinds";
 import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 import { priorityBriefToText } from "./priorityBrief";
+import { formatTextScale } from "../report/textScale";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
@@ -43,7 +44,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
     "## 报告信息",
     `**文件类型：** ${documentKindLabel(report)}`,
     `**生成时间：** ${report.generatedAt}`,
-    `**文本规模：** ${report.wordCount} 字符线索`,
+    `**文本规模：** ${formatTextScale(report.wordCount)}`,
     "",
     "## 关键事实",
     facts,

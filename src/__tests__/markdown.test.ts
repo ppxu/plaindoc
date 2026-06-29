@@ -30,6 +30,7 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("**文件类型：**");
     expect(markdown).toContain("**生成时间：**");
     expect(markdown).toContain(report.generatedAt);
-    expect(markdown).toContain(`**文本规模：** ${report.wordCount} 字符线索`);
+    expect(markdown).toContain(`**文本规模：** 约 ${report.wordCount} 字/词`);
+    expect(markdown).not.toContain("字符线索");
   });
 });
