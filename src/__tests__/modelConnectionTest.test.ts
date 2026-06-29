@@ -129,6 +129,33 @@ describe("model connection test", () => {
     expect(result.message).toContain("没有返回 OpenAI-compatible chat completions 格式");
   });
 
+  it("explains successful HTTP responses that are not valid JSON", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => {
+          throw new SyntaxError("Unexpected token '<', \"<html>\" is not valid JSON");
+        }
+      }))
+    );
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "http://localhost:11434/v1",
+        model: "qwen2.5:7b",
+        apiKey: "",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("不是有效 JSON");
+    expect(result.message).not.toContain("Unexpected token");
+  });
+
   it("explains authentication failures separately from generic service errors", async () => {
     vi.stubGlobal(
       "fetch",

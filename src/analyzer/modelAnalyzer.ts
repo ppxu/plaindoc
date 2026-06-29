@@ -14,7 +14,12 @@ import {
   modelEndpointNeedsApiKey,
   modelEndpointSecurityMessage
 } from "./modelEndpointSecurity";
-import { modelServiceStatusMessage, shouldRetryWithoutResponseFormat } from "./modelServiceErrors";
+import {
+  isModelServiceJsonParseFailure,
+  modelServiceInvalidJsonMessage,
+  modelServiceStatusMessage,
+  shouldRetryWithoutResponseFormat
+} from "./modelServiceErrors";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionResponse {
@@ -125,6 +130,9 @@ export async function analyzeWithModel(
     }
     if (isNetworkFailure(caught)) {
       throw new Error(modelConnectionFailureMessage(runtimeSettings.baseUrl));
+    }
+    if (isModelServiceJsonParseFailure(caught)) {
+      throw new Error(modelServiceInvalidJsonMessage());
     }
     throw caught;
   } finally {

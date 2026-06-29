@@ -8,6 +8,14 @@ export function modelServiceStatusMessage(status: number): string {
   return `模型服务返回 ${status}，请检查 endpoint、模型名和 API key。`;
 }
 
+export function modelServiceInvalidJsonMessage(): string {
+  return "模型服务已响应，但返回的不是有效 JSON。请检查 endpoint 是否指向 OpenAI-compatible /v1 服务。";
+}
+
+export function isModelServiceJsonParseFailure(caught: unknown): boolean {
+  return caught instanceof SyntaxError;
+}
+
 export async function shouldRetryWithoutResponseFormat(response: Response): Promise<boolean> {
   if (response.status !== 400) return false;
   const message = await safeReadResponseText(response);

@@ -5,7 +5,12 @@ import {
   modelEndpointNeedsApiKey,
   modelEndpointSecurityMessage
 } from "./modelEndpointSecurity";
-import { modelServiceStatusMessage, shouldRetryWithoutResponseFormat } from "./modelServiceErrors";
+import {
+  isModelServiceJsonParseFailure,
+  modelServiceInvalidJsonMessage,
+  modelServiceStatusMessage,
+  shouldRetryWithoutResponseFormat
+} from "./modelServiceErrors";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionProbeResponse {
@@ -83,6 +88,9 @@ export async function testModelConnection(
     }
     if (caught instanceof TypeError) {
       return { ok: false, message: modelConnectionFailureMessage(runtimeSettings.baseUrl) };
+    }
+    if (isModelServiceJsonParseFailure(caught)) {
+      return { ok: false, message: modelServiceInvalidJsonMessage() };
     }
     const message = caught instanceof Error ? caught.message : "连接测试失败。";
     return { ok: false, message };
