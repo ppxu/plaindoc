@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
-import { mergeModelPayload } from "../analyzer/modelAnalyzer";
+import { analyzeWithModel, mergeModelPayload } from "../analyzer/modelAnalyzer";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("model analyzer", () => {
   it("merges only supported model report fields", () => {
@@ -91,5 +95,42 @@ describe("model analyzer", () => {
 
     expect(report.notice).toContain("仅发送前 12000 个字符");
     expect(report.notice).toContain("完整文本仍由本地规则分析");
+  });
+
+  it("passes an abort signal to the model request", async () => {
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    const controller = new AbortController();
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      expect(init?.signal).toBe(controller.signal);
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [
+            {
+              message: {
+                content: JSON.stringify({ summary: "模型摘要" })
+              }
+            }
+          ]
+        })
+      } as Response;
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const report = await analyzeWithModel(
+      { text: "甲方可扣除押金。", kind: "rental" },
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "test-key",
+        rememberApiKey: false
+      },
+      localReport,
+      { signal: controller.signal }
+    );
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(report.summary).toBe("模型摘要");
   });
 });

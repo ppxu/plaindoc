@@ -23,6 +23,7 @@ const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 export default function App() {
   const firstExample = documentExamples[0];
   const analysisRunTracker = useRef(createAnalysisRunTracker());
+  const modelRequestAbortController = useRef<AbortController | null>(null);
   const [text, setText] = useState(firstExample.content);
   const [kind, setKind] = useState<DocumentKind>(firstExample.kind);
   const [selectedExampleId, setSelectedExampleId] = useState(firstExample.id);
@@ -77,6 +78,7 @@ export default function App() {
   }
 
   async function handleAnalyze() {
+    abortCurrentModelRequest();
     const runId = analysisRunTracker.current.begin();
     if (!text.trim()) {
       setError("请先粘贴文件内容、选择样例或上传文本文件。");
@@ -110,8 +112,12 @@ export default function App() {
     }
 
     setIsAnalyzing(true);
+    const abortController = new AbortController();
+    modelRequestAbortController.current = abortController;
     try {
-      const modelReport = await analyzeWithModel({ text, kind: resolvedKind.kind }, modelSettings, localReport);
+      const modelReport = await analyzeWithModel({ text, kind: resolvedKind.kind }, modelSettings, localReport, {
+        signal: abortController.signal
+      });
       if (!analysisRunTracker.current.isCurrent(runId)) {
         return;
       }
@@ -135,6 +141,9 @@ export default function App() {
     } finally {
       if (analysisRunTracker.current.isCurrent(runId)) {
         setIsAnalyzing(false);
+      }
+      if (modelRequestAbortController.current === abortController) {
+        modelRequestAbortController.current = null;
       }
     }
   }
@@ -254,14 +263,21 @@ export default function App() {
   }
 
   function handleCancelAnalysis() {
+    abortCurrentModelRequest();
     analysisRunTracker.current.cancel();
     setIsAnalyzing(false);
     setInputNotice("已取消本次 AI 增强分析，当前报告保持为本地规则结果。");
   }
 
   function invalidateCurrentAnalysis() {
+    abortCurrentModelRequest();
     analysisRunTracker.current.invalidate();
     setIsAnalyzing(false);
+  }
+
+  function abortCurrentModelRequest() {
+    modelRequestAbortController.current?.abort();
+    modelRequestAbortController.current = null;
   }
 
   return (

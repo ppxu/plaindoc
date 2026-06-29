@@ -78,7 +78,7 @@ Privacy boundary:
 - After confirmation, PlainDoc sends up to the first 12,000 characters of the document text from your browser to the endpoint you configured. The full document is still analyzed locally, and long AI-enhanced reports include a notice when the model only received the front section.
 - The local baseline sent to the model omits evidence snippets, so extracted raw evidence from outside the sent text range is not included in the model request.
 - If the document or model settings change while an AI request is still in flight, the stale model result is ignored instead of replacing the current report.
-- You can cancel an in-flight AI analysis. The current report stays on the local-rule result, and the canceled model result is ignored if it returns later.
+- You can cancel an in-flight AI analysis. PlainDoc asks the browser to abort the model request, keeps the current report on the local-rule result, and still ignores any canceled model result if it returns later.
 - The API key is session-only by default. It is written to browser localStorage only when you explicitly enable **记住 API key**, and can be cleared from the UI.
 - If the model call fails, PlainDoc falls back to the local report and shows the failure reason.
 - When AI mode improves a local risk card, PlainDoc keeps the local evidence snippet instead of replacing it with unsupported model text.
@@ -98,7 +98,7 @@ Supported in this MVP:
 - Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.
 - Transparent long-document AI scope notice when only the first 12,000 characters are sent to the configured model service.
-- Cancelable in-flight AI analysis with stale-result protection.
+- Cancelable in-flight AI analysis with request abort and stale-result protection.
 - Session-only API key handling by default, with explicit opt-in persistence.
 - Conservative model/local merge that preserves evidence snippets on AI-enhanced risk cards.
 - One-click original-text locating for risk evidence snippets, with paragraph-level fallback when exact snippet text no longer matches.

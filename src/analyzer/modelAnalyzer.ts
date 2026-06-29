@@ -35,10 +35,15 @@ interface ModelFindingPatch {
   modification?: string;
 }
 
+interface AnalyzeWithModelOptions {
+  signal?: AbortSignal;
+}
+
 export async function analyzeWithModel(
   input: AnalyzerInput,
   settings: ModelAnalyzerSettings,
-  localReport: AnalysisReport
+  localReport: AnalysisReport,
+  options: AnalyzeWithModelOptions = {}
 ): Promise<AnalysisReport> {
   if (!settings.enabled || !settings.apiKey.trim()) {
     return {
@@ -50,6 +55,7 @@ export async function analyzeWithModel(
   const preparedDocument = prepareModelDocumentText(input.text);
   const response = await fetch(`${settings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
     method: "POST",
+    signal: options.signal,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${settings.apiKey.trim()}`
