@@ -34,13 +34,17 @@ export function modelEndpointSecurityMessage(security: ModelEndpointSecurity): s
   return "模型 endpoint 协议不受支持。请使用 HTTPS，或本机 http://localhost 地址。";
 }
 
-export function modelEndpointNeedsApiKey(baseUrl: string): boolean {
+export function isLocalModelEndpoint(baseUrl: string): boolean {
   let parsed: URL;
   try {
     parsed = new URL(baseUrl.trim());
   } catch {
-    return true;
+    return false;
   }
 
-  return !LOCAL_HTTP_HOSTS.has(parsed.hostname);
+  return LOCAL_HTTP_HOSTS.has(parsed.hostname);
+}
+
+export function modelEndpointNeedsApiKey(baseUrl: string): boolean {
+  return !isLocalModelEndpoint(baseUrl);
 }
