@@ -183,6 +183,52 @@ describe("model analyzer", () => {
     expect(report.modelName).toBe("gpt-4o-mini");
   });
 
+  it("retries model analysis once without response_format when a compatible service rejects it", async () => {
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    const requestBodies: Array<Record<string, unknown>> = [];
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      requestBodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      if (requestBodies.length === 1) {
+        return {
+          ok: false,
+          status: 400,
+          text: async () => "response_format is not supported"
+        } as Response;
+      }
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [
+            {
+              message: {
+                content: JSON.stringify({ summary: "模型摘要" })
+              }
+            }
+          ]
+        })
+      } as Response;
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const report = await analyzeWithModel(
+      { text: "甲方可扣除押金。", kind: "rental" },
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "test-key",
+        rememberApiKey: false
+      },
+      localReport,
+      { timeoutMs: 0 }
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestBodies[0].response_format).toEqual({ type: "json_object" });
+    expect(requestBodies[1].response_format).toBeUndefined();
+    expect(report.summary).toBe("模型摘要");
+  });
+
   it("allows local model requests without an authorization header", async () => {
     const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
     let requestHeaders: HeadersInit | undefined;

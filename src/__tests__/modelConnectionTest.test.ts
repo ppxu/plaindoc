@@ -69,6 +69,41 @@ describe("model connection test", () => {
     expect((requestHeaders as Record<string, string>).Authorization).toBeUndefined();
   });
 
+  it("retries once without response_format when a compatible service rejects it", async () => {
+    const requestBodies: Array<Record<string, unknown>> = [];
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      requestBodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      if (requestBodies.length === 1) {
+        return {
+          ok: false,
+          status: 400,
+          text: async () => "unsupported parameter: response_format"
+        } as Response;
+      }
+      return {
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: "{\"ok\":true}" } }] })
+      } as Response;
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "http://localhost:11434/v1",
+        model: "qwen2.5:7b",
+        apiKey: "",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestBodies[0].response_format).toEqual({ type: "json_object" });
+    expect(requestBodies[1].response_format).toBeUndefined();
+  });
+
   it("rejects successful HTTP responses that are not chat completion payloads", async () => {
     vi.stubGlobal(
       "fetch",

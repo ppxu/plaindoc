@@ -5,7 +5,7 @@ import {
   modelEndpointNeedsApiKey,
   modelEndpointSecurityMessage
 } from "./modelEndpointSecurity";
-import { modelServiceStatusMessage } from "./modelServiceErrors";
+import { modelServiceStatusMessage, shouldRetryWithoutResponseFormat } from "./modelServiceErrors";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionProbeResponse {
@@ -51,27 +51,10 @@ export async function testModelConnection(
   }
 
   try {
-    const response = await fetch(`${runtimeSettings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
-      method: "POST",
-      signal: requestAbort.signal,
-      headers,
-      body: JSON.stringify({
-        model: runtimeSettings.model,
-        temperature: 0,
-        response_format: { type: "json_object" },
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are PlainDoc connection tester. Return strict JSON only. Do not ask for document text or user data."
-          },
-          {
-            role: "user",
-            content: "Return exactly this JSON shape to confirm the model endpoint works: {\"ok\":true}"
-          }
-        ]
-      })
-    });
+    let response = await fetchModelConnectionTest(runtimeSettings.baseUrl, headers, runtimeSettings.model, requestAbort.signal, true);
+    if (!response.ok && (await shouldRetryWithoutResponseFormat(response))) {
+      response = await fetchModelConnectionTest(runtimeSettings.baseUrl, headers, runtimeSettings.model, requestAbort.signal, false);
+    }
 
     if (!response.ok) {
       return { ok: false, message: modelServiceStatusMessage(response.status) };
@@ -99,6 +82,36 @@ export async function testModelConnection(
   } finally {
     requestAbort.clear();
   }
+}
+
+function fetchModelConnectionTest(
+  baseUrl: string,
+  headers: Record<string, string>,
+  model: string,
+  signal: AbortSignal | undefined,
+  includeResponseFormat: boolean
+): Promise<Response> {
+  return fetch(`${baseUrl.replace(/\/+$/, "")}/chat/completions`, {
+    method: "POST",
+    signal,
+    headers,
+    body: JSON.stringify({
+      model,
+      temperature: 0,
+      ...(includeResponseFormat ? { response_format: { type: "json_object" } } : {}),
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are PlainDoc connection tester. Return strict JSON only. Do not ask for document text or user data."
+        },
+        {
+          role: "user",
+          content: "Return exactly this JSON shape to confirm the model endpoint works: {\"ok\":true}"
+        }
+      ]
+    })
+  });
 }
 
 function createConnectionTestAbort(options: ModelConnectionTestOptions): {
