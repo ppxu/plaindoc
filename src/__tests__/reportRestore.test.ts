@@ -23,6 +23,7 @@ describe("report restore", () => {
     expect(restored.text).toBe("");
     expect(restored.selectedExampleId).toBe("");
     expect(restored.error).toBe("");
+    expect(restored.evidenceSelection).toBeNull();
     expect(restored.notice).toContain("正文框已清空");
     expect(restored.notice).toContain("历史不保存原始正文");
     expect(restored.notice).toContain("证据片段");

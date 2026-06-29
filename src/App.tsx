@@ -239,6 +239,7 @@ export default function App() {
     setError(restored.error);
     setInputNotice(restored.notice);
     setModelTextConsent(false);
+    setEvidenceSelection(restored.evidenceSelection);
   }
 
   function handleClearHistory() {
