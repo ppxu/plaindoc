@@ -154,7 +154,10 @@ export function ModelSettingsPanel({
           </button>
 
           <p className="model-warning">
-            只有勾选本次发送确认后，待分析文本才会发送到你配置的模型服务。更换正文、样例、文件或模型端点后会自动取消确认。API key 默认只保存在当前页面会话；勾选“记住 API key”后才会写入本机浏览器。
+            只有勾选本次发送确认后，待分析文本才会发送到你配置的模型服务。更换正文、样例、文件或模型端点后会自动取消确认。
+            {needsApiKey
+              ? "远程模型端点仍需要 API key；API key 默认只保存在当前页面会话，勾选“记住 API key”后才会写入本机浏览器。"
+              : "本机模型端点可不填写 API key；如果本机服务要求鉴权，仍可在这里填写。"}
           </p>
         </div>
       ) : null}

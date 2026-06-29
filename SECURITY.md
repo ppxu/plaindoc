@@ -14,6 +14,8 @@ Document text is treated as untrusted content in model prompts. PlainDoc instruc
 
 Remote model endpoints must use HTTPS before PlainDoc sends document text or API keys. HTTP endpoints are allowed only for local model services on `localhost`, `127.0.0.1`, or `[::1]`.
 
+Local model endpoints can be used without an API key. PlainDoc remote model endpoints still require an API key before AI sending is enabled; if a local model server requires authentication, the user can still enter a key manually.
+
 API keys are session-only by default. They are written to browser localStorage only when the user explicitly enables persistent storage, and can be cleared from the UI.
 
 Recent report history is stored in the browser and does not store original document text or evidence snippets. It keeps report conclusions and suggestions so users can revisit recent analyses without retaining raw contract text.

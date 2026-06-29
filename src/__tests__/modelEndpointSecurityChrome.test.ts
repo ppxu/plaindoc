@@ -12,6 +12,7 @@ describe("model endpoint security chrome", () => {
     expect(modelSettingsPanelSource).toContain("getModelEndpointSecurity(runtimeSettings.baseUrl)");
     expect(modelSettingsPanelSource).toContain("modelEndpointSecurityMessage(endpointSecurity)");
     expect(modelSettingsPanelSource).toContain("model-endpoint-warning");
+    expect(modelSettingsPanelSource).toContain("本机模型端点可不填写 API key");
     expect(modelSettingsPanelSource).toContain("disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}");
   });
 });
