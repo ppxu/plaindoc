@@ -305,6 +305,7 @@ export default function App() {
     invalidateCurrentAnalysis();
     setError("");
     setInputNotice("");
+    setModelTextConsent(false);
     if (file.size > MAX_UPLOAD_BYTES) {
       setError("文件超过 20MB。请先压缩、拆分或复制关键条款后再分析。");
       return;

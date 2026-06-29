@@ -16,4 +16,16 @@ describe("upload failure chrome", () => {
     );
     expect(uploadHandler.indexOf('setInputNotice("");')).toBeLessThan(uploadHandler.indexOf("!isPdfUpload && !isTextFile"));
   });
+
+  it("revokes AI send confirmation before any upload validation can fail", () => {
+    const uploadHandler = appSource.slice(
+      appSource.indexOf("async function handleUpload"),
+      appSource.indexOf("async function copyChecklist")
+    );
+
+    expect(uploadHandler).toContain("setModelTextConsent(false);");
+    expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("file.size > MAX_UPLOAD_BYTES"));
+    expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("!isPdfUpload && !isTextFile"));
+    expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("!fileText.trim()"));
+  });
 });
