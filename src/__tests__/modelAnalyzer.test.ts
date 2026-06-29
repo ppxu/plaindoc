@@ -229,6 +229,43 @@ describe("model analyzer", () => {
     expect(report.summary).toBe("模型摘要");
   });
 
+  it("extracts a valid model JSON object from fenced text even when earlier braces are invalid", async () => {
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: [
+                "下面是结果，注意这不是 JSON: {summary: 草稿}",
+                "```json",
+                JSON.stringify({ summary: "模型摘要" }),
+                "```"
+              ].join("\n")
+            }
+          }
+        ]
+      })
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const report = await analyzeWithModel(
+      { text: "甲方可扣除押金。", kind: "rental" },
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "test-key",
+        rememberApiKey: false
+      },
+      localReport,
+      { timeoutMs: 0 }
+    );
+
+    expect(report.summary).toBe("模型摘要");
+  });
+
   it("allows local model requests without an authorization header", async () => {
     const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
     let requestHeaders: HeadersInit | undefined;
