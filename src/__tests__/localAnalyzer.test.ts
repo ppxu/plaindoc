@@ -134,6 +134,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "renovation-front-loaded-payment")).toBe(false);
   });
 
+  it("does not flag low first payment with later large milestone as front-loaded", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定签约当日支付总价 10% 作为首期款，材料进场并经业主确认后支付 30%，水电验收合格后支付 60%。",
+      kind: "renovation"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "renovation-front-loaded-payment")).toBe(false);
+  });
+
   it("does not flag confirmed renovation change orders as open-ended charges", () => {
     const report = analyzeDocument({
       text: "装修合同约定任何增项必须先由承包方提交报价单，经业主书面确认后方可施工和收费。",

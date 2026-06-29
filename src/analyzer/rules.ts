@@ -113,6 +113,7 @@ export const ruleDefinitions: RuleDefinition[] = [
     terms: ["支付总价 60%", "首期款", "签约当日"],
     requiredTerms: ["首期款"],
     supportingTerms: ["支付总价 60%", "总价 60%", "总价60%", "60%", "60％", "６０％", "六成", "过半", "一半以上"],
+    excludedTerms: ["支付总价 10% 作为首期款", "支付总价10%作为首期款", "支付总价 10％ 作为首期款", "10% 作为首期款", "10％ 作为首期款"],
     title: "首付款比例偏高",
     severity: "red",
     explanation: "装修合同在施工成果出现前要求支付较大比例款项，业主后续议价和纠错空间会变小。",
