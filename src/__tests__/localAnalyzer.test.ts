@@ -80,6 +80,15 @@ describe("analyzeDocument", () => {
     expect(report.facts.length).toBeGreaterThan(0);
   });
 
+  it("does not flag ordinary renovation deposit milestones as front-loaded payment", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定签约当日支付总价 10% 作为定金，水电验收后支付 30%，竣工验收合格后支付尾款。",
+      kind: "renovation"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "renovation-front-loaded-payment")).toBe(false);
+  });
+
   it("extracts percentage facts for payment milestones and rate clauses", () => {
     const report = analyzeDocument({
       text: "装修合同约定工程总价为人民币 20 万元，签约当日支付总价60%作为首期款，竣工验收后支付40%尾款。",
