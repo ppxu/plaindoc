@@ -60,6 +60,19 @@ describe("analyzeDocument", () => {
     expect(deadlineFacts).toContain("二十四个月");
   });
 
+  it("keeps full Chinese calendar dates as deadline facts", () => {
+    const report = analyzeDocument({
+      text: "租赁期限自二〇二六年七月一日起至二〇二七年六月三十日止，承租人应按月支付租金。",
+      kind: "rental"
+    });
+    const deadlineFacts = report.facts.filter((fact) => fact.label.includes("期限")).map((fact) => fact.value);
+
+    expect(deadlineFacts).toContain("二〇二六年七月一日");
+    expect(deadlineFacts).toContain("二〇二七年六月三十日");
+    expect(deadlineFacts).not.toContain("二〇二六年");
+    expect(deadlineFacts).not.toContain("七月");
+  });
+
   it("flags stacked charges and acceleration in loan agreements", () => {
     const example = documentExamples.find((item) => item.kind === "loan");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "loan" });

@@ -12,10 +12,12 @@ const MONEY_PATTERN = new RegExp(
 );
 const PERCENTAGE_PATTERN = /\d+(?:\.\d+)?\s?%|百分之[零〇一二两三四五六七八九十百千万点]+/g;
 const CHINESE_DATE_NUMBER_PATTERN = String.raw`[零〇一二两三四五六七八九十百]+`;
+const CHINESE_YEAR_PATTERN = String.raw`[零〇○一二三四五六七八九]{4}`;
 const DATE_PATTERN = new RegExp(
   [
     String.raw`\d{4}\s?年\s?\d{1,2}\s?月\s?\d{1,2}\s?日`,
     String.raw`\d{4}[/-]\d{1,2}[/-]\d{1,2}`,
+    String.raw`${CHINESE_YEAR_PATTERN}\s?年\s?${CHINESE_DATE_NUMBER_PATTERN}\s?月\s?${CHINESE_DATE_NUMBER_PATTERN}\s?(?:日|号)`,
     String.raw`\d{1,2}\s?个月`,
     String.raw`\d{1,3}\s?日`,
     String.raw`${CHINESE_DATE_NUMBER_PATTERN}\s?(?:日|天|个月|月|年)(?:内|前|后)?`
