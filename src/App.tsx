@@ -12,6 +12,7 @@ import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./hi
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
 import { createAnalysisRunTracker } from "./state/analysisRun";
+import { createExampleSelectionState } from "./state/exampleSelection";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
 import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
@@ -43,12 +44,15 @@ export default function App() {
     const example = documentExamples.find((item) => item.id === id);
     if (!example) return;
     invalidateCurrentAnalysis();
-    setSelectedExampleId(id);
-    setText(example.content);
-    setKind(example.kind);
-    setError("");
-    setInputNotice("");
-    setModelTextConsent(false);
+    const selected = createExampleSelectionState(example);
+    setSelectedExampleId(selected.selectedExampleId);
+    setText(selected.text);
+    setKind(selected.kind);
+    setError(selected.error);
+    setInputNotice(selected.notice);
+    setReport(selected.report);
+    setEvidenceSelection(selected.evidenceSelection);
+    setModelTextConsent(selected.modelTextConsent);
   }
 
   function handleTextChange(nextText: string) {

@@ -38,6 +38,7 @@
 - Document-kind coverage panel backed by shared metadata.
 - Local document-type detection for pasted and uploaded text.
 - Initial expanded example pack with two fictional scenarios per supported document type.
+- Instant local report refresh when switching bundled examples.
 - GitHub Pages release metadata, social preview image, and web app manifest.
 
 ## 0.3 Document Ingestion

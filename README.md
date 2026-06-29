@@ -92,6 +92,7 @@ Supported in this MVP:
 - Paste text.
 - Upload selectable-text PDF, `.txt`, and `.md` files.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.
+- Switching bundled examples immediately refreshes the local-rule report so the demo text and report stay aligned.
 - Automatically detect the closest supported document type for uploaded or uncertain text.
 - Analyze common loan and borrowing clauses.
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
