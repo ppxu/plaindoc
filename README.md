@@ -124,7 +124,7 @@ Supported in this MVP:
 - One-click local data reset for current text, report history, model settings, and AI send confirmation.
 - Markdown report export with readable timestamped filenames.
 - Print-friendly report output for browser printing or saving as PDF.
-- GitHub Pages-ready metadata, social preview image, and web app manifest.
+- GitHub Pages-ready metadata, PNG social preview image, and web app manifest.
 - GitHub Pages-scoped service worker with offline application-shell caching.
 - Canonical, robots.txt, and sitemap.xml metadata for search indexing.
 

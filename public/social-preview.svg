@@ -5,10 +5,10 @@
   <rect x="72" y="72" width="1056" height="486" rx="24" fill="#0f172a" />
   <rect x="132" y="132" width="272" height="366" rx="18" fill="#f8fafc" />
   <path d="M184 204h164M184 258h126M184 312h144M184 366h102" stroke="#0f172a" stroke-width="18" stroke-linecap="round" />
-  <circle cx="874" cy="214" r="66" fill="#f97316" />
-  <path d="M840 214l24 24 48-56" fill="none" stroke="#fff7ed" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
-  <text x="464" y="220" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="88" font-weight="800">PlainDoc</text>
-  <text x="468" y="304" fill="#cbd5e1" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="36" font-weight="600">Know what can hurt you before you sign.</text>
-  <text x="468" y="394" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="34">Risk notes, clause edits, and signing checklists</text>
-  <text x="468" y="448" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="30">Local-first · Open source · Works without API keys</text>
+  <circle cx="976" cy="214" r="66" fill="#f97316" />
+  <path d="M942 214l24 24 48-56" fill="none" stroke="#fff7ed" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="444" y="220" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="82" font-weight="800">PlainDoc</text>
+  <text x="448" y="304" fill="#cbd5e1" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="34" font-weight="600">Know what can hurt you before you sign.</text>
+  <text x="448" y="394" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="32">Risk notes · Clause edits · Signing checklists</text>
+  <text x="448" y="448" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="28">Local-first · Open source · Works without API keys</text>
 </svg>

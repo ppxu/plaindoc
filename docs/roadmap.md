@@ -44,7 +44,7 @@
 - Local document-type detection for pasted and uploaded text.
 - Initial expanded example pack with two fictional scenarios per supported document type.
 - Instant local report refresh when switching bundled examples.
-- GitHub Pages release metadata, social preview image, and web app manifest.
+- GitHub Pages release metadata, PNG social preview image, and web app manifest.
 - GitHub Pages-scoped service worker and offline application-shell caching.
 - Canonical, robots.txt, and sitemap.xml metadata for the GitHub Pages demo.
 

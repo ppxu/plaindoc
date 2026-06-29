@@ -1,8 +1,13 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import html from "../../index.html?raw";
 import manifestText from "../../public/manifest.webmanifest?raw";
 import robotsText from "../../public/robots.txt?raw";
 import sitemapText from "../../public/sitemap.xml?raw";
+import socialPreviewPngUrl from "../../public/social-preview.png?url";
+
+const socialPreviewPng = readFileSync(fileURLToPath(new URL("../../public/social-preview.png", import.meta.url)));
 
 describe("release metadata", () => {
   it("declares the document language for the Chinese-first app shell", () => {
@@ -18,9 +23,12 @@ describe("release metadata", () => {
     );
     expect(html).toContain('<meta property="og:type" content="website" />');
     expect(html).toContain('<meta property="og:url" content="https://ppxu.github.io/plaindoc/" />');
-    expect(html).toContain('<meta property="og:image" content="https://ppxu.github.io/plaindoc/social-preview.svg" />');
+    expect(html).toContain('<meta property="og:image" content="https://ppxu.github.io/plaindoc/social-preview.png" />');
     expect(html).toContain('<meta name="twitter:card" content="summary_large_image" />');
+    expect(html).toContain('<meta name="twitter:image" content="https://ppxu.github.io/plaindoc/social-preview.png" />');
     expect(html).toContain('<link rel="canonical" href="https://ppxu.github.io/plaindoc/" />');
+    expect(socialPreviewPngUrl).toContain("social-preview.png");
+    expect(readPngSize(socialPreviewPng)).toEqual({ width: 1200, height: 630 });
   });
 
   it("provides a GitHub Pages scoped web app manifest", () => {
@@ -57,3 +65,10 @@ describe("release metadata", () => {
     expect(sitemapText).not.toContain("localhost");
   });
 });
+
+function readPngSize(bytes: Buffer): { width: number; height: number } {
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20)
+  };
+}
