@@ -6,9 +6,17 @@ Please open a private security advisory on GitHub if the repository is hosted th
 
 ## Local Data Handling
 
-The current MVP runs analysis in the browser. It does not upload documents to a server and does not require an API key.
+PlainDoc runs local-rule analysis in the browser. When AI mode is off, it does not upload document text to any PlainDoc server and does not require an API key.
 
-Users should still avoid pasting highly sensitive documents into any software they do not understand or control. Future LLM integrations must keep provider calls explicit and opt-in.
+AI-enhanced mode is optional. It sends document text only after the user enables AI settings and confirms **本次允许发送正文给模型服务** for the current document/model destination. PlainDoc sends at most the first 12,000 characters to the configured OpenAI-compatible endpoint; the full text is still analyzed locally.
+
+API keys are session-only by default. They are written to browser localStorage only when the user explicitly enables persistent storage, and can be cleared from the UI.
+
+Recent report history is stored in the browser and does not store original document text or evidence snippets. It keeps report conclusions and suggestions so users can revisit recent analyses without retaining raw contract text.
+
+Before AI sending, PlainDoc performs a local sensitive-data category check and can generate a local redacted copy for common categories such as phone numbers, email addresses, ID numbers, and bank card numbers. The local redacted copy replaces detected values before the user confirms model sending.
+
+Users should still avoid pasting highly sensitive documents into any software they do not understand or control. Model providers, browser extensions, and the user's device may have their own security boundaries outside this repository.
 
 ## Sensitive Examples
 
@@ -17,4 +25,3 @@ Do not contribute real contracts, real medical records, real insurance policies,
 ## Professional Advice Boundary
 
 PlainDoc is not a legal, medical, financial, or professional advisory service. Security fixes must not remove or weaken this boundary.
-

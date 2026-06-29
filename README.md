@@ -137,6 +137,10 @@ Not yet supported:
 
 PlainDoc provides document-reading assistance and risk prompts. It does not provide legal, medical, financial, or other professional advice. Important decisions should be reviewed with qualified professionals.
 
+## Security
+
+For vulnerability reporting and the current local/AI data boundary, see [SECURITY.md](SECURITY.md).
+
 ## Roadmap
 
 See [docs/roadmap.md](docs/roadmap.md).
