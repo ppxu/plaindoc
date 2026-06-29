@@ -212,6 +212,9 @@ export default function App() {
   }
 
   function handleClearHistory() {
+    if (!confirmReportHistoryClear()) {
+      return;
+    }
     setHistory(clearReportHistory());
     setInputNotice("已清空本地报告历史。");
     setError("");
@@ -449,5 +452,11 @@ function confirmLocalDataReset(): boolean {
 function confirmWorkspaceClear(): boolean {
   return window.confirm(
     "确定要清空当前文件吗？\n\n这会清空当前正文和当前报告，但不会删除最近报告历史或模型设置。"
+  );
+}
+
+function confirmReportHistoryClear(): boolean {
+  return window.confirm(
+    "确定要清空最近报告历史吗？\n\n这只会删除本机保存的最近报告记录，不会清空当前正文、当前报告或模型设置。"
   );
 }
