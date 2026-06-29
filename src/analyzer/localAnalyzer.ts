@@ -2,7 +2,7 @@ import type { AnalysisReport, AnalyzerInput, ExtractedFact, ReportStatus } from 
 import { documentKindMeta } from "../data/documentKinds";
 import { buildActionPlan } from "./actionPlan";
 import { checklistFromRules, runRules } from "./rules";
-import { countWords, findDateMatches, findEvidence, findMoneyMatches } from "./patterns";
+import { countWords, findDateMatches, findEvidence, findMoneyMatches, findPercentageMatches } from "./patterns";
 
 const DISCLAIMER = "PlainDoc 提供文件阅读辅助和风险提示，不构成法律、医疗、财务或其他专业建议。重要决定请咨询合格专业人士。";
 
@@ -75,6 +75,13 @@ function extractFacts(text: string): ExtractedFact[] {
     evidence: match.evidence
   }));
 
+  const percentages = findPercentageMatches(text).slice(0, 4).map((match, index) => ({
+    label: index === 0 ? "比例" : "相关比例",
+    value: match.value,
+    confidence: 0.66,
+    evidence: match.evidence
+  }));
+
   const obligations = [
     ["通知义务", ["提前", "通知"]],
     ["付款义务", ["支付", "付款"]],
@@ -98,7 +105,7 @@ function extractFacts(text: string): ExtractedFact[] {
       : [];
   });
 
-  return [...money, ...dates, ...obligationFacts].slice(0, 10);
+  return [...money, ...dates, ...percentages, ...obligationFacts].slice(0, 10);
 }
 
 function buildChecklist(text: string, kind: AnalyzerInput["kind"]) {
@@ -147,7 +154,7 @@ function statusFromScore(score: number): ReportStatus {
 
 function summarize(kind: AnalyzerInput["kind"], findingCount: number, facts: ExtractedFact[]): string {
   const label = documentKindMeta[kind].summaryLabel;
-  const factText = facts.length ? `已识别 ${facts.length} 个金额、期限或义务线索` : "暂未识别出足够的金额或期限线索";
+  const factText = facts.length ? `已识别 ${facts.length} 个金额、比例、期限或义务线索` : "暂未识别出足够的金额、比例或期限线索";
   const riskText = findingCount > 0 ? `发现 ${findingCount} 个需要确认的风险点` : "没有命中明显高风险规则，但仍建议逐条确认关键义务";
   return `${label}${factText}，${riskText}。`;
 }

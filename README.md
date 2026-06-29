@@ -13,7 +13,7 @@ The first version focuses on rental, employment, renovation, loan, and insurance
 Paste a contract, upload a selectable-text PDF, or load one of the bundled fictional scenarios. PlainDoc produces:
 
 - A one-sentence summary.
-- Key facts such as money, dates, obligations, penalties, and acceptance terms.
+- Key facts such as money, percentages, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
 - Red/yellow/green risk cards with evidence snippets.
 - One-click evidence locating back to the original text in the editor, with paragraph fallback when the snippet was lightly edited.

@@ -38,6 +38,17 @@ describe("analyzeDocument", () => {
     expect(report.facts.length).toBeGreaterThan(0);
   });
 
+  it("extracts percentage facts for payment milestones and rate clauses", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定工程总价为人民币 20 万元，签约当日支付总价60%作为首期款，竣工验收后支付40%尾款。",
+      kind: "renovation"
+    });
+    const proportionFacts = report.facts.filter((fact) => fact.label.includes("比例")).map((fact) => fact.value);
+
+    expect(proportionFacts).toContain("60%");
+    expect(proportionFacts).toContain("40%");
+  });
+
   it("flags stacked charges and acceleration in loan agreements", () => {
     const example = documentExamples.find((item) => item.kind === "loan");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "loan" });

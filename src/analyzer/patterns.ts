@@ -5,6 +5,7 @@ const MONEY_PATTERN = new RegExp(
   String.raw`(?:人民币|¥|￥)\s?${MONEY_NUMBER_PATTERN}(?:\s?万)?(?:\s?(?:元|块))?|${MONEY_NUMBER_PATTERN}\s?(?:万\s?(?:元|块)?|元|块|人民币)`,
   "g"
 );
+const PERCENTAGE_PATTERN = /\d+(?:\.\d+)?\s?%|百分之[零〇一二两三四五六七八九十百千万点]+/g;
 const DATE_PATTERN = /\d{4}\s?年\s?\d{1,2}\s?月\s?\d{1,2}\s?日|\d{4}[/-]\d{1,2}[/-]\d{1,2}|\d{1,2}\s?个月|\d{1,3}\s?日|两年|一年|三年|六个月/g;
 
 export interface PatternMatch {
@@ -32,6 +33,10 @@ export function findMoneyMatches(text: string): PatternMatch[] {
 
 export function findDateMatches(text: string): PatternMatch[] {
   return findPatternMatches(text, DATE_PATTERN);
+}
+
+export function findPercentageMatches(text: string): PatternMatch[] {
+  return findPatternMatches(text, PERCENTAGE_PATTERN);
 }
 
 export function findEvidence(text: string, terms: string[]): EvidenceSnippet | undefined {
