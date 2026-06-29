@@ -262,6 +262,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "insurance-short-claim-notice-window")).toBe(false);
   });
 
+  it("does not flag clear occupation change handling as a broad activity exclusion", () => {
+    const report = analyzeDocument({
+      text: "保险条款约定被保险人发生职业变更时，应通过客服电话或线上服务通知保险人；保险人应在 5 个工作日内书面告知继续承保、加费承保或解除合同的处理结果。",
+      kind: "insurance"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "insurance-broad-activity-occupation-exclusion")).toBe(false);
+  });
+
   it("flags waiting-period and renewal risks in insurance policies", () => {
     const example = documentExamples.find((item) => item.kind === "insurance");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });
