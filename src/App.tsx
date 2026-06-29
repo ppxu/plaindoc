@@ -258,6 +258,8 @@ export default function App() {
 
   async function handleUpload(file: File) {
     invalidateCurrentAnalysis();
+    setError("");
+    setInputNotice("");
     if (file.size > MAX_UPLOAD_BYTES) {
       setError("文件超过 20MB。请先压缩、拆分或复制关键条款后再分析。");
       return;
@@ -272,8 +274,6 @@ export default function App() {
     }
 
     setIsUploading(true);
-    setError("");
-    setInputNotice("");
 
     try {
       const fileText = isPdfUpload ? await extractUploadedPdfText(file) : await file.text();
