@@ -49,6 +49,17 @@ describe("analyzeDocument", () => {
     expect(proportionFacts).toContain("40%");
   });
 
+  it("extracts full-width percentage facts from copied Chinese documents", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定签约当日支付总价60％作为首期款，竣工验收后支付40％尾款。",
+      kind: "renovation"
+    });
+    const proportionFacts = report.facts.filter((fact) => fact.label.includes("比例")).map((fact) => fact.value);
+
+    expect(proportionFacts).toContain("60％");
+    expect(proportionFacts).toContain("40％");
+  });
+
   it("extracts Chinese numeral deadlines and duration terms", () => {
     const report = analyzeDocument({
       text: "装修合同约定签约后十五日内支付定金，工程质保期为二十四个月，验收后开始计算。",
