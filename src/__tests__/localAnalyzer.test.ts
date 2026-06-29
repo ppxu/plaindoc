@@ -22,6 +22,15 @@ describe("analyzeDocument", () => {
     expect(report.actionPlan.message).toContain("签署前想先确认");
   });
 
+  it("does not flag ordinary deposit terms as broad deduction risk", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定押金为人民币 5000 元，租期届满且水电结清后，甲方应在 7 日内退还剩余押金。",
+      kind: "rental"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(false);
+  });
+
   it("does not run other document-type rule packs for a known rental contract", () => {
     const report = analyzeDocument({
       text: "租房合同约定押金可直接扣除，提前退租需书面通知并承担违约金和赔偿责任。",

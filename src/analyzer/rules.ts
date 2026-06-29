@@ -5,6 +5,8 @@ interface RuleDefinition {
   id: string;
   kinds: DocumentKind[];
   terms: string[];
+  requiredTerms?: string[];
+  supportingTerms?: string[];
   title: string;
   severity: Severity;
   explanation: string;
@@ -31,6 +33,8 @@ export const ruleDefinitions: RuleDefinition[] = [
     id: "rental-broad-deposit-deduction",
     kinds: ["rental", "unknown"],
     terms: ["押金", "直接扣除", "甲方认为必要"],
+    requiredTerms: ["押金"],
+    supportingTerms: ["扣除", "直接扣除", "甲方认为必要"],
     title: "押金扣除口径过宽",
     severity: "red",
     explanation: "合同允许出租方按较宽口径扣押金，但没有列出清晰的验收标准、凭证要求或争议处理方式。",
@@ -224,7 +228,7 @@ export const ruleDefinitions: RuleDefinition[] = [
 export function runRules(text: string, kind: DocumentKind): RiskFinding[] {
   return ruleDefinitions
     .filter((rule) => isRuleEnabledForKind(rule, kind))
-    .filter((rule) => includesAny(text, rule.terms))
+    .filter((rule) => matchesRule(text, rule))
     .map((rule) => ({
       id: rule.id,
       title: rule.title,
@@ -240,7 +244,7 @@ export function runRules(text: string, kind: DocumentKind): RiskFinding[] {
 export function checklistFromRules(text: string, kind: DocumentKind) {
   return ruleDefinitions
     .filter((rule) => isRuleEnabledForKind(rule, kind))
-    .filter((rule) => includesAny(text, rule.terms))
+    .filter((rule) => matchesRule(text, rule))
     .map((rule) => ({
       question: rule.checklistQuestion,
       reason: rule.whyItMatters,
@@ -250,4 +254,17 @@ export function checklistFromRules(text: string, kind: DocumentKind) {
 
 function isRuleEnabledForKind(rule: RuleDefinition, kind: DocumentKind): boolean {
   return kind === "unknown" ? rule.kinds.includes("unknown") : rule.kinds.includes(kind);
+}
+
+function matchesRule(text: string, rule: RuleDefinition): boolean {
+  if (!rule.requiredTerms?.length) {
+    return includesAny(text, rule.terms);
+  }
+
+  return includesAll(text, rule.requiredTerms) && (!rule.supportingTerms?.length || includesAny(text, rule.supportingTerms));
+}
+
+function includesAll(text: string, terms: string[]): boolean {
+  const normalized = text.toLowerCase();
+  return terms.every((term) => normalized.includes(term.toLowerCase()));
 }
