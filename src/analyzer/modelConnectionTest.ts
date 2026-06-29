@@ -52,7 +52,9 @@ export async function testModelConnection(
 
   try {
     let response = await fetchModelConnectionTest(runtimeSettings.baseUrl, headers, runtimeSettings.model, requestAbort.signal, true);
+    let usedResponseFormatCompatibility = false;
     if (!response.ok && (await shouldRetryWithoutResponseFormat(response))) {
+      usedResponseFormatCompatibility = true;
       response = await fetchModelConnectionTest(runtimeSettings.baseUrl, headers, runtimeSettings.model, requestAbort.signal, false);
     }
 
@@ -69,7 +71,12 @@ export async function testModelConnection(
       };
     }
 
-    return { ok: true, message: `连接测试通过：已连到 ${runtimeSettings.model}，本次未发送文件正文。` };
+    return {
+      ok: true,
+      message: usedResponseFormatCompatibility
+        ? `连接测试通过：已连到 ${runtimeSettings.model}，本次未发送文件正文；模型服务不支持 response_format，已使用兼容模式。`
+        : `连接测试通过：已连到 ${runtimeSettings.model}，本次未发送文件正文。`
+    };
   } catch (caught) {
     if (requestAbort.didTimeout()) {
       return { ok: false, message: `连接测试超时（${Math.ceil(requestAbort.timeoutMs / 1000)} 秒）。` };

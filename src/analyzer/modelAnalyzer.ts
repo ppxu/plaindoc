@@ -90,7 +90,9 @@ export async function analyzeWithModel(
       requestAbort.signal,
       true
     );
+    let usedResponseFormatCompatibility = false;
     if (!response.ok && (await shouldRetryWithoutResponseFormat(response))) {
+      usedResponseFormatCompatibility = true;
       response = await fetchModelAnalysis(
         runtimeSettings.baseUrl,
         headers,
@@ -114,7 +116,9 @@ export async function analyzeWithModel(
     }
 
     const payload = parseModelPayload(content);
-    return mergeModelPayload(localReport, payload, runtimeSettings.model, preparedDocument);
+    return mergeModelPayload(localReport, payload, runtimeSettings.model, preparedDocument, {
+      usedResponseFormatCompatibility
+    });
   } catch (caught) {
     if (requestAbort.didTimeout()) {
       throw new Error(`模型请求超时（${Math.ceil(requestAbort.timeoutMs / 1000)} 秒）。`);
@@ -242,7 +246,8 @@ export function mergeModelPayload(
   localReport: AnalysisReport,
   payload: ModelReportPayload,
   modelName: string,
-  modelInput?: PreparedModelDocumentText
+  modelInput?: PreparedModelDocumentText,
+  options: { usedResponseFormatCompatibility?: boolean } = {}
 ): AnalysisReport {
   const findings = sanitizeFindings(payload.findings);
   const checklist = sanitizeChecklist(payload.checklist);
@@ -259,16 +264,25 @@ export function mergeModelPayload(
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
     modelName,
-    notice: buildModelNotice(modelInput)
+    notice: buildModelNotice(modelInput, options)
   };
 }
 
-function buildModelNotice(modelInput?: PreparedModelDocumentText): string {
+function buildModelNotice(
+  modelInput?: PreparedModelDocumentText,
+  options: { usedResponseFormatCompatibility?: boolean } = {}
+): string {
   const baseNotice = "AI 增强已开启：报告结合了本地规则和你配置的模型服务；本地证据片段会被保留。";
-  if (!modelInput?.truncated) {
-    return baseNotice;
+  const notices = [baseNotice];
+  if (options.usedResponseFormatCompatibility) {
+    notices.push("模型服务不支持 response_format，PlainDoc 已使用兼容模式解析模型返回。");
   }
-  return `${baseNotice} 由于正文较长，AI 增强仅发送开头和结尾共 ${modelInput.sentLength} 个字符给模型服务，完整文本仍由本地规则分析；中间省略部分请继续人工确认。`;
+  if (modelInput?.truncated) {
+    notices.push(
+      `由于正文较长，AI 增强仅发送开头和结尾共 ${modelInput.sentLength} 个字符给模型服务，完整文本仍由本地规则分析；中间省略部分请继续人工确认。`
+    );
+  }
+  return notices.join(" ");
 }
 
 function sanitizeActionPlan(value: unknown): ActionPlan | undefined {

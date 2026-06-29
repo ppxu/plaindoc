@@ -99,6 +99,7 @@ describe("model connection test", () => {
     );
 
     expect(result.ok).toBe(true);
+    expect(result.message).toContain("兼容模式");
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(requestBodies[0].response_format).toEqual({ type: "json_object" });
     expect(requestBodies[1].response_format).toBeUndefined();

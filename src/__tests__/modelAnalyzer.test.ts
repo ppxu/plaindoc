@@ -227,6 +227,7 @@ describe("model analyzer", () => {
     expect(requestBodies[0].response_format).toEqual({ type: "json_object" });
     expect(requestBodies[1].response_format).toBeUndefined();
     expect(report.summary).toBe("模型摘要");
+    expect(report.notice).toContain("兼容模式");
   });
 
   it("extracts a valid model JSON object from fenced text even when earlier braces are invalid", async () => {
