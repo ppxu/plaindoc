@@ -31,6 +31,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(false);
   });
 
+  it("does not flag ordinary liquidated-damages wording as early-exit penalty risk", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定任一方违约时，应按照实际损失承担违约金或赔偿责任。合同到期后正常交还房屋。",
+      kind: "rental"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "rental-large-early-exit-penalty")).toBe(false);
+  });
+
   it("does not run other document-type rule packs for a known rental contract", () => {
     const report = analyzeDocument({
       text: "租房合同约定押金可直接扣除，提前退租需书面通知并承担违约金和赔偿责任。",

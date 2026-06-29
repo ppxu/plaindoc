@@ -21,6 +21,8 @@ export const ruleDefinitions: RuleDefinition[] = [
     id: "rental-large-early-exit-penalty",
     kinds: ["rental", "unknown"],
     terms: ["提前退租", "两个月租金", "违约金"],
+    requiredTerms: ["提前退租"],
+    supportingTerms: ["两个月租金", "违约金"],
     title: "提前退租成本可能偏高",
     severity: "red",
     explanation: "合同把提前退租和较高违约金绑定，可能让你在工作变动、家庭变化时承担较大退出成本。",
