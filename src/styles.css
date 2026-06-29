@@ -616,6 +616,23 @@ textarea:focus,
   line-height: 1.55;
 }
 
+.model-sensitive-warning button {
+  min-height: 34px;
+  margin-top: 9px;
+  padding: 0 10px;
+  color: #7b382f;
+  background: #fff;
+  border: 1px solid #dda89b;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.model-sensitive-warning button:hover {
+  color: #9b3329;
+  border-color: #c8796d;
+}
+
 .clear-settings-button {
   min-height: 36px;
   padding: 0 10px;

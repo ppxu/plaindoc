@@ -9,6 +9,7 @@ interface ModelSettingsPanelProps {
   onChange: (settings: ModelAnalyzerSettings) => void;
   onClear: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
+  onRedactSensitiveText: () => void;
 }
 
 export function ModelSettingsPanel({
@@ -17,7 +18,8 @@ export function ModelSettingsPanel({
   sensitiveTextSummary,
   onChange,
   onClear,
-  onModelTextConsentChange
+  onModelTextConsentChange,
+  onRedactSensitiveText
 }: ModelSettingsPanelProps) {
   function update(partial: Partial<ModelAnalyzerSettings>) {
     onChange({ ...settings, ...partial });
@@ -89,6 +91,9 @@ export function ModelSettingsPanel({
               <p>
                 当前正文可能包含{sensitiveTextSummary.labels.join("、")}。PlainDoc 只在本地显示类别提醒，不保存或展示具体敏感值；勾选发送确认前，请先删除或替换不必要的个人信息。
               </p>
+              <button type="button" onClick={onRedactSensitiveText}>
+                生成脱敏副本
+              </button>
             </div>
           ) : null}
 

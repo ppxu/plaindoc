@@ -4,7 +4,7 @@ import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnaly
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
-import { detectSensitiveText } from "../privacy/sensitiveText";
+import { detectSensitiveText, redactSensitiveText } from "../privacy/sensitiveText";
 
 interface DocumentInputProps {
   text: string;
@@ -156,6 +156,7 @@ export function DocumentInput({
         onChange={onModelSettingsChange}
         onClear={onClearModelSettings}
         onModelTextConsentChange={onModelTextConsentChange}
+        onRedactSensitiveText={() => onTextChange(redactSensitiveText(text))}
       />
 
       <label className="field text-field">

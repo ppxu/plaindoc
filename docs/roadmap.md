@@ -16,7 +16,7 @@
 - Per-session confirmation before sending document text to the configured model service, revoked when the document or model destination changes.
 - Transparent AI input-scope notice for long documents when only the first 12,000 characters are sent to the model.
 - Session-only API key handling by default with explicit opt-in persistence.
-- Local sensitive-data category warning before AI model sending.
+- Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Structured output validation.
 - Conservative model/local merge that preserves local evidence snippets.
 - Local-rule fallback when model calls fail.
