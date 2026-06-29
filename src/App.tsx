@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Github, LockKeyhole, ScrollText } from "lucide-react";
 import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
+import { testModelConnection } from "./analyzer/modelConnectionTest";
 import { analyzeWithModel } from "./analyzer/modelAnalyzer";
 import {
   getModelEndpointSecurity,
@@ -31,10 +32,14 @@ import { resolveEvidenceSelection } from "./utils/evidenceSelection";
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
+type ModelConnectionStatus = { tone: "success" | "error"; message: string } | null;
+
 export default function App() {
   const firstExample = documentExamples[0];
   const analysisRunTracker = useRef(createAnalysisRunTracker());
   const modelRequestAbortController = useRef<AbortController | null>(null);
+  const modelConnectionTestAbortController = useRef<AbortController | null>(null);
+  const modelConnectionTestRunId = useRef(0);
   const [text, setText] = useState(firstExample.content);
   const [kind, setKind] = useState<DocumentKind>(firstExample.kind);
   const [selectedExampleId, setSelectedExampleId] = useState(firstExample.id);
@@ -47,6 +52,8 @@ export default function App() {
   );
   const [modelSettings, setModelSettings] = useState<ModelAnalyzerSettings>(() => loadModelSettings());
   const [modelTextConsent, setModelTextConsent] = useState(false);
+  const [isTestingModelConnection, setIsTestingModelConnection] = useState(false);
+  const [modelConnectionStatus, setModelConnectionStatus] = useState<ModelConnectionStatus>(null);
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
   const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
 
@@ -126,6 +133,7 @@ export default function App() {
       return;
     }
     invalidateCurrentAnalysis();
+    abortCurrentModelConnectionTest();
     clearLocalStoredData();
     const reset = createLocalDataResetState();
     setText(reset.text);
@@ -137,6 +145,7 @@ export default function App() {
     setHistory(reset.history);
     setModelSettings(reset.modelSettings);
     setModelTextConsent(reset.modelTextConsent);
+    setModelConnectionStatus(null);
     setEvidenceSelection(reset.evidenceSelection);
   }
 
@@ -243,9 +252,11 @@ export default function App() {
 
   function handleModelSettingsChange(settings: ModelAnalyzerSettings) {
     invalidateCurrentAnalysis();
+    abortCurrentModelConnectionTest();
     if (shouldRevokeModelTextConsent(modelSettings, settings)) {
       setModelTextConsent(false);
     }
+    setModelConnectionStatus(null);
     setModelSettings(settings);
     saveModelSettings(settings);
   }
@@ -255,11 +266,39 @@ export default function App() {
       return;
     }
     invalidateCurrentAnalysis();
+    abortCurrentModelConnectionTest();
     clearModelSettings();
     const next = loadModelSettings();
     setModelSettings(next);
     setModelTextConsent(false);
+    setModelConnectionStatus(null);
     setError("");
+  }
+
+  async function handleTestModelConnection() {
+    abortCurrentModelConnectionTest();
+    const runId = modelConnectionTestRunId.current + 1;
+    modelConnectionTestRunId.current = runId;
+    const abortController = new AbortController();
+    modelConnectionTestAbortController.current = abortController;
+    setIsTestingModelConnection(true);
+    setModelConnectionStatus(null);
+    setError("");
+
+    try {
+      const result = await testModelConnection(modelSettings, { signal: abortController.signal });
+      if (modelConnectionTestRunId.current !== runId) {
+        return;
+      }
+      setModelConnectionStatus({ tone: result.ok ? "success" : "error", message: result.message });
+    } finally {
+      if (modelConnectionTestRunId.current === runId) {
+        setIsTestingModelConnection(false);
+      }
+      if (modelConnectionTestAbortController.current === abortController) {
+        modelConnectionTestAbortController.current = null;
+      }
+    }
   }
 
   async function handleUpload(file: File) {
@@ -358,6 +397,13 @@ export default function App() {
     modelRequestAbortController.current = null;
   }
 
+  function abortCurrentModelConnectionTest() {
+    modelConnectionTestRunId.current += 1;
+    modelConnectionTestAbortController.current?.abort();
+    modelConnectionTestAbortController.current = null;
+    setIsTestingModelConnection(false);
+  }
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#report-panel">
@@ -398,6 +444,8 @@ export default function App() {
           history={history}
           modelSettings={modelSettings}
           modelTextConsent={modelTextConsent}
+          modelConnectionStatus={modelConnectionStatus}
+          isTestingModelConnection={isTestingModelConnection}
           evidenceSelection={evidenceSelection}
           onTextChange={handleTextChange}
           onKindChange={handleKindChange}
@@ -412,6 +460,7 @@ export default function App() {
           onModelSettingsChange={handleModelSettingsChange}
           onClearModelSettings={handleClearModelSettings}
           onModelTextConsentChange={handleModelTextConsentChange}
+          onTestModelConnection={handleTestModelConnection}
         />
         <ReportPanel
           report={report}

@@ -19,6 +19,8 @@ interface DocumentInputProps {
   history: SavedReport[];
   modelSettings: ModelAnalyzerSettings;
   modelTextConsent: boolean;
+  modelConnectionStatus: { tone: "success" | "error"; message: string } | null;
+  isTestingModelConnection: boolean;
   evidenceSelection: EvidenceSelectionTarget | null;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
@@ -33,6 +35,7 @@ interface DocumentInputProps {
   onModelSettingsChange: (settings: ModelAnalyzerSettings) => void;
   onClearModelSettings: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
+  onTestModelConnection: () => void;
 }
 
 export function DocumentInput({
@@ -47,6 +50,8 @@ export function DocumentInput({
   history,
   modelSettings,
   modelTextConsent,
+  modelConnectionStatus,
+  isTestingModelConnection,
   evidenceSelection,
   onTextChange,
   onKindChange,
@@ -60,7 +65,8 @@ export function DocumentInput({
   onClearHistory,
   onModelSettingsChange,
   onClearModelSettings,
-  onModelTextConsentChange
+  onModelTextConsentChange,
+  onTestModelConnection
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -155,10 +161,13 @@ export function DocumentInput({
       <ModelSettingsPanel
         settings={modelSettings}
         modelTextConsent={modelTextConsent}
+        modelConnectionStatus={modelConnectionStatus}
+        isTestingModelConnection={isTestingModelConnection}
         sensitiveTextSummary={sensitiveTextSummary}
         onChange={onModelSettingsChange}
         onClear={onClearModelSettings}
         onModelTextConsentChange={onModelTextConsentChange}
+        onTestModelConnection={onTestModelConnection}
         onRedactSensitiveText={() => onTextChange(redactSensitiveText(text))}
       />
 

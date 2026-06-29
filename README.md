@@ -67,8 +67,9 @@ To use it:
 
 1. Enable **AI 增强分析** in the left panel.
 2. Choose a model-service preset or enter an OpenAI-compatible endpoint and model name. 本机 Ollama 可不填 API key；远程模型仍需要 API key.
-3. Confirm **本次允许发送正文给模型服务**.
-4. Click **生成 AI 增强清单**.
+3. Use **测试模型连接** if you want to check the endpoint, model name, API key, and network before sending any document text.
+4. Confirm **本次允许发送正文给模型服务**.
+5. Click **生成 AI 增强清单**.
 
 Privacy boundary:
 
@@ -79,6 +80,7 @@ Privacy boundary:
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
 - The local data reset button clears the visible document text, current report, recent report history, stored model settings, remembered API key opt-in state, and current AI send confirmation. It does not remove the application-shell cache used for offline reopening.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
+- **测试模型连接** sends only a minimal probe prompt to the configured model service. It does not send the visible document text and does not require AI send confirmation.
 - Remote model endpoints must use HTTPS before PlainDoc will send document text or API keys. PlainDoc allows HTTP only for local model endpoints such as `http://localhost` or `http://127.0.0.1`.
 - 本机 Ollama 可不填 API key；远程模型仍需要 API key. If your local model server requires authentication, you can still enter a key manually.
 - Before AI sending, PlainDoc locally checks whether the visible text appears to contain common sensitive data categories such as phone numbers, email addresses, ID numbers, or bank card numbers. It only shows category labels and does not store or display the matched values. You can generate a local redacted copy that replaces those values with placeholders before confirming model sending.
@@ -109,6 +111,7 @@ Supported in this MVP:
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Model connection test that checks endpoint/model/API key/network before sending document text.
 - Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.
 - HTTPS-required remote model endpoints, with HTTP allowed only for local model endpoints.

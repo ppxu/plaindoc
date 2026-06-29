@@ -1,0 +1,135 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { testModelConnection } from "../analyzer/modelConnectionTest";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe("model connection test", () => {
+  it("sends a minimal remote model probe with authorization but no document text", async () => {
+    let requestUrl = "";
+    let requestBody: Record<string, unknown> | undefined;
+    let requestHeaders: HeadersInit | undefined;
+    const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      requestUrl = String(url);
+      requestHeaders = init?.headers;
+      requestBody = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: "{\"ok\":true}" } }]
+        })
+      } as Response;
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: " https://example.test/v1/ ",
+        model: " test-model ",
+        apiKey: " test-key ",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(true);
+    expect(result.message).toContain("连接测试通过");
+    expect(requestUrl).toBe("https://example.test/v1/chat/completions");
+    expect((requestHeaders as Record<string, string>).Authorization).toBe("Bearer test-key");
+    expect(requestBody?.model).toBe("test-model");
+    expect(JSON.stringify(requestBody)).not.toContain("押金");
+    expect(JSON.stringify(requestBody)).not.toContain("合同正文");
+  });
+
+  it("allows local model probes without an authorization header", async () => {
+    let requestHeaders: HeadersInit | undefined;
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      requestHeaders = init?.headers;
+      return {
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: "{\"ok\":true}" } }] })
+      } as Response;
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "http://localhost:11434/v1",
+        model: "qwen2.5:7b",
+        apiKey: " ",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(true);
+    expect((requestHeaders as Record<string, string>).Authorization).toBeUndefined();
+  });
+
+  it("blocks remote model probes without an API key before calling fetch", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("远程模型 endpoint 需要 API key");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("returns endpoint security errors before calling fetch", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "http://example.test/v1",
+        model: "test-model",
+        apiKey: "test-key",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("远程模型 endpoint 必须使用 HTTPS");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("explains local probe network failures without exposing raw fetch errors", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new TypeError("Failed to fetch");
+      })
+    );
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "http://localhost:11434/v1",
+        model: "qwen2.5:7b",
+        apiKey: "",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("无法连接本机模型服务");
+    expect(result.message).not.toContain("Failed to fetch");
+  });
+});

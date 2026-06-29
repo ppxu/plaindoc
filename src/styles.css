@@ -809,6 +809,62 @@ textarea:focus,
   line-height: 1.55;
 }
 
+.model-connection-test {
+  margin: 8px 0 10px;
+}
+
+.model-connection-test button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 11px;
+  color: #24413b;
+  background: #fff;
+  border: 1px solid #cfe0dc;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.model-connection-test button:hover:not(:disabled) {
+  color: var(--teal);
+  border-color: #8fc3b8;
+  background: #fbfffd;
+}
+
+.model-connection-test button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
+.model-connection-test svg {
+  width: 15px;
+  height: 15px;
+  color: var(--teal);
+}
+
+.model-connection-status {
+  margin: 8px 0 0;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.model-connection-status.success {
+  color: #1f5a3f;
+  background: #effaf2;
+  border: 1px solid #b9dcc6;
+}
+
+.model-connection-status.error {
+  color: #6f3529;
+  background: #fff4ef;
+  border: 1px solid #e6b8aa;
+}
+
 .model-sensitive-warning button {
   min-height: 34px;
   margin-top: 9px;

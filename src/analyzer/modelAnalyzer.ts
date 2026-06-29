@@ -10,7 +10,7 @@ import type {
 import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
 import {
   getModelEndpointSecurity,
-  isLocalModelEndpoint,
+  modelConnectionFailureMessage,
   modelEndpointNeedsApiKey,
   modelEndpointSecurityMessage
 } from "./modelEndpointSecurity";
@@ -160,13 +160,6 @@ export async function analyzeWithModel(
 
 function isNetworkFailure(caught: unknown): boolean {
   return caught instanceof TypeError;
-}
-
-function modelConnectionFailureMessage(baseUrl: string): string {
-  if (isLocalModelEndpoint(baseUrl)) {
-    return "无法连接本机模型服务。请确认 Ollama 或本机 OpenAI-compatible 服务已启动、endpoint 地址正确，并允许当前网页请求该服务。";
-  }
-  return "无法连接模型服务。请确认 endpoint 地址、网络连接和模型服务状态。";
 }
 
 function createModelRequestAbort(options: AnalyzeWithModelOptions): {

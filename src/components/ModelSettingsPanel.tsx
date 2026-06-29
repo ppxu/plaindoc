@@ -1,4 +1,4 @@
-import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
+import { BrainCircuit, KeyRound, PlugZap, ShieldAlert, Trash2 } from "lucide-react";
 import {
   getModelEndpointSecurity,
   modelEndpointNeedsApiKey,
@@ -17,20 +17,26 @@ import type { ModelAnalyzerSettings } from "../types";
 interface ModelSettingsPanelProps {
   settings: ModelAnalyzerSettings;
   modelTextConsent: boolean;
+  modelConnectionStatus: { tone: "success" | "error"; message: string } | null;
+  isTestingModelConnection: boolean;
   sensitiveTextSummary: SensitiveTextSummary;
   onChange: (settings: ModelAnalyzerSettings) => void;
   onClear: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
+  onTestModelConnection: () => void;
   onRedactSensitiveText: () => void;
 }
 
 export function ModelSettingsPanel({
   settings,
   modelTextConsent,
+  modelConnectionStatus,
+  isTestingModelConnection,
   sensitiveTextSummary,
   onChange,
   onClear,
   onModelTextConsentChange,
+  onTestModelConnection,
   onRedactSensitiveText
 }: ModelSettingsPanelProps) {
   const runtimeSettings = normalizeModelSettingsForRuntime(settings);
@@ -107,6 +113,22 @@ export function ModelSettingsPanel({
               autoComplete="off"
             />
           </label>
+
+          <div className="model-connection-test">
+            <button type="button" onClick={onTestModelConnection} disabled={isTestingModelConnection}>
+              <PlugZap aria-hidden="true" />
+              {isTestingModelConnection ? "正在测试连接..." : "测试模型连接"}
+            </button>
+            {modelConnectionStatus ? (
+              <p
+                className={`model-connection-status ${modelConnectionStatus.tone}`}
+                role={modelConnectionStatus.tone === "error" ? "alert" : "status"}
+                aria-live={modelConnectionStatus.tone === "error" ? "assertive" : "polite"}
+              >
+                {modelConnectionStatus.message}
+              </p>
+            ) : null}
+          </div>
 
           <label className="mode-toggle key-retention-toggle">
             <span>
