@@ -69,6 +69,52 @@ describe("model connection test", () => {
     expect((requestHeaders as Record<string, string>).Authorization).toBeUndefined();
   });
 
+  it("rejects successful HTTP responses that are not chat completion payloads", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ status: "ok" })
+      }))
+    );
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "http://localhost:11434/v1",
+        model: "qwen2.5:7b",
+        apiKey: "",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("没有返回 OpenAI-compatible chat completions 格式");
+  });
+
+  it("explains authentication failures separately from generic service errors", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: false, status: 401 }))
+    );
+
+    const result = await testModelConnection(
+      {
+        enabled: true,
+        baseUrl: "https://example.test/v1",
+        model: "test-model",
+        apiKey: "wrong-key",
+        rememberApiKey: false
+      },
+      { timeoutMs: 0 }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("API key");
+    expect(result.message).toContain("401");
+  });
+
   it("blocks remote model probes without an API key before calling fetch", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
