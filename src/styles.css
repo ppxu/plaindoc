@@ -1303,7 +1303,7 @@ textarea:focus,
 
 .quiet-state {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding: 16px;
   color: var(--muted);
@@ -1312,10 +1312,20 @@ textarea:focus,
   border-radius: 10px;
 }
 
+.quiet-state p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.quiet-state p + p {
+  margin-top: 6px;
+}
+
 .quiet-state svg {
   width: 20px;
   height: 20px;
   color: var(--green);
+  flex: 0 0 auto;
 }
 
 .priority-list {

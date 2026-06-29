@@ -33,4 +33,16 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain(`**文本规模：** 约 ${report.wordCount} 字/词`);
     expect(markdown).not.toContain("字符线索");
   });
+
+  it("exports coverage limits when no risk rule matched", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定押金为人民币 5000 元，租期届满且水电结清后，甲方应在 7 日内退还剩余押金。",
+      kind: "rental"
+    });
+    const markdown = reportToMarkdown(report);
+
+    expect(report.findings).toHaveLength(0);
+    expect(markdown).toContain("未命中不等于安全背书");
+    expect(markdown).toContain("金额、期限、解除、违约、押金退还和维修责任");
+  });
 });

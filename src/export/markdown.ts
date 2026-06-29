@@ -3,12 +3,14 @@ import { getDocumentKindLabel } from "../data/documentKinds";
 import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 import { priorityBriefToText } from "./priorityBrief";
 import { formatTextScale } from "../report/textScale";
+import { getCoverageBoundaryNotice } from "../report/coverageBoundary";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
     .map((fact) => `- **${fact.label}**: ${fact.value}`)
     .join("\n") || "- 未识别出关键事实。";
 
+  const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
   const findings = report.findings
     .map((finding) => [
       `### ${severityLabel(finding.severity)} ${finding.title}`,
@@ -21,7 +23,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
       finding.modification ? `\n**建议修改条款：** ${finding.modification}` : "",
       finding.evidence ? `\n> 证据片段：${finding.evidence.text}` : ""
     ].join("\n"))
-    .join("\n\n") || "未命中明显风险规则。";
+    .join("\n\n") || ["未命中明显风险规则。", coverageBoundaryNotice].filter(Boolean).join("\n\n");
 
   const checklist = report.checklist
     .map((item, index) => `${index + 1}. ${item.question}\n   - ${item.reason}`)

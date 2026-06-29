@@ -7,6 +7,7 @@ import { reportToMarkdown } from "../export/markdown";
 import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { formatTextScale } from "../report/textScale";
+import { getCoverageBoundaryNotice } from "../report/coverageBoundary";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClauseEditPack } from "./ClauseEditPack";
@@ -27,6 +28,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
   const markdownReport = reportToMarkdown(report);
+  const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
 
   useEffect(() => {
     setCopyReportState("idle");
@@ -113,7 +115,10 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
           ) : (
             <div className="quiet-state">
               <ShieldCheck aria-hidden="true" />
-              <p>没有命中明显风险规则。请继续逐条确认金额、期限、违约和退出条件。</p>
+              <div>
+                <p>没有命中明显风险规则。</p>
+                {coverageBoundaryNotice ? <p>{coverageBoundaryNotice}</p> : null}
+              </div>
             </div>
           )}
         </div>
