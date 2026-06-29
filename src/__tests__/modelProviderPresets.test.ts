@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { applyModelProviderPreset, modelProviderPresets } from "../analyzer/modelProviderPresets";
+import {
+  applyModelProviderPreset,
+  getMatchingModelProviderPresetId,
+  modelProviderPresets
+} from "../analyzer/modelProviderPresets";
 import type { ModelAnalyzerSettings } from "../types";
 
 describe("model provider presets", () => {
@@ -24,5 +28,27 @@ describe("model provider presets", () => {
       apiKey: "secret",
       rememberApiKey: true
     });
+  });
+
+  it("identifies the active preset only when endpoint and model both match", () => {
+    expect(
+      getMatchingModelProviderPresetId({
+        enabled: true,
+        baseUrl: " https://api.deepseek.com/v1 ",
+        model: "deepseek-chat",
+        apiKey: "",
+        rememberApiKey: false
+      })
+    ).toBe("deepseek");
+
+    expect(
+      getMatchingModelProviderPresetId({
+        enabled: true,
+        baseUrl: "https://api.deepseek.com/v1",
+        model: "custom-deepseek-model",
+        apiKey: "",
+        rememberApiKey: false
+      })
+    ).toBeUndefined();
   });
 });

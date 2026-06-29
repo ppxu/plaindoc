@@ -2,6 +2,7 @@ import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
 import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "../analyzer/modelEndpointSecurity";
 import {
   applyModelProviderPreset,
+  getMatchingModelProviderPresetId,
   modelProviderPresets,
   type ModelProviderPresetId
 } from "../analyzer/modelProviderPresets";
@@ -31,6 +32,7 @@ export function ModelSettingsPanel({
   const runtimeSettings = normalizeModelSettingsForRuntime(settings);
   const endpointSecurity = getModelEndpointSecurity(runtimeSettings.baseUrl);
   const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
+  const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
 
   function update(partial: Partial<ModelAnalyzerSettings>) {
     onChange({ ...settings, ...partial });
@@ -58,7 +60,13 @@ export function ModelSettingsPanel({
         <div className="model-settings-body">
           <div className="model-provider-presets" aria-label="AI model service presets">
             {modelProviderPresets.map((preset) => (
-              <button key={preset.id} type="button" onClick={() => applyPreset(preset.id)}>
+              <button
+                key={preset.id}
+                className={activePresetId === preset.id ? "active" : undefined}
+                type="button"
+                aria-pressed={activePresetId === preset.id}
+                onClick={() => applyPreset(preset.id)}
+              >
                 <span>{preset.label}</span>
                 <small>{preset.description}</small>
               </button>

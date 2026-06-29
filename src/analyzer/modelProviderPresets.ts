@@ -56,3 +56,10 @@ export function applyModelProviderPreset(
     model: preset.model
   };
 }
+
+export function getMatchingModelProviderPresetId(settings: ModelAnalyzerSettings): ModelProviderPresetId | undefined {
+  const baseUrl = settings.baseUrl.trim().replace(/\/+$/, "");
+  const model = settings.model.trim();
+  return modelProviderPresets.find((preset) => preset.baseUrl.replace(/\/+$/, "") === baseUrl && preset.model === model)
+    ?.id;
+}
