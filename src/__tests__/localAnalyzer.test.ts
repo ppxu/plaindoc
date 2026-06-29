@@ -253,6 +253,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "insurance-broad-waiting-period-exclusion")).toBe(false);
   });
 
+  it("does not flag flexible claim notice wording as a short refusal window", () => {
+    const report = analyzeDocument({
+      text: "保险条款约定发生保险事故后，投保人或受益人应在 10 日内通知保险人；因抢救、住院或其他客观原因未能及时通知的，可在合理期限内补充说明，保险人不得仅因迟延通知拒赔。",
+      kind: "insurance"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "insurance-short-claim-notice-window")).toBe(false);
+  });
+
   it("flags waiting-period and renewal risks in insurance policies", () => {
     const example = documentExamples.find((item) => item.kind === "insurance");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });
