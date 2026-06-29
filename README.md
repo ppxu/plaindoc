@@ -110,6 +110,7 @@ Supported in this MVP:
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - One-click current-workspace clearing for sensitive document text and the current report.
 - Markdown report export with readable timestamped filenames.
+- GitHub Pages-ready metadata, social preview image, and web app manifest.
 
 Not yet supported:
 
