@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import html from "../../index.html?raw";
 import manifestText from "../../public/manifest.webmanifest?raw";
+import robotsText from "../../public/robots.txt?raw";
+import sitemapText from "../../public/sitemap.xml?raw";
 
 describe("release metadata", () => {
   it("declares the document language for the Chinese-first app shell", () => {
@@ -18,6 +20,7 @@ describe("release metadata", () => {
     expect(html).toContain('<meta property="og:url" content="https://ppxu.github.io/plaindoc/" />');
     expect(html).toContain('<meta property="og:image" content="https://ppxu.github.io/plaindoc/social-preview.svg" />');
     expect(html).toContain('<meta name="twitter:card" content="summary_large_image" />');
+    expect(html).toContain('<link rel="canonical" href="https://ppxu.github.io/plaindoc/" />');
   });
 
   it("provides a GitHub Pages scoped web app manifest", () => {
@@ -42,5 +45,15 @@ describe("release metadata", () => {
         })
       ])
     );
+  });
+
+  it("publishes search crawler hints for the GitHub Pages demo", () => {
+    expect(robotsText).toContain("User-agent: *");
+    expect(robotsText).toContain("Allow: /plaindoc/");
+    expect(robotsText).toContain("Sitemap: https://ppxu.github.io/plaindoc/sitemap.xml");
+
+    expect(sitemapText).toContain("<loc>https://ppxu.github.io/plaindoc/</loc>");
+    expect(sitemapText).toContain("<lastmod>2026-06-29</lastmod>");
+    expect(sitemapText).not.toContain("localhost");
   });
 });

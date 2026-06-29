@@ -30,6 +30,7 @@ Paste a contract, upload a selectable-text PDF, or load one of the bundled ficti
 - Markdown export with document-type and timestamped filenames for saving or sharing the report.
 - Print-friendly report view for saving as PDF or bringing to an offline discussion.
 - Installable web app metadata and application-shell caching so the app can reopen offline after a successful visit.
+- Canonical URL, robots.txt, and sitemap.xml for the GitHub Pages demo.
 - Optional AI-enhanced analysis with local-rule fallback.
 - Local sensitive-data preflight warning and one-click redacted copy before AI model sending.
 - Explicit per-session confirmation before sending document text to a configured model service.
@@ -125,6 +126,7 @@ Supported in this MVP:
 - Print-friendly report output for browser printing or saving as PDF.
 - GitHub Pages-ready metadata, social preview image, and web app manifest.
 - GitHub Pages-scoped service worker with offline application-shell caching.
+- Canonical, robots.txt, and sitemap.xml metadata for search indexing.
 
 Not yet supported:
 

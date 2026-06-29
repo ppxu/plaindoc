@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /plaindoc/
+
+Sitemap: https://ppxu.github.io/plaindoc/sitemap.xml

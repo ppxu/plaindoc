@@ -46,6 +46,7 @@
 - Instant local report refresh when switching bundled examples.
 - GitHub Pages release metadata, social preview image, and web app manifest.
 - GitHub Pages-scoped service worker and offline application-shell caching.
+- Canonical, robots.txt, and sitemap.xml metadata for the GitHub Pages demo.
 
 ## 0.3 Document Ingestion
 
