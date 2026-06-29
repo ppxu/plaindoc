@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipboardList } from "lucide-react";
 import type { AnalysisReport } from "../types";
 import { getPriorityFindings, priorityBriefToText } from "../export/priorityBrief";
@@ -11,9 +11,14 @@ interface PriorityBriefProps {
 export function PriorityBrief({ report }: PriorityBriefProps) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const priorityFindings = getPriorityFindings(report.findings);
+  const briefText = priorityBriefToText(report);
+
+  useEffect(() => {
+    setCopyState("idle");
+  }, [briefText]);
 
   async function copyBrief() {
-    setCopyState((await copyTextToClipboard(priorityBriefToText(report))) ? "copied" : "failed");
+    setCopyState((await copyTextToClipboard(briefText)) ? "copied" : "failed");
   }
 
   return (

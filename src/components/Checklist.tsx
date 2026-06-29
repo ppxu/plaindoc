@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipboardCheck } from "lucide-react";
 import type { ChecklistItem } from "../types";
 
@@ -9,6 +9,10 @@ interface ChecklistProps {
 
 export function Checklist({ items, onCopy }: ChecklistProps) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  useEffect(() => {
+    setCopyState("idle");
+  }, [items]);
 
   async function handleCopy() {
     setCopyState((await onCopy()) ? "copied" : "failed");

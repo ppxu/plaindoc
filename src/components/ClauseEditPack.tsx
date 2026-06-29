@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipboardList } from "lucide-react";
 import { clauseEditsToText, getClauseEdits } from "../export/clauseEdits";
 import type { RiskFinding } from "../types";
@@ -10,14 +10,19 @@ interface ClauseEditPackProps {
 
 export function ClauseEditPack({ findings }: ClauseEditPackProps) {
   const edits = getClauseEdits(findings);
+  const editsText = clauseEditsToText(edits);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  useEffect(() => {
+    setCopyState("idle");
+  }, [editsText]);
 
   if (!edits.length) {
     return null;
   }
 
   async function copyAllEdits() {
-    setCopyState((await copyTextToClipboard(clauseEditsToText(edits))) ? "copied" : "failed");
+    setCopyState((await copyTextToClipboard(editsText)) ? "copied" : "failed");
   }
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, CheckCircle2, CircleAlert, Search } from "lucide-react";
 import type { RiskFinding } from "../types";
 import { copyTextToClipboard } from "../utils/clipboard";
@@ -11,6 +11,10 @@ interface RiskCardProps {
 export function RiskCard({ finding, onRevealEvidence }: RiskCardProps) {
   const Icon = finding.severity === "red" ? CircleAlert : finding.severity === "yellow" ? AlertTriangle : CheckCircle2;
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  useEffect(() => {
+    setCopyState("idle");
+  }, [finding.modification]);
 
   async function copyModification() {
     if (!finding.modification) return;

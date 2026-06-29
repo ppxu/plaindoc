@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MessageSquareText } from "lucide-react";
 import type { ActionPlan as ActionPlanData } from "../types";
 
@@ -9,6 +9,10 @@ interface ActionPlanProps {
 
 export function ActionPlan({ plan, onCopyMessage }: ActionPlanProps) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  useEffect(() => {
+    setCopyState("idle");
+  }, [plan.message]);
 
   async function handleCopy() {
     setCopyState((await onCopyMessage()) ? "copied" : "failed");
