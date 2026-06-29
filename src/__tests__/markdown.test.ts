@@ -20,4 +20,16 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("## 免责声明");
     expect(markdown).toContain(report.disclaimer);
   });
+
+  it("exports report metadata needed for offline review and sharing", () => {
+    const example = documentExamples[0];
+    const report = analyzeDocument({ text: example.content, kind: example.kind });
+    const markdown = reportToMarkdown(report);
+
+    expect(markdown).toContain("## 报告信息");
+    expect(markdown).toContain("**文件类型：**");
+    expect(markdown).toContain("**生成时间：**");
+    expect(markdown).toContain(report.generatedAt);
+    expect(markdown).toContain(`**文本规模：** ${report.wordCount} 字符线索`);
+  });
 });

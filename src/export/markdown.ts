@@ -1,4 +1,5 @@
 import type { AnalysisReport } from "../types";
+import { getDocumentKindLabel } from "../data/documentKinds";
 import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 import { priorityBriefToText } from "./priorityBrief";
 
@@ -38,6 +39,11 @@ export function reportToMarkdown(report: AnalysisReport): string {
     `**状态：** ${statusLabel(report.status)}`,
     `**分析来源：** ${sourceLabel(report)}`,
     report.notice ? `**说明：** ${report.notice}` : "",
+    "",
+    "## 报告信息",
+    `**文件类型：** ${documentKindLabel(report)}`,
+    `**生成时间：** ${report.generatedAt}`,
+    `**文本规模：** ${report.wordCount} 字符线索`,
     "",
     "## 关键事实",
     facts,
@@ -84,6 +90,10 @@ function sourceLabel(report: AnalysisReport): string {
     return report.modelName ? `AI 增强（${report.modelName}）` : "AI 增强";
   }
   return "本地规则";
+}
+
+function documentKindLabel(report: AnalysisReport): string {
+  return report.documentKind === "unknown" ? "通用文件" : getDocumentKindLabel(report.documentKind);
 }
 
 function severityLabel(severity: "red" | "yellow" | "green"): string {
