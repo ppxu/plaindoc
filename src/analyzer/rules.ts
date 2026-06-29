@@ -39,6 +39,7 @@ export const ruleDefinitions: RuleDefinition[] = [
     terms: ["押金", "直接扣除", "甲方认为必要"],
     requiredTerms: ["押金"],
     supportingTerms: ["扣除", "直接扣除", "甲方认为必要"],
+    excludedTerms: ["押金扣除仅限", "经双方确认的人为损坏", "应提供发票", "报价单或双方确认记录", "退租交接后 7 日内退还剩余押金"],
     title: "押金扣除口径过宽",
     severity: "red",
     explanation: "合同允许出租方按较宽口径扣押金，但没有列出清晰的验收标准、凭证要求或争议处理方式。",

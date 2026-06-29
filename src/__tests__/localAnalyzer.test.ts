@@ -31,6 +31,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(false);
   });
 
+  it("does not flag documented deposit deductions as broad deduction risk", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定押金扣除仅限未付租金、水电燃气费和经双方确认的人为损坏维修费用；甲方应提供发票、报价单或双方确认记录，并在退租交接后 7 日内退还剩余押金。",
+      kind: "rental"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(false);
+  });
+
   it("does not flag ordinary liquidated-damages wording as early-exit penalty risk", () => {
     const report = analyzeDocument({
       text: "租房合同约定任一方违约时，应按照实际损失承担违约金或赔偿责任。合同到期后正常交还房屋。",
