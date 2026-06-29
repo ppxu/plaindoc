@@ -3,6 +3,10 @@ import html from "../../index.html?raw";
 import manifestText from "../../public/manifest.webmanifest?raw";
 
 describe("release metadata", () => {
+  it("declares the document language for the Chinese-first app shell", () => {
+    expect(html).toContain('<html lang="zh-CN">');
+  });
+
   it("exposes social preview and install metadata from the app shell", () => {
     expect(html).toContain('<meta name="theme-color" content="#0f172a" />');
     expect(html).toContain('<link rel="manifest" href="%BASE_URL%manifest.webmanifest" />');
