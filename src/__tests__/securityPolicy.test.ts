@@ -18,6 +18,7 @@ describe("security policy", () => {
     expect(securityPolicy).toContain("Local model endpoints can be used without an API key");
     expect(securityPolicy).toContain("remote model endpoints still require an API key");
     expect(securityPolicy).toContain("The model connection test sends only a minimal probe prompt");
+    expect(securityPolicy).toContain("expects a JSON confirmation");
   });
 
   it("is discoverable from the README", () => {
@@ -30,6 +31,7 @@ describe("security policy", () => {
     expect(readme).toContain("本机 Ollama 可不填 API key");
     expect(readme).toContain("远程模型仍需要 API key");
     expect(readme).toContain("测试模型连接");
+    expect(readme).toContain("{\"ok\":true}");
     expect(readme).toContain("does not send the visible document text");
     expect(readme).not.toContain("only received the front section");
     expect(readme).not.toContain("first 12,000 characters");
