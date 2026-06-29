@@ -326,6 +326,52 @@ describe("model analyzer", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("explains authentication failures from model analysis", async () => {
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: false, status: 401 }))
+    );
+
+    await expect(
+      analyzeWithModel(
+        { text: "甲方可扣除押金。", kind: "rental" },
+        {
+          enabled: true,
+          baseUrl: "https://example.test/v1",
+          model: "test-model",
+          apiKey: "wrong-key",
+          rememberApiKey: false
+        },
+        localReport,
+        { timeoutMs: 0 }
+      )
+    ).rejects.toThrow("API key");
+  });
+
+  it("explains missing chat completions endpoints from model analysis", async () => {
+    const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: false, status: 404 }))
+    );
+
+    await expect(
+      analyzeWithModel(
+        { text: "甲方可扣除押金。", kind: "rental" },
+        {
+          enabled: true,
+          baseUrl: "https://example.test/v1",
+          model: "test-model",
+          apiKey: "test-key",
+          rememberApiKey: false
+        },
+        localReport,
+        { timeoutMs: 0 }
+      )
+    ).rejects.toThrow("/chat/completions");
+  });
+
   it("times out a hanging model request", async () => {
     vi.useFakeTimers();
     const localReport = analyzeDocument({ text: "甲方可扣除押金。", kind: "rental" });

@@ -14,6 +14,7 @@ import {
   modelEndpointNeedsApiKey,
   modelEndpointSecurityMessage
 } from "./modelEndpointSecurity";
+import { modelServiceStatusMessage } from "./modelServiceErrors";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionResponse {
@@ -134,7 +135,7 @@ export async function analyzeWithModel(
     });
 
     if (!response.ok) {
-      throw new Error(`模型服务返回 ${response.status}。`);
+      throw new Error(modelServiceStatusMessage(response.status));
     }
 
     const data = (await response.json()) as ChatCompletionResponse;
