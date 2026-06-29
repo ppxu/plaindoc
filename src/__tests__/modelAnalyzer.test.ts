@@ -90,12 +90,17 @@ describe("model analyzer", () => {
         text: "条".repeat(12000),
         originalLength: 12025,
         sentLength: 12000,
-        truncated: true
+        truncated: true,
+        sentRanges: [
+          { start: 0, end: 7800 },
+          { start: 8025, end: 12025 }
+        ]
       }
     );
 
-    expect(report.notice).toContain("仅发送前 12000 个字符");
+    expect(report.notice).toContain("仅发送开头和结尾共 12000 个字符");
     expect(report.notice).toContain("完整文本仍由本地规则分析");
+    expect(report.notice).toContain("中间省略部分");
   });
 
   it("passes an abort signal to the model request", async () => {

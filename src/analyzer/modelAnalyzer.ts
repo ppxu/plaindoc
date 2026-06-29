@@ -103,7 +103,8 @@ export async function analyzeWithModel(
               documentTextScope: {
                 originalChars: preparedDocument.originalLength,
                 sentChars: preparedDocument.sentLength,
-                truncated: preparedDocument.truncated
+                truncated: preparedDocument.truncated,
+                sentRanges: preparedDocument.sentRanges
               },
               localBaseline: prepareModelBaseline(localReport, preparedDocument)
             })
@@ -205,7 +206,7 @@ function buildModelNotice(modelInput?: PreparedModelDocumentText): string {
   if (!modelInput?.truncated) {
     return baseNotice;
   }
-  return `${baseNotice} 由于正文较长，AI 增强仅发送前 ${modelInput.sentLength} 个字符给模型服务，完整文本仍由本地规则分析；超出部分请继续人工确认。`;
+  return `${baseNotice} 由于正文较长，AI 增强仅发送开头和结尾共 ${modelInput.sentLength} 个字符给模型服务，完整文本仍由本地规则分析；中间省略部分请继续人工确认。`;
 }
 
 function sanitizeActionPlan(value: unknown): ActionPlan | undefined {

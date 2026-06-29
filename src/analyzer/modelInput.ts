@@ -1,21 +1,45 @@
 import type { AnalysisReport } from "../types";
 
 export const MAX_MODEL_DOCUMENT_CHARS = 12000;
+const MODEL_OMISSION_MARKER = "\n\n[PlainDoc: 中间部分已省略，模型输入保留了开头和结尾片段。]\n\n";
 
 export interface PreparedModelDocumentText {
   text: string;
   originalLength: number;
   sentLength: number;
   truncated: boolean;
+  sentRanges: Array<{
+    start: number;
+    end: number;
+  }>;
 }
 
 export function prepareModelDocumentText(text: string): PreparedModelDocumentText {
-  const preparedText = text.slice(0, MAX_MODEL_DOCUMENT_CHARS);
+  if (text.length <= MAX_MODEL_DOCUMENT_CHARS) {
+    return {
+      text,
+      originalLength: text.length,
+      sentLength: text.length,
+      truncated: false,
+      sentRanges: [{ start: 0, end: text.length }]
+    };
+  }
+
+  const availableTextLength = MAX_MODEL_DOCUMENT_CHARS - MODEL_OMISSION_MARKER.length;
+  const headLength = Math.ceil(availableTextLength * 0.65);
+  const tailLength = availableTextLength - headLength;
+  const tailStart = text.length - tailLength;
+  const preparedText = `${text.slice(0, headLength)}${MODEL_OMISSION_MARKER}${text.slice(tailStart)}`;
+
   return {
     text: preparedText,
     originalLength: text.length,
     sentLength: preparedText.length,
-    truncated: text.length > preparedText.length
+    truncated: true,
+    sentRanges: [
+      { start: 0, end: headLength },
+      { start: tailStart, end: text.length }
+    ]
   };
 }
 
@@ -43,5 +67,5 @@ function shouldIncludeFactValue(
   if (!evidence) {
     return !preparedDocument.truncated;
   }
-  return evidence.end <= preparedDocument.sentLength;
+  return preparedDocument.sentRanges.some((range) => evidence.start >= range.start && evidence.end <= range.end);
 }
