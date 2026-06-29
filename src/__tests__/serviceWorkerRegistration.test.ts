@@ -31,4 +31,11 @@ describe("service worker registration", () => {
     expect(serviceWorkerSource).toContain("networkFirst(request, APP_SCOPE)");
     expect(serviceWorkerSource).toContain('cache.match(request.url, { ignoreSearch: true })');
   });
+
+  it("does not fail online responses when runtime cache writes are blocked", () => {
+    expect(serviceWorkerSource).toContain("safeCachePut(cache, request, response.clone())");
+    expect(serviceWorkerSource).toContain("async function safeCachePut");
+    expect(serviceWorkerSource).toContain("Runtime cache writes are best-effort");
+    expect(serviceWorkerSource).not.toContain("await cache.put(request, response.clone())");
+  });
 });

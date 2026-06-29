@@ -40,7 +40,7 @@ async function networkFirst(request, fallbackUrl) {
   try {
     const response = await fetch(request);
     if (response.ok) {
-      await cache.put(request, response.clone());
+      await safeCachePut(cache, request, response.clone());
     }
     return response;
   } catch {
@@ -55,7 +55,15 @@ async function cacheFirst(request) {
 
   const response = await fetch(request);
   if (response.ok) {
-    await cache.put(request, response.clone());
+    await safeCachePut(cache, request, response.clone());
   }
   return response;
+}
+
+async function safeCachePut(cache, request, response) {
+  try {
+    await cache.put(request, response);
+  } catch {
+    // Runtime cache writes are best-effort; online responses should still reach the page.
+  }
 }
