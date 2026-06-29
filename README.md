@@ -25,6 +25,7 @@ Paste a contract, upload a selectable-text PDF, or load one of the bundled ficti
 - Plain-language explanations for non-experts.
 - Deduplicated local report history for revisiting recent analyses.
 - One-click current-workspace clearing after reviewing sensitive documents.
+- One-click local data reset for clearing the current text, recent report history, model settings, and AI send confirmation.
 - One-click copy for the full Markdown report.
 - Markdown export with document-type and timestamped filenames for saving or sharing the report.
 - Print-friendly report view for saving as PDF or bringing to an offline discussion.
@@ -75,6 +76,7 @@ Privacy boundary:
 - Offline support stores PlainDoc application files in browser Cache Storage. It does not cache original document text, evidence snippets, API keys, or report history.
 - Recent report history is stored in your browser, deduplicates repeated analyses, and stores report conclusions and suggestions only. It does not store the original document text or evidence snippets. Restoring a history report clears the editor so stale text is not shown beside the restored report.
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
+- The local data reset button clears the visible document text, current report, recent report history, stored model settings, remembered API key opt-in state, and current AI send confirmation. It does not remove the application-shell cache used for offline reopening.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
 - Before AI sending, PlainDoc locally checks whether the visible text appears to contain common sensitive data categories such as phone numbers, email addresses, ID numbers, or bank card numbers. It only shows category labels and does not store or display the matched values. You can generate a local redacted copy that replaces those values with placeholders before confirming model sending.
 - Changing the document text, loading an example, uploading a file, restoring a history report, clearing the workspace, or changing the model endpoint/model/API key cancels the send confirmation.
@@ -116,6 +118,7 @@ Supported in this MVP:
 - Copyable next-step message draft for counterparties.
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - One-click current-workspace clearing for sensitive document text and the current report.
+- One-click local data reset for current text, report history, model settings, and AI send confirmation.
 - Markdown report export with readable timestamped filenames.
 - Print-friendly report output for browser printing or saving as PDF.
 - GitHub Pages-ready metadata, social preview image, and web app manifest.

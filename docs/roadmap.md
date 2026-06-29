@@ -27,6 +27,7 @@
 - Next-step action plan and copyable counterparty message.
 - Deduplicated local report history without storing original document text or evidence snippets, clearing the editor when a report is restored.
 - One-click current-workspace clearing for sensitive document text and the current report.
+- One-click local data reset for current text, report history, model settings, and AI send confirmation.
 - Suggested clause edits for flagged risks.
 - Copyable clause-edit pack for all proposed changes.
 - Copyable full Markdown report.

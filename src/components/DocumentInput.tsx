@@ -26,6 +26,7 @@ interface DocumentInputProps {
   onCancelAnalysis: () => void;
   onUpload: (file: File) => void;
   onClearWorkspace: () => void;
+  onClearLocalData: () => void;
   onSelectHistory: (item: SavedReport) => void;
   onClearHistory: () => void;
   onModelSettingsChange: (settings: ModelAnalyzerSettings) => void;
@@ -53,6 +54,7 @@ export function DocumentInput({
   onCancelAnalysis,
   onUpload,
   onClearWorkspace,
+  onClearLocalData,
   onSelectHistory,
   onClearHistory,
   onModelSettingsChange,
@@ -186,8 +188,20 @@ export function DocumentInput({
       </div>
 
       <div className="privacy-note">
-        <FolderOpen aria-hidden="true" />
-        <span>{modelSettings.enabled ? "默认先做本地分析；开启 AI 增强后才会调用你配置的模型服务。" : "当前在浏览器本地处理文本，不上传文件。"}</span>
+        <div>
+          <FolderOpen aria-hidden="true" />
+          <span>{modelSettings.enabled ? "默认先做本地分析；开启 AI 增强后才会调用你配置的模型服务。" : "当前在浏览器本地处理文本，不上传文件。"}</span>
+        </div>
+        <button
+          type="button"
+          onClick={onClearLocalData}
+          disabled={isUploading || isAnalyzing}
+          aria-label="清除本机数据"
+          title="清除当前正文、报告历史、模型设置和 AI 发送确认"
+        >
+          <Trash2 aria-hidden="true" />
+          清除本机数据
+        </button>
       </div>
     </section>
   );

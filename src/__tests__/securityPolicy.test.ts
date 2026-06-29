@@ -9,6 +9,7 @@ describe("security policy", () => {
     expect(securityPolicy).toContain("session-only by default");
     expect(securityPolicy).toContain("localStorage");
     expect(securityPolicy).toContain("does not store original document text or evidence snippets");
+    expect(securityPolicy).toContain("The local data reset action clears the visible document text");
     expect(securityPolicy).toContain("Offline app caching stores PlainDoc application files");
     expect(securityPolicy).toContain("first 12,000 characters");
     expect(securityPolicy).toContain("local redacted copy");

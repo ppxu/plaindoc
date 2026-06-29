@@ -15,6 +15,7 @@ import { createAnalysisRunTracker } from "./state/analysisRun";
 import { createDraftTextState } from "./state/draftText";
 import { createExampleSelectionState } from "./state/exampleSelection";
 import { createKindSelectionState } from "./state/kindSelection";
+import { clearLocalStoredData, createLocalDataResetState } from "./state/localDataReset";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createUploadedTextState } from "./state/uploadedText";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
@@ -95,6 +96,22 @@ export default function App() {
     setReport(cleared.report);
     setEvidenceSelection(cleared.evidenceSelection);
     setModelTextConsent(false);
+  }
+
+  function handleClearLocalData() {
+    invalidateCurrentAnalysis();
+    clearLocalStoredData();
+    const reset = createLocalDataResetState();
+    setText(reset.text);
+    setKind(reset.kind);
+    setSelectedExampleId(reset.selectedExampleId);
+    setError(reset.error);
+    setInputNotice(reset.notice);
+    setReport(reset.report);
+    setHistory(reset.history);
+    setModelSettings(reset.modelSettings);
+    setModelTextConsent(reset.modelTextConsent);
+    setEvidenceSelection(reset.evidenceSelection);
   }
 
   async function handleAnalyze() {
@@ -348,6 +365,7 @@ export default function App() {
           onCancelAnalysis={handleCancelAnalysis}
           onUpload={handleUpload}
           onClearWorkspace={handleClearWorkspace}
+          onClearLocalData={handleClearLocalData}
           onSelectHistory={handleSelectHistory}
           onClearHistory={handleClearHistory}
           onModelSettingsChange={handleModelSettingsChange}
