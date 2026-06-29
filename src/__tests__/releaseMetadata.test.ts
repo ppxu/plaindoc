@@ -1,13 +1,9 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-
-const root = resolve(__dirname, "../..");
+import html from "../../index.html?raw";
+import manifestText from "../../public/manifest.webmanifest?raw";
 
 describe("release metadata", () => {
   it("exposes social preview and install metadata from the app shell", () => {
-    const html = readFileSync(resolve(root, "index.html"), "utf8");
-
     expect(html).toContain('<meta name="theme-color" content="#0f172a" />');
     expect(html).toContain('<link rel="manifest" href="%BASE_URL%manifest.webmanifest" />');
     expect(html).toContain('<meta property="og:title" content="PlainDoc" />');
@@ -21,7 +17,7 @@ describe("release metadata", () => {
   });
 
   it("provides a GitHub Pages scoped web app manifest", () => {
-    const manifest = JSON.parse(readFileSync(resolve(root, "public/manifest.webmanifest"), "utf8")) as {
+    const manifest = JSON.parse(manifestText) as {
       name?: string;
       start_url?: string;
       scope?: string;
