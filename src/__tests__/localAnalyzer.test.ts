@@ -244,6 +244,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "insurance-renewal-not-guaranteed")).toBe(false);
   });
 
+  it("does not flag separately defined and accepted prior conditions as broad exclusion", () => {
+    const report = analyzeDocument({
+      text: "保险条款分别定义等待期和既往症；投保时已如实告知且保险人承保的事项，不得再作为拒赔理由。",
+      kind: "insurance"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "insurance-broad-waiting-period-exclusion")).toBe(false);
+  });
+
   it("flags waiting-period and renewal risks in insurance policies", () => {
     const example = documentExamples.find((item) => item.kind === "insurance");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "insurance" });
