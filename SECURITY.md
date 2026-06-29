@@ -14,6 +14,8 @@ API keys are session-only by default. They are written to browser localStorage o
 
 Recent report history is stored in the browser and does not store original document text or evidence snippets. It keeps report conclusions and suggestions so users can revisit recent analyses without retaining raw contract text.
 
+Offline app caching stores PlainDoc application files such as HTML, JavaScript, CSS, manifest, and icons in the browser Cache Storage so the GitHub Pages app can reopen after a successful visit. The offline cache is not used for original document text, evidence snippets, API keys, or report history.
+
 Before AI sending, PlainDoc performs a local sensitive-data category check and can generate a local redacted copy for common categories such as phone numbers, email addresses, ID numbers, and bank card numbers. The local redacted copy replaces detected values before the user confirms model sending.
 
 Users should still avoid pasting highly sensitive documents into any software they do not understand or control. Model providers, browser extensions, and the user's device may have their own security boundaries outside this repository.

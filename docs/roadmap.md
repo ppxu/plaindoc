@@ -43,6 +43,7 @@
 - Initial expanded example pack with two fictional scenarios per supported document type.
 - Instant local report refresh when switching bundled examples.
 - GitHub Pages release metadata, social preview image, and web app manifest.
+- GitHub Pages-scoped service worker and offline application-shell caching.
 
 ## 0.3 Document Ingestion
 

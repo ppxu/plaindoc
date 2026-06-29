@@ -28,6 +28,7 @@ Paste a contract, upload a selectable-text PDF, or load one of the bundled ficti
 - One-click copy for the full Markdown report.
 - Markdown export with document-type and timestamped filenames for saving or sharing the report.
 - Print-friendly report view for saving as PDF or bringing to an offline discussion.
+- Installable web app metadata and application-shell caching so the app can reopen offline after a successful visit.
 - Optional AI-enhanced analysis with local-rule fallback.
 - Local sensitive-data preflight warning and one-click redacted copy before AI model sending.
 - Explicit per-session confirmation before sending document text to a configured model service.
@@ -71,6 +72,7 @@ Privacy boundary:
 
 - When AI mode is off, PlainDoc does not send document text anywhere.
 - PDF text extraction runs in your browser before analysis.
+- Offline support stores PlainDoc application files in browser Cache Storage. It does not cache original document text, evidence snippets, API keys, or report history.
 - Recent report history is stored in your browser, deduplicates repeated analyses, and stores report conclusions and suggestions only. It does not store the original document text or evidence snippets. Restoring a history report clears the editor so stale text is not shown beside the restored report.
 - The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
@@ -117,6 +119,7 @@ Supported in this MVP:
 - Markdown report export with readable timestamped filenames.
 - Print-friendly report output for browser printing or saving as PDF.
 - GitHub Pages-ready metadata, social preview image, and web app manifest.
+- GitHub Pages-scoped service worker with offline application-shell caching.
 
 Not yet supported:
 
