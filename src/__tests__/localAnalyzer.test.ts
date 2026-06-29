@@ -152,6 +152,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "renovation-open-ended-change-orders")).toBe(false);
   });
 
+  it("does not flag prohibited unconfirmed change work as open-ended charges", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定任何增项未经业主书面确认不得先行施工，未经确认的费用不得在结算时计入总价，业主有权拒绝支付。",
+      kind: "renovation"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "renovation-open-ended-change-orders")).toBe(false);
+  });
+
   it("does not flag signed renovation acceptance milestones as deemed pass", () => {
     const report = analyzeDocument({
       text: "装修合同约定工程完工后由双方按合同标准共同验收，双方签字确认验收合格后支付尾款。",

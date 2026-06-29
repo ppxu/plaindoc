@@ -128,6 +128,7 @@ export const ruleDefinitions: RuleDefinition[] = [
     terms: ["先行施工", "结算时计入总价", "增项"],
     requiredTerms: ["增项"],
     supportingTerms: ["先行施工", "结算时计入总价", "结算时计入", "不影响已施工项目的付款义务"],
+    excludedTerms: ["不得先行施工", "未经确认不得先行施工", "未经确认的费用不得在结算时计入总价", "业主有权拒绝支付"],
     title: "增项可能先施工后收费",
     severity: "red",
     explanation: "合同允许承包方先做增项再结算，业主可能在不清楚价格时被动接受费用。",
