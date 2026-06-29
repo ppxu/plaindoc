@@ -98,17 +98,97 @@ function isAnalysisReport(value: unknown): value is AnalysisReport {
   if (!isRecord(value)) return false;
   return (
     typeof value.summary === "string" &&
+    isReportStatus(value.status) &&
     typeof value.score === "number" &&
+    Array.isArray(value.facts) &&
+    value.facts.every(isFact) &&
     Array.isArray(value.findings) &&
+    value.findings.every(isFinding) &&
     Array.isArray(value.checklist) &&
-    isRecord(value.actionPlan) &&
+    value.checklist.every(isChecklistItem) &&
+    isActionPlan(value.actionPlan) &&
+    Array.isArray(value.plainLanguage) &&
+    value.plainLanguage.every((line) => typeof line === "string") &&
     typeof value.generatedAt === "string" &&
+    isDocumentKind(value.documentKind) &&
+    typeof value.wordCount === "number" &&
+    isAnalysisSource(value.source) &&
+    (value.modelName === undefined || typeof value.modelName === "string") &&
+    (value.notice === undefined || typeof value.notice === "string") &&
     typeof value.disclaimer === "string"
   );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+function isDocumentKind(value: unknown): value is AnalysisReport["documentKind"] {
+  return (
+    value === "rental" ||
+    value === "employment" ||
+    value === "renovation" ||
+    value === "loan" ||
+    value === "insurance" ||
+    value === "unknown"
+  );
+}
+
+function isReportStatus(value: unknown): value is AnalysisReport["status"] {
+  return value === "safe_to_review" || value === "needs_attention" || value === "do_not_sign_directly";
+}
+
+function isAnalysisSource(value: unknown): value is AnalysisReport["source"] {
+  return value === "local" || value === "model";
+}
+
+function isSeverity(value: unknown): value is "red" | "yellow" | "green" {
+  return value === "red" || value === "yellow" || value === "green";
+}
+
+function isFact(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.label === "string" &&
+    typeof value.value === "string" &&
+    typeof value.confidence === "number" &&
+    (value.evidence === undefined || isEvidence(value.evidence))
+  );
+}
+
+function isFinding(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.id === "string" &&
+    typeof value.title === "string" &&
+    isSeverity(value.severity) &&
+    typeof value.explanation === "string" &&
+    typeof value.whyItMatters === "string" &&
+    typeof value.suggestion === "string" &&
+    (value.modification === undefined || typeof value.modification === "string") &&
+    (value.evidence === undefined || isEvidence(value.evidence))
+  );
+}
+
+function isChecklistItem(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return typeof value.question === "string" && typeof value.reason === "string" && isSeverity(value.severity);
+}
+
+function isActionPlan(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return (
+    (value.priority === "low" || value.priority === "medium" || value.priority === "high") &&
+    typeof value.title === "string" &&
+    Array.isArray(value.steps) &&
+    value.steps.every((step) => typeof step === "string") &&
+    typeof value.message === "string"
+  );
+}
+
+function isEvidence(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return typeof value.text === "string" && typeof value.start === "number" && typeof value.end === "number";
 }
 
 function createReportFingerprint(report: AnalysisReport): string {

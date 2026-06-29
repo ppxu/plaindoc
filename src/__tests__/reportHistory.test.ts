@@ -86,6 +86,39 @@ describe("report history", () => {
     expect(loadReportHistory(storage)).toEqual([]);
   });
 
+  it("ignores older saved reports that are missing fields required by the report UI", () => {
+    const storage = createMemoryStorage();
+    storage.setItem(
+      "plaindoc:report-history:v1",
+      JSON.stringify([
+        {
+          id: "partial-history",
+          title: "旧版报告",
+          createdAt: "2026-06-28T00:00:00.000Z",
+          report: {
+            summary: "旧版报告缺少状态、文件类型和来源字段。",
+            score: 64,
+            facts: [],
+            findings: [],
+            checklist: [],
+            actionPlan: {
+              priority: "medium",
+              title: "继续确认",
+              steps: [],
+              message: "请确认关键条款。"
+            },
+            plainLanguage: ["请继续确认关键条款。"],
+            generatedAt: "2026-06-28T00:00:00.000Z",
+            wordCount: 42,
+            disclaimer: "PlainDoc 提供文件阅读辅助。"
+          }
+        }
+      ])
+    );
+
+    expect(loadReportHistory(storage)).toEqual([]);
+  });
+
   it("keeps the current in-memory history when browser storage writes fail", () => {
     const storage = createFailingStorage({ failSetItem: true, failRemoveItem: true });
     const report = analyzeDocument({ text: "押金 5000 元，提前退租需赔偿两个月租金。", kind: "rental" });
