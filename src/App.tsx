@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Github, LockKeyhole, ScrollText } from "lucide-react";
 import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
@@ -17,6 +17,7 @@ import { createDraftTextState } from "./state/draftText";
 import { createExampleSelectionState } from "./state/exampleSelection";
 import { createKindSelectionState } from "./state/kindSelection";
 import { clearLocalStoredData, createLocalDataResetState } from "./state/localDataReset";
+import { shouldWarnBeforeLeaving } from "./state/leaveWarning";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createUploadedTextState } from "./state/uploadedText";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
@@ -44,6 +45,20 @@ export default function App() {
   const [modelTextConsent, setModelTextConsent] = useState(false);
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
   const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
+
+  useEffect(() => {
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      if (!shouldWarnBeforeLeaving({ text, selectedExampleId, isAnalyzing })) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [text, selectedExampleId, isAnalyzing]);
 
   function handleExampleChange(id: string) {
     const example = documentExamples.find((item) => item.id === id);
