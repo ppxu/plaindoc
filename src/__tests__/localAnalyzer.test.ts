@@ -55,6 +55,15 @@ describe("analyzeDocument", () => {
     expect(checklistQuestions.some((question) => question.includes("触发违约金"))).toBe(false);
   });
 
+  it("does not flag landlord-covered aging repairs as tenant repair burden", () => {
+    const report = analyzeDocument({
+      text: "租房合同约定承租人仅对人为使用不当造成的损坏负责；房屋主体结构、设施自然老化或非人为损坏由甲方负责维修。",
+      kind: "rental"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "rental-tenant-pays-all-repairs")).toBe(false);
+  });
+
   it("flags vague non-compete compensation in employment agreements", () => {
     const example = documentExamples.find((item) => item.kind === "employment");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "employment" });
