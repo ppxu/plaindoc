@@ -87,6 +87,9 @@ export default function App() {
   }
 
   function handleClearWorkspace() {
+    if (!confirmWorkspaceClear()) {
+      return;
+    }
     invalidateCurrentAnalysis();
     const cleared = createClearedWorkspaceState();
     setText(cleared.text);
@@ -440,5 +443,11 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
 function confirmLocalDataReset(): boolean {
   return window.confirm(
     "确定要清除本机数据吗？\n\n这会清空当前正文、当前报告、最近报告历史、模型设置和 AI 发送确认。离线应用缓存不会被删除。"
+  );
+}
+
+function confirmWorkspaceClear(): boolean {
+  return window.confirm(
+    "确定要清空当前文件吗？\n\n这会清空当前正文和当前报告，但不会删除最近报告历史或模型设置。"
   );
 }
