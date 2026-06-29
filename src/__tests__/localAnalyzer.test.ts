@@ -49,6 +49,17 @@ describe("analyzeDocument", () => {
     expect(proportionFacts).toContain("40%");
   });
 
+  it("extracts Chinese numeral deadlines and duration terms", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定签约后十五日内支付定金，工程质保期为二十四个月，验收后开始计算。",
+      kind: "renovation"
+    });
+    const deadlineFacts = report.facts.filter((fact) => fact.label.includes("期限")).map((fact) => fact.value);
+
+    expect(deadlineFacts).toContain("十五日内");
+    expect(deadlineFacts).toContain("二十四个月");
+  });
+
   it("flags stacked charges and acceleration in loan agreements", () => {
     const example = documentExamples.find((item) => item.kind === "loan");
     const report = analyzeDocument({ text: example?.content ?? "", kind: "loan" });
