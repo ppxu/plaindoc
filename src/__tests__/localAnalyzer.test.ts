@@ -89,6 +89,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "renovation-front-loaded-payment")).toBe(false);
   });
 
+  it("does not flag confirmed renovation change orders as open-ended charges", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定任何增项必须先由承包方提交报价单，经业主书面确认后方可施工和收费。",
+      kind: "renovation"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "renovation-open-ended-change-orders")).toBe(false);
+  });
+
   it("extracts percentage facts for payment milestones and rate clauses", () => {
     const report = analyzeDocument({
       text: "装修合同约定工程总价为人民币 20 万元，签约当日支付总价60%作为首期款，竣工验收后支付40%尾款。",
