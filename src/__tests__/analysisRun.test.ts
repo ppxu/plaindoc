@@ -19,4 +19,13 @@ describe("createAnalysisRunTracker", () => {
 
     expect(tracker.isCurrent(run)).toBe(false);
   });
+
+  it("cancels the current run explicitly", () => {
+    const tracker = createAnalysisRunTracker();
+    const run = tracker.begin();
+
+    tracker.cancel();
+
+    expect(tracker.isCurrent(run)).toBe(false);
+  });
 });

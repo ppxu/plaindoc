@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { FileText, FolderOpen, ShieldCheck, Sparkles, Trash2, Upload } from "lucide-react";
+import { FileText, FolderOpen, ShieldCheck, Sparkles, Square, Trash2, Upload } from "lucide-react";
 import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
@@ -22,6 +22,7 @@ interface DocumentInputProps {
   onKindChange: (kind: DocumentKind) => void;
   onExampleChange: (id: string) => void;
   onAnalyze: () => void;
+  onCancelAnalysis: () => void;
   onUpload: (file: File) => void;
   onClearWorkspace: () => void;
   onSelectHistory: (item: SavedReport) => void;
@@ -48,6 +49,7 @@ export function DocumentInput({
   onKindChange,
   onExampleChange,
   onAnalyze,
+  onCancelAnalysis,
   onUpload,
   onClearWorkspace,
   onSelectHistory,
@@ -166,10 +168,18 @@ export function DocumentInput({
       {error ? <p className="error-message">{error}</p> : null}
       {notice ? <p className="input-notice">{notice}</p> : null}
 
-      <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing || isUploading}>
-        <Sparkles aria-hidden="true" />
-        {analyzeButtonLabel(isUploading, isAnalyzing, modelSettings, modelTextConsent)}
-      </button>
+      <div className="analysis-actions">
+        <button className="primary-action" type="button" onClick={onAnalyze} disabled={isAnalyzing || isUploading}>
+          <Sparkles aria-hidden="true" />
+          {analyzeButtonLabel(isUploading, isAnalyzing, modelSettings, modelTextConsent)}
+        </button>
+        {isAnalyzing ? (
+          <button className="cancel-analysis-button" type="button" onClick={onCancelAnalysis}>
+            <Square aria-hidden="true" />
+            取消 AI 分析
+          </button>
+        ) : null}
+      </div>
 
       <div className="privacy-note">
         <FolderOpen aria-hidden="true" />

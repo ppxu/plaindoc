@@ -1,5 +1,6 @@
 export interface AnalysisRunTracker {
   begin: () => number;
+  cancel: () => number;
   invalidate: () => number;
   isCurrent: (runId: number) => boolean;
 }
@@ -9,6 +10,10 @@ export function createAnalysisRunTracker(initialRunId = 0): AnalysisRunTracker {
 
   return {
     begin: () => {
+      currentRunId += 1;
+      return currentRunId;
+    },
+    cancel: () => {
       currentRunId += 1;
       return currentRunId;
     },

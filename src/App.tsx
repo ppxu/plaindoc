@@ -249,6 +249,12 @@ export default function App() {
     setModelTextConsent(checked);
   }
 
+  function handleCancelAnalysis() {
+    analysisRunTracker.current.cancel();
+    setIsAnalyzing(false);
+    setInputNotice("已取消本次 AI 增强分析，当前报告保持为本地规则结果。");
+  }
+
   function invalidateCurrentAnalysis() {
     analysisRunTracker.current.invalidate();
     setIsAnalyzing(false);
@@ -296,6 +302,7 @@ export default function App() {
           onKindChange={handleKindChange}
           onExampleChange={handleExampleChange}
           onAnalyze={handleAnalyze}
+          onCancelAnalysis={handleCancelAnalysis}
           onUpload={handleUpload}
           onClearWorkspace={handleClearWorkspace}
           onSelectHistory={handleSelectHistory}

@@ -372,9 +372,16 @@ textarea:focus,
   line-height: 1.45;
 }
 
-.primary-action {
+.analysis-actions {
   display: inline-flex;
   width: 100%;
+  gap: 10px;
+}
+
+.primary-action {
+  display: inline-flex;
+  min-width: 0;
+  flex: 1 1 auto;
   min-height: 48px;
   align-items: center;
   justify-content: center;
@@ -395,6 +402,33 @@ textarea:focus,
 .primary-action:disabled {
   cursor: wait;
   opacity: 0.68;
+}
+
+.cancel-analysis-button {
+  display: inline-flex;
+  min-height: 48px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 13px;
+  color: #7a332e;
+  background: #fff;
+  border: 1px solid #dfc8c3;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.cancel-analysis-button svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.cancel-analysis-button:hover {
+  color: #9b3329;
+  border-color: #d59c93;
 }
 
 .privacy-note {
@@ -1245,7 +1279,15 @@ textarea:focus,
     flex-direction: column;
   }
 
+  .analysis-actions {
+    flex-direction: column;
+  }
+
   .clear-workspace-button {
+    width: 100%;
+  }
+
+  .cancel-analysis-button {
     width: 100%;
   }
 
