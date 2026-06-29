@@ -184,6 +184,15 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "loan-fees-deducted-from-principal")).toBe(false);
   });
 
+  it("does not flag no-fee early repayment as costly prepayment", () => {
+    const report = analyzeDocument({
+      text: "借款合同约定借款人可提前还款，利息按实际占用天数计算，不收提前还款手续费，也不收剩余期限利息。",
+      kind: "loan"
+    });
+
+    expect(report.findings.some((finding) => finding.id === "loan-costly-prepayment")).toBe(false);
+  });
+
   it("extracts Chinese ten-thousand-unit and decimal money amounts without truncation", () => {
     const report = analyzeDocument({
       text: "借款本金为人民币 10 万元，平台服务费为1.5万元，逾期后还需支付罚息。",
