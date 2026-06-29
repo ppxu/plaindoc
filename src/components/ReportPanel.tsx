@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
+import { downloadMarkdownFile } from "../export/downloadMarkdown";
 import { buildReportMarkdownFilename } from "../export/downloadFilename";
 import { reportToMarkdown } from "../export/markdown";
 import { printReport } from "../export/printReport";
@@ -20,23 +21,26 @@ interface ReportPanelProps {
 
 export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRevealEvidence }: ReportPanelProps) {
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
+  const [downloadReportState, setDownloadReportState] = useState<"idle" | "downloaded" | "failed">("idle");
   const [printState, setPrintState] = useState<"idle" | "failed">("idle");
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
   const markdownReport = reportToMarkdown(report);
+
+  useEffect(() => {
+    setCopyReportState("idle");
+    setDownloadReportState("idle");
+    setPrintState("idle");
+  }, [markdownReport]);
 
   async function copyReport() {
     setCopyReportState((await copyTextToClipboard(markdownReport)) ? "copied" : "failed");
   }
 
   function downloadMarkdown() {
-    const blob = new Blob([markdownReport], { type: "text/markdown;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = buildReportMarkdownFilename(report);
-    anchor.click();
-    URL.revokeObjectURL(url);
+    setDownloadReportState(
+      downloadMarkdownFile(markdownReport, buildReportMarkdownFilename(report)) ? "downloaded" : "failed"
+    );
   }
 
   function printCurrentReport() {
@@ -71,7 +75,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
           </button>
           <button className="ghost-button" type="button" onClick={downloadMarkdown}>
             <Download aria-hidden="true" />
-            导出 Markdown
+            {downloadReportLabel(downloadReportState)}
           </button>
           <button className="ghost-button" type="button" onClick={printCurrentReport}>
             <Printer aria-hidden="true" />
@@ -82,6 +86,12 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
 
       {report.notice ? <p className="report-notice">{report.notice}</p> : null}
       {printState === "failed" ? <p className="report-notice">当前浏览器不支持自动打开打印窗口，请使用浏览器菜单打印。</p> : null}
+      {downloadReportState === "failed" ? (
+        <div className="report-copy-fallback">
+          <span>浏览器没有允许自动下载。可以复制完整 Markdown 报告后手动保存为 .md 文件。</span>
+          <textarea readOnly value={markdownReport} aria-label="完整 Markdown 报告，可手动保存" />
+        </div>
+      ) : null}
       {copyReportState === "failed" ? (
         <div className="report-copy-fallback">
           <span>浏览器没有允许自动复制。可以在这里手动全选复制完整报告。</span>
@@ -148,6 +158,12 @@ function copyReportLabel(state: "idle" | "copied" | "failed"): string {
   if (state === "copied") return "已复制";
   if (state === "failed") return "复制失败";
   return "复制报告";
+}
+
+function downloadReportLabel(state: "idle" | "downloaded" | "failed"): string {
+  if (state === "downloaded") return "已导出";
+  if (state === "failed") return "导出失败";
+  return "导出 Markdown";
 }
 
 function sourceText(report: AnalysisReport): string {
