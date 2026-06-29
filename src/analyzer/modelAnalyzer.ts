@@ -8,7 +8,11 @@ import type {
   Severity
 } from "../types";
 import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
-import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "./modelEndpointSecurity";
+import {
+  getModelEndpointSecurity,
+  modelEndpointNeedsApiKey,
+  modelEndpointSecurityMessage
+} from "./modelEndpointSecurity";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
 
 interface ChatCompletionResponse {
@@ -51,7 +55,8 @@ export async function analyzeWithModel(
   options: AnalyzeWithModelOptions = {}
 ): Promise<AnalysisReport> {
   const runtimeSettings = normalizeModelSettingsForRuntime(settings);
-  if (!runtimeSettings.enabled || !runtimeSettings.apiKey.trim()) {
+  const needsApiKey = modelEndpointNeedsApiKey(runtimeSettings.baseUrl);
+  if (!runtimeSettings.enabled || (needsApiKey && !runtimeSettings.apiKey.trim())) {
     return {
       ...localReport,
       notice: "AI 增强未启用或缺少 API key，当前使用本地规则分析。"
@@ -65,15 +70,18 @@ export async function analyzeWithModel(
 
   const preparedDocument = prepareModelDocumentText(input.text);
   const requestAbort = createModelRequestAbort(options);
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json"
+  };
+  if (runtimeSettings.apiKey.trim()) {
+    headers.Authorization = `Bearer ${runtimeSettings.apiKey.trim()}`;
+  }
 
   try {
     const response = await fetch(`${runtimeSettings.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
       method: "POST",
       signal: requestAbort.signal,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${runtimeSettings.apiKey.trim()}`
-      },
+      headers,
       body: JSON.stringify({
         model: runtimeSettings.model,
         temperature: 0.2,

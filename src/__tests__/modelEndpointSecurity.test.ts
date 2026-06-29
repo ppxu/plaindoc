@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getModelEndpointSecurity } from "../analyzer/modelEndpointSecurity";
+import { getModelEndpointSecurity, modelEndpointNeedsApiKey } from "../analyzer/modelEndpointSecurity";
 
 describe("model endpoint security", () => {
   it("allows HTTPS model endpoints", () => {
@@ -24,5 +24,13 @@ describe("model endpoint security", () => {
       ok: false,
       reason: "invalid_url"
     });
+  });
+
+  it("does not require API keys for local model endpoints", () => {
+    expect(modelEndpointNeedsApiKey("http://localhost:11434/v1")).toBe(false);
+    expect(modelEndpointNeedsApiKey("http://127.0.0.1:11434/v1")).toBe(false);
+    expect(modelEndpointNeedsApiKey("http://[::1]:11434/v1")).toBe(false);
+    expect(modelEndpointNeedsApiKey("https://api.openai.com/v1")).toBe(true);
+    expect(modelEndpointNeedsApiKey("not a url")).toBe(true);
   });
 });

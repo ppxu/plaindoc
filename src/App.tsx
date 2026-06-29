@@ -3,7 +3,11 @@ import { Github, LockKeyhole, ScrollText } from "lucide-react";
 import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
 import { analyzeWithModel } from "./analyzer/modelAnalyzer";
-import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "./analyzer/modelEndpointSecurity";
+import {
+  getModelEndpointSecurity,
+  modelEndpointNeedsApiKey,
+  modelEndpointSecurityMessage
+} from "./analyzer/modelEndpointSecurity";
 import { clearModelSettings, loadModelSettings, normalizeModelSettingsForRuntime, saveModelSettings } from "./analyzer/modelSettings";
 import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
@@ -161,6 +165,7 @@ export default function App() {
 
     const runtimeModelSettings = normalizeModelSettingsForRuntime(modelSettings);
     const endpointSecurity = getModelEndpointSecurity(runtimeModelSettings.baseUrl);
+    const needsModelApiKey = modelEndpointNeedsApiKey(runtimeModelSettings.baseUrl);
     if (modelSettings.enabled && !endpointSecurity.ok) {
       setHistory(saveReportToHistory(localReport));
       setInputNotice(modelEndpointSecurityMessage(endpointSecurity));
@@ -170,7 +175,7 @@ export default function App() {
     const canUseModel = canSendDocumentTextToModel(modelSettings, modelTextConsent);
     if (!modelSettings.enabled || !canUseModel) {
       setHistory(saveReportToHistory(localReport));
-      if (modelSettings.enabled && !modelSettings.apiKey.trim()) {
+      if (modelSettings.enabled && needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
         setInputNotice("AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。");
       } else if (modelSettings.enabled && !modelTextConsent) {
         setInputNotice("未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。");
@@ -190,7 +195,7 @@ export default function App() {
       }
       setReport(modelReport);
       setHistory(saveReportToHistory(modelReport));
-      if (!modelSettings.apiKey.trim()) {
+      if (needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
         setError("AI 增强已开启，但缺少 API key，已回退到本地分析。");
       }
     } catch (caught) {

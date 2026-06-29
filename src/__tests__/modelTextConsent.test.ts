@@ -11,13 +11,28 @@ const baseSettings: ModelAnalyzerSettings = {
 };
 
 describe("model text consent", () => {
-  it("allows model calls only after AI is enabled, an API key exists, and the user has confirmed text sending", () => {
+  it("allows remote model calls only after AI is enabled, an API key exists, and the user has confirmed text sending", () => {
     expect(canSendDocumentTextToModel(baseSettings, true)).toBe(true);
     expect(canSendDocumentTextToModel(baseSettings, false)).toBe(false);
     expect(canSendDocumentTextToModel({ ...baseSettings, enabled: false }, true)).toBe(false);
     expect(canSendDocumentTextToModel({ ...baseSettings, apiKey: " " }, true)).toBe(false);
     expect(canSendDocumentTextToModel({ ...baseSettings, baseUrl: "http://example.com/v1" }, true)).toBe(false);
-    expect(canSendDocumentTextToModel({ ...baseSettings, baseUrl: "http://localhost:11434/v1" }, true)).toBe(true);
+  });
+
+  it("allows local model calls without an API key after text sending is confirmed", () => {
+    expect(
+      canSendDocumentTextToModel(
+        {
+          ...baseSettings,
+          baseUrl: "http://localhost:11434/v1",
+          apiKey: " "
+        },
+        true
+      )
+    ).toBe(true);
+    expect(canSendDocumentTextToModel({ ...baseSettings, baseUrl: "http://localhost:11434/v1", apiKey: " " }, false)).toBe(
+      false
+    );
   });
 
   it("revokes confirmation when the model destination or credential changes", () => {

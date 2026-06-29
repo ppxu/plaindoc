@@ -1,5 +1,9 @@
 import { BrainCircuit, KeyRound, ShieldAlert, Trash2 } from "lucide-react";
-import { getModelEndpointSecurity, modelEndpointSecurityMessage } from "../analyzer/modelEndpointSecurity";
+import {
+  getModelEndpointSecurity,
+  modelEndpointNeedsApiKey,
+  modelEndpointSecurityMessage
+} from "../analyzer/modelEndpointSecurity";
 import {
   applyModelProviderPreset,
   getMatchingModelProviderPresetId,
@@ -32,6 +36,7 @@ export function ModelSettingsPanel({
   const runtimeSettings = normalizeModelSettingsForRuntime(settings);
   const endpointSecurity = getModelEndpointSecurity(runtimeSettings.baseUrl);
   const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
+  const needsApiKey = modelEndpointNeedsApiKey(runtimeSettings.baseUrl);
   const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
 
   function update(partial: Partial<ModelAnalyzerSettings>) {
@@ -138,7 +143,7 @@ export function ModelSettingsPanel({
             <input
               type="checkbox"
               checked={modelTextConsent}
-              disabled={!runtimeSettings.apiKey.trim() || !endpointSecurity.ok}
+              disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}
               onChange={(event) => onModelTextConsentChange(event.target.checked)}
             />
           </label>

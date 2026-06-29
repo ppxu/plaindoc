@@ -12,6 +12,6 @@ describe("model endpoint security chrome", () => {
     expect(modelSettingsPanelSource).toContain("getModelEndpointSecurity(runtimeSettings.baseUrl)");
     expect(modelSettingsPanelSource).toContain("modelEndpointSecurityMessage(endpointSecurity)");
     expect(modelSettingsPanelSource).toContain("model-endpoint-warning");
-    expect(modelSettingsPanelSource).toContain("disabled={!runtimeSettings.apiKey.trim() || !endpointSecurity.ok}");
+    expect(modelSettingsPanelSource).toContain("disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}");
   });
 });
