@@ -60,6 +60,18 @@ describe("analyzeDocument", () => {
     expect(proportionFacts).toContain("40％");
   });
 
+  it("extracts facts that use full-width digits from copied PDFs", () => {
+    const report = analyzeDocument({
+      text: "装修合同约定工程总价为人民币２０万元，签约当日支付６０％首期款，工期自２０２６年７月１日起算。",
+      kind: "renovation"
+    });
+    const factValues = report.facts.map((fact) => fact.value);
+
+    expect(factValues).toContain("人民币２０万元");
+    expect(factValues).toContain("６０％");
+    expect(factValues).toContain("２０２６年７月１日");
+  });
+
   it("extracts Chinese numeral deadlines and duration terms", () => {
     const report = analyzeDocument({
       text: "装修合同约定签约后十五日内支付定金，工程质保期为二十四个月，验收后开始计算。",

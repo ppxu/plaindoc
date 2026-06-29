@@ -1,7 +1,8 @@
 import type { EvidenceSnippet } from "../types";
 
-const MONEY_NUMBER_PATTERN = String.raw`(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?`;
-const CHINESE_MONEY_NUMBER_PATTERN = String.raw`[零〇一二两三四五六七八九十百千万亿壹贰叁肆伍陆柒捌玖拾佰仟萬億]+`;
+const DIGIT_PATTERN = String.raw`[0-9０-９]`;
+const MONEY_NUMBER_PATTERN = String.raw`(?:${DIGIT_PATTERN}{1,3}(?:[,，]${DIGIT_PATTERN}{3})+|${DIGIT_PATTERN}+)(?:[.．]${DIGIT_PATTERN}+)?`;
+const CHINESE_MONEY_NUMBER_PATTERN = String.raw`[零〇一二两三四五六七八九十百壹贰叁肆伍陆柒捌玖拾佰仟][零〇一二两三四五六七八九十百千万亿壹贰叁肆伍陆柒捌玖拾佰仟萬億]*`;
 const MONEY_PATTERN = new RegExp(
   [
     String.raw`(?:人民币|¥|￥)\s?${MONEY_NUMBER_PATTERN}(?:\s?万)?(?:\s?(?:元|块))?`,
@@ -10,16 +11,19 @@ const MONEY_PATTERN = new RegExp(
   ].join("|"),
   "g"
 );
-const PERCENTAGE_PATTERN = /\d+(?:\.\d+)?\s?[%％]|百分之[零〇一二两三四五六七八九十百千万点]+/g;
+const PERCENTAGE_PATTERN = new RegExp(
+  String.raw`${DIGIT_PATTERN}+(?:[.．]${DIGIT_PATTERN}+)?\s?[%％]|百分之[零〇一二两三四五六七八九十百千万点]+`,
+  "g"
+);
 const CHINESE_DATE_NUMBER_PATTERN = String.raw`[零〇一二两三四五六七八九十百]+`;
 const CHINESE_YEAR_PATTERN = String.raw`[零〇○一二三四五六七八九]{4}`;
 const DATE_PATTERN = new RegExp(
   [
-    String.raw`\d{4}\s?年\s?\d{1,2}\s?月\s?\d{1,2}\s?日`,
-    String.raw`\d{4}[/-]\d{1,2}[/-]\d{1,2}`,
+    String.raw`${DIGIT_PATTERN}{4}\s?年\s?${DIGIT_PATTERN}{1,2}\s?月\s?${DIGIT_PATTERN}{1,2}\s?日`,
+    String.raw`${DIGIT_PATTERN}{4}[/-]${DIGIT_PATTERN}{1,2}[/-]${DIGIT_PATTERN}{1,2}`,
     String.raw`${CHINESE_YEAR_PATTERN}\s?年\s?${CHINESE_DATE_NUMBER_PATTERN}\s?月\s?${CHINESE_DATE_NUMBER_PATTERN}\s?(?:日|号)`,
-    String.raw`\d{1,2}\s?个月`,
-    String.raw`\d{1,3}\s?日`,
+    String.raw`${DIGIT_PATTERN}{1,2}\s?个月`,
+    String.raw`${DIGIT_PATTERN}{1,3}\s?日`,
     String.raw`${CHINESE_DATE_NUMBER_PATTERN}\s?(?:日|天|个月|月|年)(?:内|前|后)?`
   ].join("|"),
   "g"
