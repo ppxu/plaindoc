@@ -171,11 +171,8 @@ export default function App() {
       return;
     }
 
-    if (text.trim().length < 80) {
-      setError("文本较短，报告可能不完整。你仍然可以继续生成。");
-    } else {
-      setError("");
-    }
+    const shortTextNotice = text.trim().length < 80 ? "文本较短，报告可能不完整。你仍然可以继续生成。" : "";
+    setError("");
 
     const resolvedKind = resolveAnalysisKind(text, kind);
     const localReport = analyzeDocument({ text, kind: resolvedKind.kind });
@@ -184,7 +181,7 @@ export default function App() {
       setKind(resolvedKind.kind);
       setSelectedExampleId("");
     }
-    setInputNotice(resolvedKind.notice);
+    setInputNotice(mergeNotices(shortTextNotice, resolvedKind.notice));
 
     const runtimeModelSettings = normalizeModelSettingsForRuntime(modelSettings);
     const endpointSecurity = getModelEndpointSecurity(runtimeModelSettings.baseUrl);
@@ -538,6 +535,10 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
     kind: selectedKind,
     notice: `已识别为${getDocumentKindLabel(detection.kind)}，当前规则包匹配。`
   };
+}
+
+function mergeNotices(...notices: string[]): string {
+  return notices.filter(Boolean).join(" ");
 }
 
 function focusReportPanel(reportPanelRef: RefObject<HTMLElement | null>): void {
