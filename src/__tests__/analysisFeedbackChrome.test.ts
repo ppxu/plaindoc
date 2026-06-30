@@ -10,6 +10,16 @@ describe("analysis feedback chrome", () => {
     expect(emptyTextBranch).toContain('setInputNotice("");');
   });
 
+  it("clears stale reports when analysis is blocked by empty text", () => {
+    const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
+    const emptyTextBranch = analyzeHandler.slice(analyzeHandler.indexOf("if (!text.trim())"), analyzeHandler.indexOf("const shortTextNotice"));
+
+    expect(emptyTextBranch).toContain('const emptyInputReport = analyzeDocument({ text: "", kind });');
+    expect(emptyTextBranch).toContain("setReport(emptyInputReport);");
+    expect(emptyTextBranch).toContain("setEvidenceSelection(null);");
+    expect(emptyTextBranch).toContain('setSelectedExampleId("");');
+  });
+
   it("shows short-text analysis feedback as a non-blocking notice", () => {
     const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
 

@@ -168,8 +168,12 @@ export default function App() {
     abortCurrentModelRequest();
     const runId = analysisRunTracker.current.begin();
     if (!text.trim()) {
+      const emptyInputReport = analyzeDocument({ text: "", kind });
       setError("请先粘贴文件内容、选择样例或上传文本文件。");
       setInputNotice("");
+      setReport(emptyInputReport);
+      setEvidenceSelection(null);
+      setSelectedExampleId("");
       return;
     }
 
