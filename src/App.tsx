@@ -408,6 +408,7 @@ export default function App() {
       setReport(uploaded.report);
       setEvidenceSelection(uploaded.evidenceSelection);
       setModelTextConsent(uploaded.modelTextConsent);
+      focusReportPanel(reportPanelRef);
     } catch {
       if (!isCurrentUploadRead(uploadRunId)) {
         return;

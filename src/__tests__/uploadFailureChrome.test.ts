@@ -76,6 +76,19 @@ describe("upload failure chrome", () => {
     expect(appSource).toContain("function isCurrentUploadRead(runId: number): boolean");
   });
 
+  it("moves focus to the generated report after a successful upload", () => {
+    const uploadHandler = appSource.slice(
+      appSource.indexOf("async function handleUpload"),
+      appSource.indexOf("async function copyChecklist")
+    );
+
+    expect(uploadHandler).toContain("setReport(uploaded.report);");
+    expect(uploadHandler).toContain("focusReportPanel(reportPanelRef);");
+    expect(uploadHandler.indexOf("setReport(uploaded.report);")).toBeLessThan(
+      uploadHandler.indexOf("focusReportPanel(reportPanelRef);")
+    );
+  });
+
   it("supports dropping a PDF or text file onto the upload strip", () => {
     expect(documentInputSource).toContain("handleUploadDrop");
     expect(documentInputSource).toContain("handleUploadDragOver");
