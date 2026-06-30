@@ -4,17 +4,18 @@ PlainDoc turns everyday professional documents into plain-language risk notes an
 
 The first version focuses on rental, employment, renovation, loan, and insurance documents. It is local-first, open-source, and runnable without API keys. An optional AI-enhanced mode can call an OpenAI-compatible model service that the user configures.
 
-> Know what can hurt you before you sign.
+> 签字前，先看懂哪里可能伤到你。
 
 ![PlainDoc desktop screenshot](docs/assets/plaindoc-desktop.png)
 
 ## What It Does
 
-Paste a contract, upload a selectable-text PDF, or load one of the bundled fictional scenarios. PlainDoc produces:
+Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md` file, or load one of the bundled fictional scenarios. PlainDoc produces:
 
 - A one-sentence summary.
 - Key facts such as money, percentages, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
+- A live document-text counter that helps confirm whether pasted or uploaded content was read.
 - Red/yellow/green risk cards with evidence snippets.
 - One-click evidence locating back to the original text in the editor, with paragraph fallback when the snippet was lightly edited.
 - A priority brief that surfaces the first issues to negotiate.
@@ -28,6 +29,7 @@ Paste a contract, upload a selectable-text PDF, or load one of the bundled ficti
 - One-click local data reset for clearing the current text, recent report history, model settings, and AI send confirmation.
 - One-click copy for the full Markdown report.
 - Markdown export with document-type and timestamped filenames for saving or sharing the report.
+- Markdown reports include a PlainDoc source link so copied or exported reports remain traceable.
 - Print-friendly report view for saving as PDF or bringing to an offline discussion.
 - Installable web app metadata and application-shell caching so the app can reopen offline after a successful visit.
 - Canonical URL, robots.txt, and sitemap.xml for the GitHub Pages demo.
@@ -101,7 +103,9 @@ Currently supported:
 
 - Paste text.
 - Pasted or edited text immediately refreshes the local-rule report so the visible report stays aligned with the editor.
-- Upload selectable-text PDF, `.txt`, and `.md` files.
+- Click **点击上传或拖入 PDF / .txt / .md 文件** to upload selectable-text PDF, `.txt`, and `.md` files.
+- Drag PDF, `.txt`, and `.md` files onto the upload strip, with a visible **松开即可读取文件** drop hint.
+- The editor header 实时显示已输入字符数，方便确认粘贴或上传是否完整。
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.
 - Switching bundled examples immediately refreshes the local-rule report so the demo text and report stay aligned.
@@ -130,6 +134,7 @@ Currently supported:
 - One-click current-workspace clearing for sensitive document text and the current report.
 - One-click local data reset for current text, report history, model settings, and AI send confirmation.
 - Markdown report export with readable timestamped filenames.
+- Markdown 报告会标明 PlainDoc 来源链接：https://ppxu.github.io/plaindoc/
 - Print-friendly report output for browser printing or saving as PDF.
 - GitHub Pages-ready metadata, PNG social preview image, and web app manifest.
 - GitHub Pages-scoped service worker with offline application-shell caching.

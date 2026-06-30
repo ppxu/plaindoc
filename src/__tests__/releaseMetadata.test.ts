@@ -107,9 +107,18 @@ describe("release metadata", () => {
   it("uses production-ready public wording instead of internal launch-stage labels", () => {
     expect(appSource).toContain("本地优先");
     expect(appSource).toContain("阅读辅助，不替代专业建议");
+    expect(readme).toContain("签字前，先看懂哪里可能伤到你。");
+    expect(readme).not.toContain("Know what can hurt you before you sign.");
     expect(appSource).not.toContain("MVP");
     expect(readme).not.toContain("MVP");
     expect(roadmap).not.toContain("MVP");
+  });
+
+  it("keeps the README aligned with shipped document and report workflows", () => {
+    expect(readme).toContain("点击上传或拖入 PDF / .txt / .md 文件");
+    expect(readme).toContain("实时显示已输入字符数");
+    expect(readme).toContain("Markdown 报告会标明 PlainDoc 来源链接");
+    expect(readme).toContain("https://ppxu.github.io/plaindoc/");
   });
 });
 
