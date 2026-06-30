@@ -100,7 +100,7 @@ describe("release metadata", () => {
     expect(robotsText).toContain("Sitemap: https://ppxu.github.io/plaindoc/sitemap.xml");
 
     expect(sitemapText).toContain("<loc>https://ppxu.github.io/plaindoc/</loc>");
-    expect(sitemapText).toContain("<lastmod>2026-06-29</lastmod>");
+    expect(sitemapText).toContain("<lastmod>2026-06-30</lastmod>");
     expect(sitemapText).not.toContain("localhost");
   });
 
