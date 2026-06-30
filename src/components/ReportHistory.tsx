@@ -8,10 +8,6 @@ interface ReportHistoryProps {
 }
 
 export function ReportHistory({ items, onSelect, onClear }: ReportHistoryProps) {
-  if (!items.length) {
-    return null;
-  }
-
   return (
     <section className="report-history" aria-label="Recent local reports">
       <div className="history-heading">
@@ -19,19 +15,27 @@ export function ReportHistory({ items, onSelect, onClear }: ReportHistoryProps) 
           <Clock3 aria-hidden="true" />
           最近报告
         </span>
-        <button type="button" onClick={onClear} aria-label="清空本地报告历史">
-          <Trash2 aria-hidden="true" />
-        </button>
+        {items.length ? (
+          <button type="button" onClick={onClear} aria-label="清空本地报告历史">
+            <Trash2 aria-hidden="true" />
+          </button>
+        ) : null}
       </div>
 
-      <div className="history-list">
-        {items.map((item) => (
-          <button key={item.id} type="button" onClick={() => onSelect(item)} className="history-item">
-            <strong>{item.title}</strong>
-            <span>{formatDate(item.createdAt)} · {sourceLabel(item.report)}</span>
-          </button>
-        ))}
-      </div>
+      {items.length ? (
+        <div className="history-list">
+          {items.map((item) => (
+            <button key={item.id} type="button" onClick={() => onSelect(item)} className="history-item">
+              <strong>{item.title}</strong>
+              <span>
+                {formatDate(item.createdAt)} · {sourceLabel(item.report)}
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="history-empty-state">生成风险清单后会在这里显示最近报告。</div>
+      )}
       <p>历史只保存在本机浏览器，保存报告结论和建议，不保存原始正文或证据片段。</p>
     </section>
   );

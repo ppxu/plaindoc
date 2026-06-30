@@ -24,4 +24,12 @@ describe("report history clearing chrome", () => {
     expect(clearHistoryIndex).toBeGreaterThan(clearHandlerIndex);
     expect(invalidateIndex).toBeLessThan(clearHistoryIndex);
   });
+
+  it("shows a privacy-aware empty state before any reports are saved", () => {
+    expect(reportHistorySource).not.toContain("return null");
+    expect(reportHistorySource).toContain("history-empty-state");
+    expect(reportHistorySource).toContain("生成风险清单后会在这里显示最近报告。");
+    expect(reportHistorySource).toContain("{items.length ? (");
+    expect(reportHistorySource).toContain("历史只保存在本机浏览器");
+  });
 });
