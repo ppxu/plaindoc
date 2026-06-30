@@ -12,7 +12,7 @@ describe("model provider presets", () => {
     expect(modelProviderPresets.every((preset) => preset.baseUrl.endsWith("/v1"))).toBe(true);
   });
 
-  it("updates endpoint and model without touching consent-sensitive settings", () => {
+  it("clears provider-scoped credentials when switching endpoint presets", () => {
     const settings: ModelAnalyzerSettings = {
       enabled: true,
       baseUrl: "https://example.com/v1",
@@ -25,8 +25,8 @@ describe("model provider presets", () => {
       enabled: true,
       baseUrl: "https://api.deepseek.com/v1",
       model: "deepseek-chat",
-      apiKey: "secret",
-      rememberApiKey: true
+      apiKey: "",
+      rememberApiKey: false
     });
   });
 

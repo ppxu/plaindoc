@@ -50,10 +50,15 @@ export function applyModelProviderPreset(
     return settings;
   }
 
+  const changesProviderScope =
+    settings.baseUrl.trim().replace(/\/+$/, "") !== preset.baseUrl.replace(/\/+$/, "") ||
+    settings.model.trim() !== preset.model;
   return {
     ...settings,
     baseUrl: preset.baseUrl,
-    model: preset.model
+    model: preset.model,
+    apiKey: changesProviderScope ? "" : settings.apiKey,
+    rememberApiKey: changesProviderScope ? false : settings.rememberApiKey
   };
 }
 
