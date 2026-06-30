@@ -31,6 +31,7 @@ import { copyTextToClipboard } from "./utils/clipboard";
 import { resolveEvidenceSelection } from "./utils/evidenceSelection";
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
+const DRAFT_SAVE_FAILED_NOTICE = "正文已更新，但浏览器没有允许保存本机草稿；刷新页面后这次正文可能不会自动恢复。";
 
 type ModelConnectionStatus = { tone: "success" | "error"; message: string } | null;
 
@@ -65,7 +66,10 @@ export default function App() {
       return;
     }
 
-    saveDocumentDraft({ text, kind });
+    const draftSaveResult = saveDocumentDraft({ text, kind });
+    if (draftSaveResult === "failed") {
+      setInputNotice((notice) => mergeNoticeOnce(notice, DRAFT_SAVE_FAILED_NOTICE));
+    }
   }, [text, kind, selectedExampleId]);
 
   useEffect(() => {
@@ -638,6 +642,10 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
 
 function mergeNotices(...notices: string[]): string {
   return notices.filter(Boolean).join(" ");
+}
+
+function mergeNoticeOnce(notice: string, nextNotice: string): string {
+  return notice.includes(nextNotice) ? notice : mergeNotices(notice, nextNotice);
 }
 
 function mergeReportNotice(report: AnalysisReport, baseNotice: string): AnalysisReport {

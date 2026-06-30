@@ -16,4 +16,9 @@ describe("document draft chrome", () => {
     expect(appSource).toContain("clearDocumentDraft();");
     expect(appSource.indexOf("if (selectedExampleId)")).toBeLessThan(appSource.indexOf("clearDocumentDraft();"));
   });
+
+  it("shows a non-blocking notice when the browser cannot save a local draft", () => {
+    expect(appSource).toContain('draftSaveResult === "failed"');
+    expect(appSource).toContain("浏览器没有允许保存本机草稿");
+  });
 });

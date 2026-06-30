@@ -40,7 +40,7 @@ describe("draft text state", () => {
     const storage = createMemoryStorage();
     const text = "租赁合同：押金 5000 元，提前退租扣两个月租金。";
 
-    saveDocumentDraft({ text, kind: "rental" }, storage);
+    expect(saveDocumentDraft({ text, kind: "rental" }, storage)).toBe("saved");
 
     expect(loadDocumentDraft(storage)).toEqual({ text, kind: "rental" });
   });
@@ -48,7 +48,7 @@ describe("draft text state", () => {
   it("ignores empty or invalid stored drafts", () => {
     const storage = createMemoryStorage();
 
-    saveDocumentDraft({ text: "   ", kind: "rental" }, storage);
+    expect(saveDocumentDraft({ text: "   ", kind: "rental" }, storage)).toBe("cleared");
     expect(loadDocumentDraft(storage)).toBeNull();
 
     storage.setItem("plaindoc:document-draft:v1", JSON.stringify({ text: "有效文本", kind: "not-a-kind" }));
@@ -59,9 +59,17 @@ describe("draft text state", () => {
     const storage = createMemoryStorage();
     saveDocumentDraft({ text: "劳动合同：竞业限制补偿另行约定。", kind: "employment" }, storage);
 
-    clearDocumentDraft(storage);
+    expect(clearDocumentDraft(storage)).toBe("cleared");
 
     expect(loadDocumentDraft(storage)).toBeNull();
+  });
+
+  it("does not throw when browser draft storage writes are blocked", () => {
+    const storage = createFailingStorage();
+
+    expect(saveDocumentDraft({ text: "租赁合同：押金 5000 元。", kind: "rental" }, storage)).toBe("failed");
+    expect(saveDocumentDraft({ text: "   ", kind: "rental" }, storage)).toBe("failed");
+    expect(clearDocumentDraft(storage)).toBe("failed");
   });
 
   it("restores a stored draft instead of the default example on startup", () => {
@@ -106,6 +114,27 @@ function createMemoryStorage(): Storage {
     },
     setItem: (key: string, value: string) => {
       values.set(key, value);
+    }
+  };
+}
+
+function createFailingStorage(): Storage {
+  return {
+    get length() {
+      return 0;
+    },
+    clear: () => {
+      throw new Error("storage blocked");
+    },
+    getItem: () => {
+      throw new Error("storage blocked");
+    },
+    key: () => null,
+    removeItem: () => {
+      throw new Error("storage blocked");
+    },
+    setItem: () => {
+      throw new Error("storage blocked");
     }
   };
 }

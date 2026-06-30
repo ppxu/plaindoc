@@ -26,6 +26,8 @@ export interface StoredDocumentDraft {
   kind: DocumentKind;
 }
 
+export type DocumentDraftPersistenceResult = "saved" | "cleared" | "unavailable" | "failed";
+
 export function createInitialDocumentState(
   fallbackExample: DocumentExample,
   storage: Storage | undefined = getBrowserStorage()
@@ -74,15 +76,19 @@ export function createDraftTextState({ text, selectedKind }: DraftTextStateInput
 export function saveDocumentDraft(
   draft: StoredDocumentDraft,
   storage: Storage | undefined = getBrowserStorage()
-): void {
-  if (!storage) return;
+): DocumentDraftPersistenceResult {
+  if (!storage) return "unavailable";
 
   if (!draft.text.trim()) {
-    clearDocumentDraft(storage);
-    return;
+    return clearDocumentDraft(storage);
   }
 
-  storage.setItem(DOCUMENT_DRAFT_STORAGE_KEY, JSON.stringify({ text: draft.text, kind: draft.kind }));
+  try {
+    storage.setItem(DOCUMENT_DRAFT_STORAGE_KEY, JSON.stringify({ text: draft.text, kind: draft.kind }));
+    return "saved";
+  } catch {
+    return "failed";
+  }
 }
 
 export function loadDocumentDraft(storage: Storage | undefined = getBrowserStorage()): StoredDocumentDraft | null {
@@ -102,8 +108,15 @@ export function loadDocumentDraft(storage: Storage | undefined = getBrowserStora
   }
 }
 
-export function clearDocumentDraft(storage: Storage | undefined = getBrowserStorage()): void {
-  storage?.removeItem(DOCUMENT_DRAFT_STORAGE_KEY);
+export function clearDocumentDraft(storage: Storage | undefined = getBrowserStorage()): DocumentDraftPersistenceResult {
+  if (!storage) return "unavailable";
+
+  try {
+    storage.removeItem(DOCUMENT_DRAFT_STORAGE_KEY);
+    return "cleared";
+  } catch {
+    return "failed";
+  }
 }
 
 function resolveDraftKind(text: string, selectedKind: DocumentKind): DocumentKind {
