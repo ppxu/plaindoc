@@ -14,6 +14,7 @@ const roadmap = readFileSync(fileURLToPath(new URL("../../docs/roadmap.md", impo
 const appIcon192Png = readFileSync(fileURLToPath(new URL("../../public/icon-192.png", import.meta.url)));
 const appIcon512Png = readFileSync(fileURLToPath(new URL("../../public/icon-512.png", import.meta.url)));
 const publicDescription = "把日常合同、协议和保单转换成易懂的风险提示和签署前清单。";
+const socialPreviewAlt = "PlainDoc 风险阅读报告和签署前清单预览";
 
 describe("release metadata", () => {
   it("declares the document language for the Chinese-first app shell", () => {
@@ -29,9 +30,11 @@ describe("release metadata", () => {
     expect(html).toContain('<meta property="og:type" content="website" />');
     expect(html).toContain('<meta property="og:url" content="https://ppxu.github.io/plaindoc/" />');
     expect(html).toContain('<meta property="og:image" content="https://ppxu.github.io/plaindoc/social-preview.png" />');
+    expect(html).toContain(`<meta property="og:image:alt" content="${socialPreviewAlt}" />`);
     expect(html).toContain('<meta name="twitter:card" content="summary_large_image" />');
     expect(html).toContain(`<meta name="twitter:description" content="${publicDescription}" />`);
     expect(html).toContain('<meta name="twitter:image" content="https://ppxu.github.io/plaindoc/social-preview.png" />');
+    expect(html).toContain(`<meta name="twitter:image:alt" content="${socialPreviewAlt}" />`);
     expect(html).toContain('<link rel="canonical" href="https://ppxu.github.io/plaindoc/" />');
     expect(socialPreviewPngUrl).toContain("social-preview.png");
     expect(readPngSize(socialPreviewPng)).toEqual({ width: 1200, height: 630 });
