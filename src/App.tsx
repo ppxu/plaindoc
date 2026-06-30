@@ -180,6 +180,7 @@ export default function App() {
     setModelTextConsent(reset.modelTextConsent);
     setModelConnectionStatus(null);
     setEvidenceSelection(reset.evidenceSelection);
+    setDocumentTextFocusRequest((request) => request + 1);
   }
 
   async function handleAnalyze() {

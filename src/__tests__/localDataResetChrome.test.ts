@@ -21,4 +21,17 @@ describe("local data reset chrome", () => {
     expect(clearLocalDataButton).toContain("disabled={isUploading}");
     expect(clearLocalDataButton).not.toContain("isAnalyzing");
   });
+
+  it("returns focus to the document text field after local data is cleared", () => {
+    const clearLocalDataHandler = appSource.slice(
+      appSource.indexOf("function handleClearLocalData"),
+      appSource.indexOf("async function handleAnalyze")
+    );
+
+    expect(clearLocalDataHandler).toContain("const reset = createLocalDataResetState();");
+    expect(clearLocalDataHandler).toContain("setDocumentTextFocusRequest((request) => request + 1);");
+    expect(clearLocalDataHandler.indexOf("const reset = createLocalDataResetState();")).toBeLessThan(
+      clearLocalDataHandler.indexOf("setDocumentTextFocusRequest((request) => request + 1);")
+    );
+  });
 });
