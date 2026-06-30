@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import appSource from "../App.tsx?raw";
+import documentInputSource from "../components/DocumentInput.tsx?raw";
 import { detectSensitiveText, redactSensitiveText } from "../privacy/sensitiveText";
 
 describe("detectSensitiveText", () => {
@@ -41,5 +43,16 @@ describe("detectSensitiveText", () => {
     expect(redacted).toBe(
       "承租人手机号 [手机号]，邮箱 [邮箱]，身份证 [身份证号]，银行卡 [银行卡号]。押金为人民币 13600 元。"
     );
+  });
+
+  it("routes the redacted-copy action through an explicit privacy feedback path", () => {
+    expect(documentInputSource).toContain("onRedactSensitiveText: (text: string) => void");
+    expect(documentInputSource).toContain("onRedactSensitiveText(redactSensitiveText(text))");
+    expect(documentInputSource).not.toContain("onTextChange(redactSensitiveText(text))");
+
+    expect(appSource).toContain("function handleRedactSensitiveText(redactedText: string)");
+    expect(appSource).toContain("createDraftTextState({ text: redactedText, selectedKind: kind })");
+    expect(appSource).toContain("已生成脱敏副本，并已取消本次 AI 发送确认。请检查正文后再重新确认发送。");
+    expect(appSource).toContain("onRedactSensitiveText={handleRedactSensitiveText}");
   });
 });

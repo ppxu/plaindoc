@@ -100,6 +100,19 @@ export default function App() {
     setModelTextConsent(draft.modelTextConsent);
   }
 
+  function handleRedactSensitiveText(redactedText: string) {
+    invalidateCurrentAnalysis();
+    const draft = createDraftTextState({ text: redactedText, selectedKind: kind });
+    setText(draft.text);
+    setKind(draft.kind);
+    setSelectedExampleId(draft.selectedExampleId);
+    setError(draft.error);
+    setInputNotice("已生成脱敏副本，并已取消本次 AI 发送确认。请检查正文后再重新确认发送。");
+    setReport(draft.report);
+    setEvidenceSelection(draft.evidenceSelection);
+    setModelTextConsent(draft.modelTextConsent);
+  }
+
   function handleKindChange(nextKind: DocumentKind) {
     invalidateCurrentAnalysis();
     const selected = createKindSelectionState({ text, nextKind });
@@ -470,6 +483,7 @@ export default function App() {
           onClearModelSettings={handleClearModelSettings}
           onModelTextConsentChange={handleModelTextConsentChange}
           onTestModelConnection={handleTestModelConnection}
+          onRedactSensitiveText={handleRedactSensitiveText}
         />
         <ReportPanel
           ref={reportPanelRef}

@@ -36,6 +36,7 @@ interface DocumentInputProps {
   onClearModelSettings: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
   onTestModelConnection: () => void;
+  onRedactSensitiveText: (text: string) => void;
 }
 
 export function DocumentInput({
@@ -66,7 +67,8 @@ export function DocumentInput({
   onModelSettingsChange,
   onClearModelSettings,
   onModelTextConsentChange,
-  onTestModelConnection
+  onTestModelConnection,
+  onRedactSensitiveText
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -166,7 +168,7 @@ export function DocumentInput({
         onClear={onClearModelSettings}
         onModelTextConsentChange={onModelTextConsentChange}
         onTestModelConnection={onTestModelConnection}
-        onRedactSensitiveText={() => onTextChange(redactSensitiveText(text))}
+        onRedactSensitiveText={() => onRedactSensitiveText(redactSensitiveText(text))}
       />
 
       <label className="field text-field">
