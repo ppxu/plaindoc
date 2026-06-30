@@ -39,6 +39,8 @@ describe("service worker registration", () => {
 
   it("ships a GitHub Pages-scoped service worker cache", () => {
     expect(serviceWorkerSource).toContain('const APP_SCOPE = "/plaindoc/"');
+    expect(serviceWorkerSource).toContain("`${APP_SCOPE}icon-192.png`");
+    expect(serviceWorkerSource).toContain("`${APP_SCOPE}icon-512.png`");
     expect(serviceWorkerSource).toContain('self.addEventListener("install"');
     expect(serviceWorkerSource).toContain('self.addEventListener("activate"');
     expect(serviceWorkerSource).toContain('self.addEventListener("fetch"');

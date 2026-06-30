@@ -18,6 +18,8 @@ describe("offline asset cache", () => {
       "https://ppxu.github.io/plaindoc/",
       "https://ppxu.github.io/plaindoc/manifest.webmanifest",
       "https://ppxu.github.io/plaindoc/favicon.svg",
+      "https://ppxu.github.io/plaindoc/icon-192.png",
+      "https://ppxu.github.io/plaindoc/icon-512.png",
       "https://ppxu.github.io/plaindoc/assets/index.js",
       "https://ppxu.github.io/plaindoc/assets/index.css"
     ]);

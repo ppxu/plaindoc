@@ -1,6 +1,12 @@
 const CACHE_NAME = "plaindoc-shell-v1";
 const APP_SCOPE = "/plaindoc/";
-const APP_SHELL = [APP_SCOPE, `${APP_SCOPE}manifest.webmanifest`, `${APP_SCOPE}favicon.svg`];
+const APP_SHELL = [
+  APP_SCOPE,
+  `${APP_SCOPE}manifest.webmanifest`,
+  `${APP_SCOPE}favicon.svg`,
+  `${APP_SCOPE}icon-192.png`,
+  `${APP_SCOPE}icon-512.png`
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

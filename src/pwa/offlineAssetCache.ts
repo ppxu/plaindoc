@@ -9,7 +9,14 @@ interface OfflineAssetInput {
 export function collectOfflineAssetUrls({ baseUrl, origin, resourceUrls }: OfflineAssetInput): string[] {
   const scope = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
   const seen = new Set<string>();
-  const urls = [`${origin}${scope}`, `${origin}${scope}manifest.webmanifest`, `${origin}${scope}favicon.svg`, ...resourceUrls];
+  const urls = [
+    `${origin}${scope}`,
+    `${origin}${scope}manifest.webmanifest`,
+    `${origin}${scope}favicon.svg`,
+    `${origin}${scope}icon-192.png`,
+    `${origin}${scope}icon-512.png`,
+    ...resourceUrls
+  ];
 
   return urls.filter((url) => {
     if (seen.has(url)) return false;
