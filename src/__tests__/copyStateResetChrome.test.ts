@@ -52,4 +52,15 @@ describe("copy state reset chrome", () => {
     expect(priorityBriefSource).toContain(".select()");
     expect(priorityBriefSource).toContain("setSelectionRange(0, textarea.value.length)");
   });
+
+  it("offers a manual clause edits fallback when browser copy is blocked", () => {
+    expect(clauseEditPackSource).toContain("editsFallbackRef");
+    expect(clauseEditPackSource).toContain('copyState === "failed"');
+    expect(clauseEditPackSource).toContain("浏览器没有允许自动复制。可以在这里手动复制修改条款包。");
+    expect(clauseEditPackSource).toContain('aria-label="修改条款包，可手动复制"');
+    expect(clauseEditPackSource).toContain("selectFallbackText(editsFallbackRef.current)");
+    expect(clauseEditPackSource).toContain(".focus()");
+    expect(clauseEditPackSource).toContain(".select()");
+    expect(clauseEditPackSource).toContain("setSelectionRange(0, textarea.value.length)");
+  });
 });
