@@ -12,4 +12,13 @@ describe("printReport", () => {
   it("reports failure when browser printing is unavailable", () => {
     expect(printReport({})).toBe(false);
   });
+
+  it("reports failure when the browser print dialog is blocked", () => {
+    const print = vi.fn(() => {
+      throw new Error("print blocked");
+    });
+
+    expect(printReport({ print })).toBe(false);
+    expect(print).toHaveBeenCalledOnce();
+  });
 });

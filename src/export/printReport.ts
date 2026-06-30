@@ -7,6 +7,10 @@ export function printReport(target: PrintableWindow = globalThis): boolean {
     return false;
   }
 
-  target.print();
-  return true;
+  try {
+    target.print();
+    return true;
+  } catch {
+    return false;
+  }
 }
