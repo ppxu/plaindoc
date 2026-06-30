@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
 import { downloadMarkdownFile } from "../export/downloadMarkdown";
@@ -21,7 +21,10 @@ interface ReportPanelProps {
   onRevealEvidence?: (finding: RiskFinding) => void;
 }
 
-export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRevealEvidence }: ReportPanelProps) {
+export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function ReportPanel(
+  { report, onCopyChecklist, onCopyActionMessage, onRevealEvidence },
+  ref
+) {
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
   const [downloadReportState, setDownloadReportState] = useState<"idle" | "downloaded" | "failed">("idle");
   const [printState, setPrintState] = useState<"idle" | "failed">("idle");
@@ -65,7 +68,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
   }
 
   return (
-    <section id="report-panel" className="report-panel" aria-label="Analysis report" tabIndex={-1}>
+    <section id="report-panel" className="report-panel" aria-label="Analysis report" tabIndex={-1} ref={ref}>
       <div className="report-hero">
         <div>
           <p className="section-label">Report</p>
@@ -172,7 +175,7 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
       <p className="disclaimer">{report.disclaimer}</p>
     </section>
   );
-}
+});
 
 function copyReportLabel(state: "idle" | "copied" | "failed"): string {
   if (state === "copied") return "已复制";

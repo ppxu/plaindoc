@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Github, LockKeyhole, ScrollText } from "lucide-react";
 import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
@@ -36,6 +36,7 @@ type ModelConnectionStatus = { tone: "success" | "error"; message: string } | nu
 
 export default function App() {
   const firstExample = documentExamples[0];
+  const reportPanelRef = useRef<HTMLElement | null>(null);
   const analysisRunTracker = useRef(createAnalysisRunTracker());
   const modelRequestAbortController = useRef<AbortController | null>(null);
   const modelConnectionTestAbortController = useRef<AbortController | null>(null);
@@ -178,6 +179,7 @@ export default function App() {
     if (modelSettings.enabled && !endpointSecurity.ok) {
       setHistory(saveReportToHistory(localReport));
       setInputNotice(modelEndpointSecurityMessage(endpointSecurity));
+      focusReportPanel(reportPanelRef);
       return;
     }
 
@@ -189,6 +191,7 @@ export default function App() {
       } else if (modelSettings.enabled && !modelTextConsent) {
         setInputNotice("未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。");
       }
+      focusReportPanel(reportPanelRef);
       return;
     }
 
@@ -207,6 +210,7 @@ export default function App() {
       if (needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
         setError("AI 增强已开启，但缺少 API key，已回退到本地分析。");
       }
+      focusReportPanel(reportPanelRef);
     } catch (caught) {
       if (!analysisRunTracker.current.isCurrent(runId)) {
         return;
@@ -219,6 +223,7 @@ export default function App() {
       setReport(fallbackReport);
       setHistory(saveReportToHistory(fallbackReport));
       setError(`AI 增强失败，已回退到本地分析：${message}`);
+      focusReportPanel(reportPanelRef);
     } finally {
       if (analysisRunTracker.current.isCurrent(runId)) {
         setIsAnalyzing(false);
@@ -467,6 +472,7 @@ export default function App() {
           onTestModelConnection={handleTestModelConnection}
         />
         <ReportPanel
+          ref={reportPanelRef}
           report={report}
           onCopyChecklist={copyChecklist}
           onCopyActionMessage={copyActionMessage}
@@ -518,6 +524,15 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
     kind: selectedKind,
     notice: `已识别为${getDocumentKindLabel(detection.kind)}，当前规则包匹配。`
   };
+}
+
+function focusReportPanel(reportPanelRef: RefObject<HTMLElement | null>): void {
+  window.requestAnimationFrame(() => {
+    const reportPanel = reportPanelRef.current;
+    if (!reportPanel) return;
+    reportPanel.scrollIntoView({ block: "start" });
+    reportPanel.focus({ preventScroll: true });
+  });
 }
 
 function confirmLocalDataReset(): boolean {
