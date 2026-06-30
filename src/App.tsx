@@ -181,14 +181,15 @@ export default function App() {
       setKind(resolvedKind.kind);
       setSelectedExampleId("");
     }
-    setInputNotice(mergeNotices(shortTextNotice, resolvedKind.notice));
+    const baseAnalysisNotice = mergeNotices(shortTextNotice, resolvedKind.notice);
+    setInputNotice(baseAnalysisNotice);
 
     const runtimeModelSettings = normalizeModelSettingsForRuntime(modelSettings);
     const endpointSecurity = getModelEndpointSecurity(runtimeModelSettings.baseUrl);
     const needsModelApiKey = modelEndpointNeedsApiKey(runtimeModelSettings.baseUrl);
     if (modelSettings.enabled && !endpointSecurity.ok) {
       setHistory(saveReportToHistory(localReport));
-      setInputNotice(modelEndpointSecurityMessage(endpointSecurity));
+      setInputNotice(mergeNotices(baseAnalysisNotice, modelEndpointSecurityMessage(endpointSecurity)));
       focusReportPanel(reportPanelRef);
       return;
     }
@@ -197,9 +198,9 @@ export default function App() {
     if (!modelSettings.enabled || !canUseModel) {
       setHistory(saveReportToHistory(localReport));
       if (modelSettings.enabled && needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
-        setInputNotice("AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。");
+        setInputNotice(mergeNotices(baseAnalysisNotice, "AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。"));
       } else if (modelSettings.enabled && !modelTextConsent) {
-        setInputNotice("未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。");
+        setInputNotice(mergeNotices(baseAnalysisNotice, "未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。"));
       }
       focusReportPanel(reportPanelRef);
       return;
