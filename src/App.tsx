@@ -19,7 +19,7 @@ import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
 import { createAnalysisRunTracker } from "./state/analysisRun";
 import { createDraftTextState } from "./state/draftText";
-import { createExampleSelectionState } from "./state/exampleSelection";
+import { createCustomExampleSelectionState, createExampleSelectionState } from "./state/exampleSelection";
 import { createKindSelectionState } from "./state/kindSelection";
 import { clearLocalStoredData, createLocalDataResetState } from "./state/localDataReset";
 import { shouldWarnBeforeLeaving } from "./state/leaveWarning";
@@ -74,6 +74,20 @@ export default function App() {
   }, [text, selectedExampleId, isAnalyzing, isUploading]);
 
   function handleExampleChange(id: string) {
+    if (!id) {
+      invalidateCurrentAnalysis();
+      const selected = createCustomExampleSelectionState({ text, kind, report });
+      setSelectedExampleId(selected.selectedExampleId);
+      setText(selected.text);
+      setKind(selected.kind);
+      setError(selected.error);
+      setInputNotice(selected.notice);
+      setReport(selected.report);
+      setEvidenceSelection(selected.evidenceSelection);
+      setModelTextConsent(selected.modelTextConsent);
+      return;
+    }
+
     const example = documentExamples.find((item) => item.id === id);
     if (!example) return;
     invalidateCurrentAnalysis();

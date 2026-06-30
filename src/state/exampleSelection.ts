@@ -1,6 +1,12 @@
 import { analyzeDocument } from "../analyzer/localAnalyzer";
 import type { AnalysisReport, DocumentExample, DocumentKind, EvidenceSelectionTarget } from "../types";
 
+export interface CustomExampleSelectionStateInput {
+  text: string;
+  kind: DocumentKind;
+  report: AnalysisReport;
+}
+
 export interface ExampleSelectionState {
   text: string;
   kind: DocumentKind;
@@ -20,6 +26,23 @@ export function createExampleSelectionState(example: DocumentExample): ExampleSe
     error: "",
     notice: `已加载「${example.title}」，并生成本地规则报告。`,
     report: analyzeDocument({ text: example.content, kind: example.kind }),
+    evidenceSelection: null,
+    modelTextConsent: false
+  };
+}
+
+export function createCustomExampleSelectionState({
+  text,
+  kind,
+  report
+}: CustomExampleSelectionStateInput): ExampleSelectionState {
+  return {
+    text,
+    kind,
+    selectedExampleId: "",
+    error: "",
+    notice: "已切换为自定义/上传文本，当前正文和报告未改变。",
+    report,
     evidenceSelection: null,
     modelTextConsent: false
   };
