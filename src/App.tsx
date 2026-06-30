@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { Github, LockKeyhole, ScrollText } from "lucide-react";
+import { Github, LockKeyhole, ScrollText, ShieldAlert } from "lucide-react";
 import { detectDocumentKind } from "./analyzer/documentKindDetector";
 import { analyzeDocument } from "./analyzer/localAnalyzer";
 import { testModelConnection } from "./analyzer/modelConnectionTest";
@@ -499,6 +499,10 @@ export default function App() {
           </div>
         </div>
         <div className="topbar-actions">
+          <span className="topbar-boundary" aria-label="PlainDoc 是阅读辅助，不替代专业建议">
+            <ShieldAlert aria-hidden="true" />
+            阅读辅助，不替代专业建议
+          </span>
           <span>
             <LockKeyhole aria-hidden="true" />
             Local-first

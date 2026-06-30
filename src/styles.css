@@ -226,6 +226,12 @@ a {
   height: 16px;
 }
 
+.topbar-actions .topbar-boundary {
+  color: #7c2d12;
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(360px, 0.78fr) minmax(0, 1.22fr);
@@ -1612,6 +1618,10 @@ textarea:focus,
   .topbar-actions a {
     flex: 1 1 140px;
     justify-content: center;
+  }
+
+  .topbar-actions .topbar-boundary {
+    flex-basis: 100%;
   }
 
   .input-panel,

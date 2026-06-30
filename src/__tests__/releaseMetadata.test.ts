@@ -102,6 +102,7 @@ describe("release metadata", () => {
 
   it("uses production-ready public wording instead of internal launch-stage labels", () => {
     expect(appSource).toContain("Local-first");
+    expect(appSource).toContain("阅读辅助，不替代专业建议");
     expect(appSource).not.toContain("MVP");
     expect(readme).not.toContain("MVP");
     expect(roadmap).not.toContain("MVP");
