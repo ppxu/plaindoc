@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
 import { downloadMarkdownFile } from "../export/downloadMarkdown";
@@ -25,6 +25,8 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
   const [downloadReportState, setDownloadReportState] = useState<"idle" | "downloaded" | "failed">("idle");
   const [printState, setPrintState] = useState<"idle" | "failed">("idle");
+  const copyFallbackRef = useRef<HTMLTextAreaElement>(null);
+  const downloadFallbackRef = useRef<HTMLTextAreaElement>(null);
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
   const markdownReport = reportToMarkdown(report);
@@ -35,6 +37,18 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
     setDownloadReportState("idle");
     setPrintState("idle");
   }, [markdownReport]);
+
+  useEffect(() => {
+    if (copyReportState === "failed") {
+      selectFallbackText(copyFallbackRef.current);
+    }
+  }, [copyReportState]);
+
+  useEffect(() => {
+    if (downloadReportState === "failed") {
+      selectFallbackText(downloadFallbackRef.current);
+    }
+  }, [downloadReportState]);
 
   async function copyReport() {
     setCopyReportState((await copyTextToClipboard(markdownReport)) ? "copied" : "failed");
@@ -92,13 +106,13 @@ export function ReportPanel({ report, onCopyChecklist, onCopyActionMessage, onRe
       {downloadReportState === "failed" ? (
         <div className="report-copy-fallback">
           <span>浏览器没有允许自动下载。可以复制完整 Markdown 报告后手动保存为 .md 文件。</span>
-          <textarea readOnly value={markdownReport} aria-label="完整 Markdown 报告，可手动保存" />
+          <textarea ref={downloadFallbackRef} readOnly value={markdownReport} aria-label="完整 Markdown 报告，可手动保存" />
         </div>
       ) : null}
       {copyReportState === "failed" ? (
         <div className="report-copy-fallback">
           <span>浏览器没有允许自动复制。可以在这里手动全选复制完整报告。</span>
-          <textarea readOnly value={markdownReport} aria-label="完整 Markdown 报告" />
+          <textarea ref={copyFallbackRef} readOnly value={markdownReport} aria-label="完整 Markdown 报告" />
         </div>
       ) : null}
 
@@ -170,6 +184,17 @@ function downloadReportLabel(state: "idle" | "downloaded" | "failed"): string {
   if (state === "downloaded") return "已导出";
   if (state === "failed") return "导出失败";
   return "导出 Markdown";
+}
+
+function selectFallbackText(textarea: HTMLTextAreaElement | null): void {
+  if (!textarea) return;
+  textarea.focus();
+  textarea.select();
+  try {
+    textarea.setSelectionRange(0, textarea.value.length);
+  } catch {
+    // The visible textarea remains available even if a browser refuses programmatic selection.
+  }
 }
 
 function sourceText(report: AnalysisReport): string {

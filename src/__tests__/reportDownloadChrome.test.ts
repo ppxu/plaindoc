@@ -10,4 +10,15 @@ describe("report markdown download chrome", () => {
     expect(reportPanelSource).toContain("浏览器没有允许自动下载");
     expect(reportPanelSource).toContain('aria-label="完整 Markdown 报告，可手动保存"');
   });
+
+  it("focuses and selects fallback markdown text when browser copy or download is blocked", () => {
+    expect(reportPanelSource).toContain("selectFallbackText");
+    expect(reportPanelSource).toContain("copyFallbackRef");
+    expect(reportPanelSource).toContain("downloadFallbackRef");
+    expect(reportPanelSource).toContain('copyReportState === "failed"');
+    expect(reportPanelSource).toContain('downloadReportState === "failed"');
+    expect(reportPanelSource).toContain(".focus()");
+    expect(reportPanelSource).toContain(".select()");
+    expect(reportPanelSource).toContain("setSelectionRange(0, textarea.value.length)");
+  });
 });
