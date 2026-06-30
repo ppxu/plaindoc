@@ -1029,6 +1029,15 @@ textarea:focus,
   gap: 8px;
 }
 
+.report-share-reminder {
+  flex-basis: 100%;
+  margin: -4px 0 0;
+  color: #7a5a1b;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+}
+
 .report-notice {
   margin: 0;
   padding: 12px 24px;
@@ -1682,6 +1691,11 @@ textarea:focus,
 
   .report-action-buttons {
     justify-content: stretch;
+  }
+
+  .report-share-reminder {
+    margin-top: 0;
+    text-align: left;
   }
 
   .ghost-button {

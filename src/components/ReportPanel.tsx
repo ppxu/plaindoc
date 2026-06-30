@@ -102,6 +102,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
             打印/保存 PDF
           </button>
         </div>
+        <p className="report-share-reminder">复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。</p>
       </div>
 
       {report.notice ? <p className="report-notice">{report.notice}</p> : null}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
+import reportPanelSource from "../components/ReportPanel.tsx?raw";
 import { documentExamples } from "../data/examples";
 import { reportToMarkdown } from "../export/markdown";
 
@@ -42,6 +43,11 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("**导出范围：**");
     expect(markdown).toContain("不包含原始全文");
     expect(markdown).toContain("分享前请确认");
+  });
+
+  it("shows a visible reminder before users copy or export a report", () => {
+    expect(reportPanelSource).toContain("report-share-reminder");
+    expect(reportPanelSource).toContain("复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。");
   });
 
   it("exports coverage limits when no risk rule matched", () => {
