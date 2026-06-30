@@ -41,4 +41,15 @@ describe("copy state reset chrome", () => {
     expect(checklistSource).toContain(".select()");
     expect(checklistSource).toContain("setSelectionRange(0, textarea.value.length)");
   });
+
+  it("offers a manual priority brief fallback when browser copy is blocked", () => {
+    expect(priorityBriefSource).toContain("briefFallbackRef");
+    expect(priorityBriefSource).toContain('copyState === "failed"');
+    expect(priorityBriefSource).toContain("浏览器没有允许自动复制。可以在这里手动复制优先处理提纲。");
+    expect(priorityBriefSource).toContain('aria-label="优先处理提纲，可手动复制"');
+    expect(priorityBriefSource).toContain("selectFallbackText(briefFallbackRef.current)");
+    expect(priorityBriefSource).toContain(".focus()");
+    expect(priorityBriefSource).toContain(".select()");
+    expect(priorityBriefSource).toContain("setSelectionRange(0, textarea.value.length)");
+  });
 });
