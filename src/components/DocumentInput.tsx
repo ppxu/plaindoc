@@ -29,7 +29,7 @@ interface DocumentInputProps {
   onExampleChange: (id: string) => void;
   onAnalyze: () => void;
   onCancelAnalysis: () => void;
-  onUpload: (file: File) => void;
+  onUpload: (file: File, options?: { ignoredFileCount?: number }) => void;
   onClearWorkspace: () => void;
   onClearLocalData: () => void;
   onSelectHistory: (item: SavedReport) => void;
@@ -105,9 +105,11 @@ export function DocumentInput({
     event.preventDefault();
     setIsUploadDragActive(false);
     if (isUploading || isAnalyzing) return;
-    const file = event.dataTransfer.files?.[0];
+    const files = event.dataTransfer.files;
+    const file = files?.[0];
+    const ignoredFileCount = Math.max(0, files.length - 1);
     if (file) {
-      onUpload(file);
+      onUpload(file, { ignoredFileCount });
     }
   }
 

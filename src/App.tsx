@@ -345,7 +345,7 @@ export default function App() {
     }
   }
 
-  async function handleUpload(file: File) {
+  async function handleUpload(file: File, options: { ignoredFileCount?: number } = {}) {
     invalidateCurrentAnalysis();
     const uploadRunId = beginUploadRead();
     setError("");
@@ -378,7 +378,13 @@ export default function App() {
         setError("没有从文件中读取到可分析文本。如果这是扫描版 PDF，请先使用 OCR，或复制关键条款粘贴到正文框。");
         return;
       }
-      const uploaded = createUploadedTextState({ text: fileText, isPdfUpload, fileName: file.name, fallbackKind: kind });
+      const uploaded = createUploadedTextState({
+        text: fileText,
+        isPdfUpload,
+        fileName: file.name,
+        fallbackKind: kind,
+        ignoredFileCount: options.ignoredFileCount
+      });
       setText(uploaded.text);
       setSelectedExampleId(uploaded.selectedExampleId);
       setKind(uploaded.kind);

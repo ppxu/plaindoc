@@ -82,8 +82,9 @@ describe("upload failure chrome", () => {
     expect(documentInputSource).toContain("handleUploadDragEnter");
     expect(documentInputSource).toContain("handleUploadDragLeave");
     expect(documentInputSource).toContain("event.preventDefault();");
-    expect(documentInputSource).toContain("event.dataTransfer.files?.[0]");
-    expect(documentInputSource).toContain("onUpload(file);");
+    expect(documentInputSource).toContain("const files = event.dataTransfer.files;");
+    expect(documentInputSource).toContain("const file = files?.[0];");
+    expect(documentInputSource).toContain("onUpload(file, { ignoredFileCount });");
     expect(documentInputSource).toContain("onDrop={handleUploadDrop}");
     expect(documentInputSource).toContain("onDragOver={handleUploadDragOver}");
     expect(documentInputSource).toContain("onDragEnter={handleUploadDragEnter}");
@@ -92,6 +93,13 @@ describe("upload failure chrome", () => {
     expect(documentInputSource).toContain('isUploadDragActive ? "upload-strip drag-active" : "upload-strip"');
     expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md 文件");
     expect(documentInputSource).toContain("松开即可读取文件");
+  });
+
+  it("passes the ignored file count when multiple files are dropped", () => {
+    expect(documentInputSource).toContain("const files = event.dataTransfer.files;");
+    expect(documentInputSource).toContain("const file = files?.[0];");
+    expect(documentInputSource).toContain("const ignoredFileCount = Math.max(0, files.length - 1);");
+    expect(documentInputSource).toContain("onUpload(file, { ignoredFileCount });");
   });
 
   it("sets scanner PDF expectations before upload", () => {

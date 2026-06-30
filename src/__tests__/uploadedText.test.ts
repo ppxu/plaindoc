@@ -57,4 +57,19 @@ describe("uploaded text state", () => {
     expect(state.notice).toContain("...");
     expect(state.notice).not.toContain(longFileName);
   });
+
+  it("explains when extra dropped files were not processed", () => {
+    const text = documentExamples.find((example) => example.id === "rental-deposit")?.content ?? "";
+
+    const state = createUploadedTextState({
+      text,
+      isPdfUpload: true,
+      fileName: "lease.pdf",
+      fallbackKind: "unknown",
+      ignoredFileCount: 2
+    });
+
+    expect(state.notice).toContain("已从 PDF 提取 lease.pdf");
+    expect(state.notice).toContain("本次只读取第一个文件，另有 2 个文件未处理。请逐个上传需要分析的文件。");
+  });
 });

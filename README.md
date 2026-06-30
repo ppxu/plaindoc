@@ -105,6 +105,7 @@ Currently supported:
 - Pasted or edited text immediately refreshes the local-rule report so the visible report stays aligned with the editor.
 - Click **点击上传或拖入 PDF / .txt / .md 文件** to upload selectable-text PDF, `.txt`, and `.md` files.
 - Drag PDF, `.txt`, and `.md` files onto the upload strip, with a visible **松开即可读取文件** drop hint.
+- 一次只分析一个文件；如果拖入多个文件，PlainDoc 只读取第一个，并提示其余文件未处理。
 - The editor header 实时显示已输入字符数，方便确认粘贴或上传是否完整。
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.
