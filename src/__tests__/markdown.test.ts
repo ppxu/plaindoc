@@ -46,6 +46,7 @@ describe("reportToMarkdown", () => {
   });
 
   it("shows a visible reminder before users copy or export a report", () => {
+    expect(reportPanelSource).toContain("report-share-actions");
     expect(reportPanelSource).toContain("report-share-reminder");
     expect(reportPanelSource).toContain("复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。");
   });

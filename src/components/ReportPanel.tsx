@@ -88,21 +88,23 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           报告已更新：{statusText(report.status)}，阅读分 {report.score}，{redCount} 个红色风险，{yellowCount} 个黄色提醒。
         </span>
-        <div className="report-action-buttons">
-          <button className="ghost-button" type="button" onClick={copyReport}>
-            <ClipboardCheck aria-hidden="true" />
-            {copyReportLabel(copyReportState)}
-          </button>
-          <button className="ghost-button" type="button" onClick={downloadMarkdown}>
-            <Download aria-hidden="true" />
-            {downloadReportLabel(downloadReportState)}
-          </button>
-          <button className="ghost-button" type="button" onClick={printCurrentReport}>
-            <Printer aria-hidden="true" />
-            打印/保存 PDF
-          </button>
+        <div className="report-share-actions">
+          <div className="report-action-buttons">
+            <button className="ghost-button" type="button" onClick={copyReport}>
+              <ClipboardCheck aria-hidden="true" />
+              {copyReportLabel(copyReportState)}
+            </button>
+            <button className="ghost-button" type="button" onClick={downloadMarkdown}>
+              <Download aria-hidden="true" />
+              {downloadReportLabel(downloadReportState)}
+            </button>
+            <button className="ghost-button" type="button" onClick={printCurrentReport}>
+              <Printer aria-hidden="true" />
+              打印/保存 PDF
+            </button>
+          </div>
+          <p className="report-share-reminder">复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。</p>
         </div>
-        <p className="report-share-reminder">复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。</p>
       </div>
 
       {report.notice ? <p className="report-notice">{report.notice}</p> : null}
