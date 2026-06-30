@@ -79,11 +79,18 @@ describe("upload failure chrome", () => {
   it("supports dropping a PDF or text file onto the upload strip", () => {
     expect(documentInputSource).toContain("handleUploadDrop");
     expect(documentInputSource).toContain("handleUploadDragOver");
+    expect(documentInputSource).toContain("handleUploadDragEnter");
+    expect(documentInputSource).toContain("handleUploadDragLeave");
     expect(documentInputSource).toContain("event.preventDefault();");
     expect(documentInputSource).toContain("event.dataTransfer.files?.[0]");
     expect(documentInputSource).toContain("onUpload(file);");
     expect(documentInputSource).toContain("onDrop={handleUploadDrop}");
     expect(documentInputSource).toContain("onDragOver={handleUploadDragOver}");
+    expect(documentInputSource).toContain("onDragEnter={handleUploadDragEnter}");
+    expect(documentInputSource).toContain("onDragLeave={handleUploadDragLeave}");
     expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 文件"');
+    expect(documentInputSource).toContain('isUploadDragActive ? "upload-strip drag-active" : "upload-strip"');
+    expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md 文件");
+    expect(documentInputSource).toContain("松开即可读取文件");
   });
 });

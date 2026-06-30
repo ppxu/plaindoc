@@ -1,4 +1,4 @@
-import { useEffect, useRef, type DragEvent } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import { FileText, FolderOpen, ShieldCheck, Sparkles, Square, Trash2, Upload } from "lucide-react";
 import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
 import { getModelEndpointSecurity, modelEndpointNeedsApiKey, type ModelEndpointSecurity } from "../analyzer/modelEndpointSecurity";
@@ -75,6 +75,7 @@ export function DocumentInput({
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isUploadDragActive, setIsUploadDragActive] = useState(false);
   const sensitiveTextSummary = detectSensitiveText(text);
 
   useEffect(() => {
@@ -88,8 +89,21 @@ export function DocumentInput({
     event.preventDefault();
   }
 
+  function handleUploadDragEnter(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    if (!isUploading && !isAnalyzing) {
+      setIsUploadDragActive(true);
+    }
+  }
+
+  function handleUploadDragLeave(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setIsUploadDragActive(false);
+  }
+
   function handleUploadDrop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
+    setIsUploadDragActive(false);
     if (isUploading || isAnalyzing) return;
     const file = event.dataTransfer.files?.[0];
     if (file) {
@@ -144,13 +158,15 @@ export function DocumentInput({
 
       <div className="workspace-actions">
         <label
-          className="upload-strip"
+          className={isUploadDragActive ? "upload-strip drag-active" : "upload-strip"}
           aria-label="上传或拖入 PDF、txt、md 文件"
+          onDragEnter={handleUploadDragEnter}
           onDragOver={handleUploadDragOver}
+          onDragLeave={handleUploadDragLeave}
           onDrop={handleUploadDrop}
         >
           <Upload aria-hidden="true" />
-          <span>{isUploading ? "正在读取文件..." : "上传 PDF / .txt / .md 文件"}</span>
+          <span>{uploadStripLabel(isUploading, isUploadDragActive)}</span>
           <input
             type="file"
             accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
@@ -248,6 +264,12 @@ export function DocumentInput({
       </div>
     </section>
   );
+}
+
+function uploadStripLabel(isUploading: boolean, isUploadDragActive: boolean): string {
+  if (isUploading) return "正在读取文件...";
+  if (isUploadDragActive) return "松开即可读取文件";
+  return "点击上传或拖入 PDF / .txt / .md 文件";
 }
 
 function analyzeButtonLabel(

@@ -383,10 +383,18 @@ textarea:focus,
   border-radius: 9px;
   font-size: 13px;
   font-weight: 700;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .upload-strip input {
   display: none;
+}
+
+.upload-strip.drag-active {
+  color: var(--teal-dark);
+  background: #e8f6f3;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px rgba(18, 124, 113, 0.1);
 }
 
 .upload-strip:has(input:disabled) {
