@@ -2,6 +2,14 @@ import { describe, expect, it } from "vitest";
 import appSource from "../App.tsx?raw";
 
 describe("analysis feedback chrome", () => {
+  it("clears stale notices when analysis is blocked by empty text", () => {
+    const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
+    const emptyTextBranch = analyzeHandler.slice(analyzeHandler.indexOf("if (!text.trim())"), analyzeHandler.indexOf("const shortTextNotice"));
+
+    expect(emptyTextBranch).toContain('setError("请先粘贴文件内容、选择样例或上传文本文件。");');
+    expect(emptyTextBranch).toContain('setInputNotice("");');
+  });
+
   it("shows short-text analysis feedback as a non-blocking notice", () => {
     const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
 

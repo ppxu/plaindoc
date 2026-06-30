@@ -168,6 +168,7 @@ export default function App() {
     const runId = analysisRunTracker.current.begin();
     if (!text.trim()) {
       setError("请先粘贴文件内容、选择样例或上传文本文件。");
+      setInputNotice("");
       return;
     }
 
