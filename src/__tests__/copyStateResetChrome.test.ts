@@ -18,4 +18,15 @@ describe("copy state reset chrome", () => {
     expect(priorityBriefSource).toContain("[briefText]");
     expect(riskCardSource).toContain("[finding.modification]");
   });
+
+  it("offers a manual message-draft fallback when browser copy is blocked", () => {
+    expect(actionPlanSource).toContain("messageFallbackRef");
+    expect(actionPlanSource).toContain('copyState === "failed"');
+    expect(actionPlanSource).toContain("浏览器没有允许自动复制。可以在这里手动复制沟通草稿。");
+    expect(actionPlanSource).toContain('aria-label="沟通草稿，可手动复制"');
+    expect(actionPlanSource).toContain("selectFallbackText(messageFallbackRef.current)");
+    expect(actionPlanSource).toContain(".focus()");
+    expect(actionPlanSource).toContain(".select()");
+    expect(actionPlanSource).toContain("setSelectionRange(0, textarea.value.length)");
+  });
 });

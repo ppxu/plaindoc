@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageSquareText } from "lucide-react";
 import type { ActionPlan as ActionPlanData } from "../types";
 
@@ -9,10 +9,17 @@ interface ActionPlanProps {
 
 export function ActionPlan({ plan, onCopyMessage }: ActionPlanProps) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const messageFallbackRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setCopyState("idle");
   }, [plan.message]);
+
+  useEffect(() => {
+    if (copyState === "failed") {
+      selectFallbackText(messageFallbackRef.current);
+    }
+  }, [copyState]);
 
   async function handleCopy() {
     setCopyState((await onCopyMessage()) ? "copied" : "failed");
@@ -43,6 +50,13 @@ export function ActionPlan({ plan, onCopyMessage }: ActionPlanProps) {
           <p>{plan.message}</p>
         </div>
       </div>
+
+      {copyState === "failed" ? (
+        <div className="report-copy-fallback">
+          <span>浏览器没有允许自动复制。可以在这里手动复制沟通草稿。</span>
+          <textarea ref={messageFallbackRef} readOnly value={plan.message} aria-label="沟通草稿，可手动复制" />
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -51,4 +65,15 @@ function copyLabel(state: "idle" | "copied" | "failed"): string {
   if (state === "copied") return "已复制";
   if (state === "failed") return "复制失败";
   return "复制给对方";
+}
+
+function selectFallbackText(textarea: HTMLTextAreaElement | null): void {
+  if (!textarea) return;
+  textarea.focus();
+  textarea.select();
+  try {
+    textarea.setSelectionRange(0, textarea.value.length);
+  } catch {
+    // The visible textarea remains available even if a browser refuses programmatic selection.
+  }
 }
