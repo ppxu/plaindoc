@@ -1,12 +1,17 @@
 {
+  "id": "/plaindoc/",
   "name": "PlainDoc",
   "short_name": "PlainDoc",
   "description": "Plain-language risk notes and signing checklists for everyday documents.",
+  "lang": "zh-CN",
+  "dir": "ltr",
   "start_url": "/plaindoc/",
   "scope": "/plaindoc/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#0f172a",
+  "display_override": ["standalone", "browser"],
+  "categories": ["productivity", "utilities", "education"],
+  "background_color": "#f5f7f8",
+  "theme_color": "#127c71",
   "icons": [
     {
       "src": "/plaindoc/favicon.svg",

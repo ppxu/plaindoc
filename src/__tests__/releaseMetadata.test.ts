@@ -18,7 +18,7 @@ describe("release metadata", () => {
   });
 
   it("exposes social preview and install metadata from the app shell", () => {
-    expect(html).toContain('<meta name="theme-color" content="#0f172a" />');
+    expect(html).toContain('<meta name="theme-color" content="#127c71" />');
     expect(html).toContain('<link rel="manifest" href="%BASE_URL%manifest.webmanifest" />');
     expect(html).toContain('<meta property="og:title" content="PlainDoc" />');
     expect(html).toContain(
@@ -36,17 +36,35 @@ describe("release metadata", () => {
 
   it("provides a GitHub Pages scoped web app manifest", () => {
     const manifest = JSON.parse(manifestText) as {
+      id?: string;
       name?: string;
+      short_name?: string;
+      description?: string;
+      lang?: string;
+      dir?: string;
       start_url?: string;
       scope?: string;
       display?: string;
+      display_override?: string[];
+      categories?: string[];
+      background_color?: string;
+      theme_color?: string;
       icons?: Array<{ src?: string; type?: string; sizes?: string }>;
     };
 
+    expect(manifest.id).toBe("/plaindoc/");
     expect(manifest.name).toBe("PlainDoc");
+    expect(manifest.short_name).toBe("PlainDoc");
+    expect(manifest.description).toBe("Plain-language risk notes and signing checklists for everyday documents.");
+    expect(manifest.lang).toBe("zh-CN");
+    expect(manifest.dir).toBe("ltr");
     expect(manifest.start_url).toBe("/plaindoc/");
     expect(manifest.scope).toBe("/plaindoc/");
     expect(manifest.display).toBe("standalone");
+    expect(manifest.display_override).toEqual(["standalone", "browser"]);
+    expect(manifest.categories).toEqual(["productivity", "utilities", "education"]);
+    expect(manifest.background_color).toBe("#f5f7f8");
+    expect(manifest.theme_color).toBe("#127c71");
     expect(manifest.icons).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
