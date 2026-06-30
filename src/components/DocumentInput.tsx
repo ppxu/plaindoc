@@ -6,6 +6,7 @@ import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
 import { detectSensitiveText, redactSensitiveText } from "../privacy/sensitiveText";
+import { formatDocumentInputStats } from "../state/documentInputStats";
 
 interface DocumentInputProps {
   text: string;
@@ -175,7 +176,10 @@ export function DocumentInput({
       />
 
       <label className="field text-field">
-        <span>文件正文</span>
+        <span className="field-label-row">
+          <span>文件正文</span>
+          <span className="field-meta">{formatDocumentInputStats(text)}</span>
+        </span>
         <textarea
           ref={textareaRef}
           value={text}

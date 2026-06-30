@@ -309,6 +309,20 @@ a {
   font-weight: 750;
 }
 
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field span.field-meta {
+  color: var(--muted);
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
 select,
 textarea,
 .compact-field input {
