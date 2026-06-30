@@ -189,19 +189,34 @@ export default function App() {
     const endpointSecurity = getModelEndpointSecurity(runtimeModelSettings.baseUrl);
     const needsModelApiKey = modelEndpointNeedsApiKey(runtimeModelSettings.baseUrl);
     if (modelSettings.enabled && !endpointSecurity.ok) {
-      setHistory(saveReportToHistory(localReport));
-      setInputNotice(mergeNotices(baseAnalysisNotice, modelEndpointSecurityMessage(endpointSecurity)));
+      const endpointFallbackNotice = mergeNotices(baseAnalysisNotice, modelEndpointSecurityMessage(endpointSecurity));
+      const endpointFallbackReport = mergeReportNotice(localReport, endpointFallbackNotice);
+      setReport(endpointFallbackReport);
+      setHistory(saveReportToHistory(endpointFallbackReport));
+      setInputNotice(endpointFallbackNotice);
       focusReportPanel(reportPanelRef);
       return;
     }
 
     const canUseModel = canSendDocumentTextToModel(modelSettings, modelTextConsent);
     if (!modelSettings.enabled || !canUseModel) {
-      setHistory(saveReportToHistory(localReport));
-      if (modelSettings.enabled && needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
-        setInputNotice(mergeNotices(baseAnalysisNotice, "AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。"));
-      } else if (modelSettings.enabled && !modelTextConsent) {
-        setInputNotice(mergeNotices(baseAnalysisNotice, "未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。"));
+      if (!modelSettings.enabled) {
+        setHistory(saveReportToHistory(localReport));
+      } else if (needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
+        const missingKeyFallbackNotice = mergeNotices(baseAnalysisNotice, "AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。");
+        const missingKeyFallbackReport = mergeReportNotice(localReport, missingKeyFallbackNotice);
+        setReport(missingKeyFallbackReport);
+        setHistory(saveReportToHistory(missingKeyFallbackReport));
+        setInputNotice(missingKeyFallbackNotice);
+      } else if (!modelTextConsent) {
+        const missingConsentFallbackNotice = mergeNotices(
+          baseAnalysisNotice,
+          "未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。"
+        );
+        const missingConsentFallbackReport = mergeReportNotice(localReport, missingConsentFallbackNotice);
+        setReport(missingConsentFallbackReport);
+        setHistory(saveReportToHistory(missingConsentFallbackReport));
+        setInputNotice(missingConsentFallbackNotice);
       }
       focusReportPanel(reportPanelRef);
       return;

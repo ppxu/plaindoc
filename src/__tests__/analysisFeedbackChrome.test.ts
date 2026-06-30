@@ -23,11 +23,33 @@ describe("analysis feedback chrome", () => {
   it("keeps analysis context when AI enhanced analysis falls back to local results", () => {
     const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
 
-    expect(analyzeHandler).toContain("setInputNotice(mergeNotices(baseAnalysisNotice, modelEndpointSecurityMessage(endpointSecurity)));");
-    expect(analyzeHandler).toContain('setInputNotice(mergeNotices(baseAnalysisNotice, "AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。"));');
+    expect(analyzeHandler).toContain("const endpointFallbackNotice = mergeNotices(baseAnalysisNotice, modelEndpointSecurityMessage(endpointSecurity));");
+    expect(analyzeHandler).toContain("setInputNotice(endpointFallbackNotice);");
+    expect(analyzeHandler).toContain('const missingKeyFallbackNotice = mergeNotices(baseAnalysisNotice, "AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。");');
+    expect(analyzeHandler).toContain("setInputNotice(missingKeyFallbackNotice);");
+    expect(analyzeHandler).toContain("const missingConsentFallbackNotice = mergeNotices(");
+    expect(analyzeHandler).toContain("未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。");
+    expect(analyzeHandler).toContain("setInputNotice(missingConsentFallbackNotice);");
+  });
+
+  it("keeps AI local fallback reasons inside the visible report notice", () => {
+    const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
+
     expect(analyzeHandler).toContain(
-      'setInputNotice(mergeNotices(baseAnalysisNotice, "未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。"));'
+      "const endpointFallbackReport = mergeReportNotice(localReport, endpointFallbackNotice);"
     );
+    expect(analyzeHandler).toContain("setReport(endpointFallbackReport);");
+    expect(analyzeHandler).toContain("setHistory(saveReportToHistory(endpointFallbackReport));");
+    expect(analyzeHandler).toContain(
+      "const missingKeyFallbackReport = mergeReportNotice(localReport, missingKeyFallbackNotice);"
+    );
+    expect(analyzeHandler).toContain("setReport(missingKeyFallbackReport);");
+    expect(analyzeHandler).toContain("setHistory(saveReportToHistory(missingKeyFallbackReport));");
+    expect(analyzeHandler).toContain(
+      "const missingConsentFallbackReport = mergeReportNotice(localReport, missingConsentFallbackNotice);"
+    );
+    expect(analyzeHandler).toContain("setReport(missingConsentFallbackReport);");
+    expect(analyzeHandler).toContain("setHistory(saveReportToHistory(missingConsentFallbackReport));");
   });
 
   it("keeps analysis context in the report notice after model success or failure", () => {
