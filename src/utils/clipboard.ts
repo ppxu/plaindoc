@@ -15,11 +15,15 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
   textarea.style.left = "-9999px";
   textarea.style.top = "0";
   document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  textarea.setSelectionRange(0, textarea.value.length);
 
   try {
+    try {
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+    } catch {
+      // Some browsers block programmatic selection; still try the copy command and always clean up.
+    }
     try {
       return document.execCommand("copy");
     } catch {

@@ -36,6 +36,32 @@ describe("copyTextToClipboard", () => {
     expect(documentStub.execCommand).toHaveBeenCalledWith("copy");
     expect(documentStub.body.removeChild).toHaveBeenCalledWith(textarea);
   });
+
+  it("still removes the fallback textarea when text selection is blocked", async () => {
+    const textarea = createTextarea();
+    textarea.setSelectionRange.mockImplementation(() => {
+      throw new Error("selection blocked");
+    });
+    const documentStub = {
+      body: {
+        appendChild: vi.fn(),
+        removeChild: vi.fn()
+      },
+      createElement: vi.fn(() => textarea),
+      execCommand: vi.fn(() => true)
+    };
+
+    vi.stubGlobal("navigator", {});
+    vi.stubGlobal("document", documentStub);
+
+    await expect(copyTextToClipboard("PlainDoc report")).resolves.toBe(true);
+
+    expect(textarea.focus).toHaveBeenCalledOnce();
+    expect(textarea.select).toHaveBeenCalledOnce();
+    expect(textarea.setSelectionRange).toHaveBeenCalledWith(0, textarea.value.length);
+    expect(documentStub.execCommand).toHaveBeenCalledWith("copy");
+    expect(documentStub.body.removeChild).toHaveBeenCalledWith(textarea);
+  });
 });
 
 function createTextarea() {
