@@ -9,10 +9,16 @@ describe("local data reset chrome", () => {
     expect(appSource).toContain("确定要清除本机数据吗？");
     expect(appSource).toContain("clearLocalStoredData()");
     expect(appSource).toContain("createLocalDataResetState()");
+    expect(appSource).toContain("invalidateCurrentAnalysis()");
     expect(appSource).toContain("onClearLocalData={handleClearLocalData}");
 
     expect(documentInputSource).toContain("清除本机数据");
     expect(documentInputSource).toContain("onClearLocalData");
-    expect(documentInputSource).toContain("disabled={isUploading || isAnalyzing}");
+    const clearLocalDataButton = documentInputSource.slice(
+      documentInputSource.indexOf("onClick={onClearLocalData}"),
+      documentInputSource.indexOf('title="清除当前正文、报告历史、模型设置和 AI 发送确认"')
+    );
+    expect(clearLocalDataButton).toContain("disabled={isUploading}");
+    expect(clearLocalDataButton).not.toContain("isAnalyzing");
   });
 });

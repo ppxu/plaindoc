@@ -211,7 +211,7 @@ export function DocumentInput({
         <button
           type="button"
           onClick={onClearLocalData}
-          disabled={isUploading || isAnalyzing}
+          disabled={isUploading}
           aria-label="清除本机数据"
           title="清除当前正文、报告历史、模型设置和 AI 发送确认"
         >
