@@ -30,7 +30,7 @@ export function Checklist({ items, onCopy }: ChecklistProps) {
     <section className="report-section checklist-section">
       <div className="section-row">
         <div>
-          <p className="section-label">Checklist</p>
+          <p className="section-label">清单</p>
           <h3>签署前问题清单</h3>
         </div>
         <button className="ghost-button" type="button" onClick={handleCopy}>

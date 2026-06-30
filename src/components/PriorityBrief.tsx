@@ -32,7 +32,7 @@ export function PriorityBrief({ report }: PriorityBriefProps) {
     <section className="report-section priority-brief-section">
       <div className="section-row">
         <div>
-          <p className="section-label">Priority</p>
+          <p className="section-label">优先处理</p>
           <h3>优先处理</h3>
         </div>
         <button className="ghost-button" type="button" onClick={copyBrief}>

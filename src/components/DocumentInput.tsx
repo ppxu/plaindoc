@@ -87,7 +87,7 @@ export function DocumentInput({
     <section className="input-panel" aria-label="文件输入与分析设置" aria-busy={isAnalyzing || isUploading}>
       <div className="panel-heading">
         <div>
-          <p className="section-label">Document</p>
+          <p className="section-label">文件</p>
           <h2>准备检查的文件</h2>
         </div>
         <FileText aria-hidden="true" />

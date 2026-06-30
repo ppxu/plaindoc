@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import appSource from "../App.tsx?raw";
+import actionPlanSource from "../components/ActionPlan.tsx?raw";
+import checklistSource from "../components/Checklist.tsx?raw";
+import clauseEditPackSource from "../components/ClauseEditPack.tsx?raw";
 import documentInputSource from "../components/DocumentInput.tsx?raw";
+import priorityBriefSource from "../components/PriorityBrief.tsx?raw";
 import reportPanelSource from "../components/ReportPanel.tsx?raw";
 import modelSettingsPanelSource from "../components/ModelSettingsPanel.tsx?raw";
 import reportHistorySource from "../components/ReportHistory.tsx?raw";
@@ -54,5 +58,19 @@ describe("accessibility chrome", () => {
   it("uses a Chinese brand tagline in the first viewport", () => {
     expect(appSource).toContain("签字前，先看懂哪里可能伤到你。");
     expect(appSource).not.toContain("Know what can hurt you before you sign.");
+  });
+
+  it("uses Chinese visible chrome labels across the main workspace", () => {
+    expect(appSource).toContain("本地优先");
+    expect(appSource).not.toContain("Local-first");
+    expect(documentInputSource).toContain('<p className="section-label">文件</p>');
+    expect(reportPanelSource).toContain('<p className="section-label">报告</p>');
+    expect(priorityBriefSource).toContain('<p className="section-label">优先处理</p>');
+    expect(reportPanelSource).toContain('<p className="section-label">风险</p>');
+    expect(clauseEditPackSource).toContain('<p className="section-label">条款修改</p>');
+    expect(reportPanelSource).toContain('<p className="section-label">事实</p>');
+    expect(checklistSource).toContain('<p className="section-label">清单</p>');
+    expect(actionPlanSource).toContain('<p className="section-label">下一步</p>');
+    expect(reportPanelSource).toContain('<p className="section-label">白话解释</p>');
   });
 });

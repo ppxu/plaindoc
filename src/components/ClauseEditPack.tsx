@@ -36,7 +36,7 @@ export function ClauseEditPack({ findings }: ClauseEditPackProps) {
     <section className="report-section clause-pack-section">
       <div className="section-row">
         <div>
-          <p className="section-label">Clause Edits</p>
+          <p className="section-label">条款修改</p>
           <h3>修改条款包</h3>
         </div>
         <button className="ghost-button" type="button" onClick={copyAllEdits}>

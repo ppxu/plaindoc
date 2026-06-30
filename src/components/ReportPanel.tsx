@@ -71,7 +71,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
     <section id="report-panel" className="report-panel" aria-label="分析报告" tabIndex={-1} ref={ref}>
       <div className="report-hero">
         <div>
-          <p className="section-label">Report</p>
+          <p className="section-label">报告</p>
           <h2>{statusText(report.status)}</h2>
           <p>{report.summary}</p>
         </div>
@@ -125,7 +125,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       <PriorityBrief report={report} />
 
       <section className="report-section">
-        <p className="section-label">Risks</p>
+        <p className="section-label">风险</p>
         <h3>风险提示</h3>
         <div className="risk-list">
           {report.findings.length ? (
@@ -147,7 +147,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       <ClauseEditPack findings={report.findings} />
 
       <section className="report-section">
-        <p className="section-label">Facts</p>
+        <p className="section-label">事实</p>
         <h3>关键事实</h3>
         {report.facts.length ? (
           <div className="facts-grid">
@@ -168,7 +168,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       <ActionPlan plan={report.actionPlan} onCopyMessage={onCopyActionMessage} />
 
       <section className="report-section plain-language">
-        <p className="section-label">Plain Language</p>
+        <p className="section-label">白话解释</p>
         <h3>给普通人的解释</h3>
         {report.plainLanguage.map((line) => (
           <p key={line}>{line}</p>

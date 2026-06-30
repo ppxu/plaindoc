@@ -29,7 +29,7 @@ export function ActionPlan({ plan, onCopyMessage }: ActionPlanProps) {
     <section className="report-section action-plan-section">
       <div className="section-row">
         <div>
-          <p className="section-label">Action</p>
+          <p className="section-label">下一步</p>
           <h3>下一步怎么做</h3>
         </div>
         <button className="ghost-button" type="button" onClick={handleCopy}>
