@@ -295,6 +295,7 @@ export default function App() {
     setInputNotice(restored.notice);
     setModelTextConsent(false);
     setEvidenceSelection(restored.evidenceSelection);
+    focusReportPanel(reportPanelRef);
   }
 
   function handleClearHistory() {

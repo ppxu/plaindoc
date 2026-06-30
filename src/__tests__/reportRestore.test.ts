@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import appSource from "../App.tsx?raw";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
 import { restoreSavedReport } from "../history/reportRestore";
 import type { SavedReport } from "../types";
@@ -27,5 +28,19 @@ describe("report restore", () => {
     expect(restored.notice).toContain("正文框已清空");
     expect(restored.notice).toContain("历史不保存原始正文");
     expect(restored.notice).toContain("证据片段");
+  });
+
+  it("moves focus to the restored report after selecting local history", () => {
+    const selectHistoryHandler = appSource.slice(
+      appSource.indexOf("function handleSelectHistory"),
+      appSource.indexOf("function handleClearHistory")
+    );
+
+    expect(selectHistoryHandler).toContain("const restored = restoreSavedReport(item);");
+    expect(selectHistoryHandler).toContain("setReport(restored.report);");
+    expect(selectHistoryHandler).toContain("focusReportPanel(reportPanelRef);");
+    expect(selectHistoryHandler.indexOf("setReport(restored.report);")).toBeLessThan(
+      selectHistoryHandler.indexOf("focusReportPanel(reportPanelRef);")
+    );
   });
 });
