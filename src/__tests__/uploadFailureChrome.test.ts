@@ -30,6 +30,27 @@ describe("upload failure chrome", () => {
     expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("!fileText.trim()"));
   });
 
+  it("gives image and photo uploads a direct OCR instruction", () => {
+    const uploadHandler = appSource.slice(
+      appSource.indexOf("async function handleUpload"),
+      appSource.indexOf("async function copyChecklist")
+    );
+
+    expect(uploadHandler).toContain("const isImageUpload = isImageFile(file);");
+    expect(uploadHandler).toContain("if (isImageUpload) {");
+    expect(uploadHandler).toContain("照片或图片文件暂不能直接识别文字");
+    expect(uploadHandler).toContain("请先用手机相册、微信、系统预览或 OCR 工具提取文字");
+    expect(uploadHandler.indexOf("if (isImageUpload) {")).toBeLessThan(
+      uploadHandler.indexOf("if (!isPdfUpload && !isTextFile)")
+    );
+  });
+
+  it("recognizes common image file extensions and mime types before generic upload rejection", () => {
+    expect(appSource).toContain("function isImageFile(file: File): boolean");
+    expect(appSource).toContain('file.type.startsWith("image/")');
+    expect(appSource).toContain('[".png", ".jpg", ".jpeg", ".webp", ".heic", ".heif"]');
+  });
+
   it("explains that failed uploads leave the current text and report unchanged", () => {
     const uploadHandler = appSource.slice(
       appSource.indexOf("async function handleUpload"),

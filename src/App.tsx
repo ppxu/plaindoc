@@ -390,6 +390,12 @@ export default function App() {
     const filename = file.name.toLowerCase();
     const isTextFile = filename.endsWith(".txt") || filename.endsWith(".md") || file.type.startsWith("text/");
     const isPdfUpload = isPdfFile(file);
+    const isImageUpload = isImageFile(file);
+    if (isImageUpload) {
+      showUploadFailureUnchangedNotice();
+      setError("照片或图片文件暂不能直接识别文字。请先用手机相册、微信、系统预览或 OCR 工具提取文字，再粘贴到正文框。");
+      return;
+    }
     if (!isPdfUpload && !isTextFile) {
       showUploadFailureUnchangedNotice();
       setError("当前支持 PDF、.txt、.md 和纯文本文件。扫描件图片和 OCR 在路线图中。");
@@ -666,6 +672,12 @@ function focusReportPanel(reportPanelRef: RefObject<HTMLElement | null>): void {
 
 function hasCurrentWorkspaceContent(text: string, report: AnalysisReport): boolean {
   return Boolean(text.trim() || report.wordCount || report.findings.length || report.facts.length);
+}
+
+function isImageFile(file: File): boolean {
+  const imageExtensions = [".png", ".jpg", ".jpeg", ".webp", ".heic", ".heif"];
+  const filename = file.name.toLowerCase();
+  return file.type.startsWith("image/") || imageExtensions.some((extension) => filename.endsWith(extension));
 }
 
 function confirmLocalDataReset(): boolean {
