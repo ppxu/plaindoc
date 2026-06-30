@@ -11,6 +11,8 @@ import socialPreviewPngUrl from "../../public/social-preview.png?url";
 const socialPreviewPng = readFileSync(fileURLToPath(new URL("../../public/social-preview.png", import.meta.url)));
 const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
 const roadmap = readFileSync(fileURLToPath(new URL("../../docs/roadmap.md", import.meta.url)), "utf8");
+const appIcon192Png = readFileSync(fileURLToPath(new URL("../../public/icon-192.png", import.meta.url)));
+const appIcon512Png = readFileSync(fileURLToPath(new URL("../../public/icon-512.png", import.meta.url)));
 
 describe("release metadata", () => {
   it("declares the document language for the Chinese-first app shell", () => {
@@ -71,9 +73,21 @@ describe("release metadata", () => {
           src: "/plaindoc/favicon.svg",
           type: "image/svg+xml",
           sizes: "any"
+        }),
+        expect.objectContaining({
+          src: "/plaindoc/icon-192.png",
+          type: "image/png",
+          sizes: "192x192"
+        }),
+        expect.objectContaining({
+          src: "/plaindoc/icon-512.png",
+          type: "image/png",
+          sizes: "512x512"
         })
       ])
     );
+    expect(readPngSize(appIcon192Png)).toEqual({ width: 192, height: 192 });
+    expect(readPngSize(appIcon512Png)).toEqual({ width: 512, height: 512 });
   });
 
   it("publishes search crawler hints for the GitHub Pages demo", () => {
