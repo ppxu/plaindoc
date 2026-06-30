@@ -2,10 +2,11 @@ export interface LeaveWarningInput {
   text: string;
   selectedExampleId: string;
   isAnalyzing: boolean;
+  isUploading: boolean;
 }
 
-export function shouldWarnBeforeLeaving({ text, selectedExampleId, isAnalyzing }: LeaveWarningInput): boolean {
-  if (isAnalyzing) {
+export function shouldWarnBeforeLeaving({ text, selectedExampleId, isAnalyzing, isUploading }: LeaveWarningInput): boolean {
+  if (isAnalyzing || isUploading) {
     return true;
   }
 

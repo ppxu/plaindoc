@@ -61,7 +61,7 @@ export default function App() {
 
   useEffect(() => {
     function handleBeforeUnload(event: BeforeUnloadEvent) {
-      if (!shouldWarnBeforeLeaving({ text, selectedExampleId, isAnalyzing })) {
+      if (!shouldWarnBeforeLeaving({ text, selectedExampleId, isAnalyzing, isUploading })) {
         return;
       }
 
@@ -71,7 +71,7 @@ export default function App() {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [text, selectedExampleId, isAnalyzing]);
+  }, [text, selectedExampleId, isAnalyzing, isUploading]);
 
   function handleExampleChange(id: string) {
     const example = documentExamples.find((item) => item.id === id);
