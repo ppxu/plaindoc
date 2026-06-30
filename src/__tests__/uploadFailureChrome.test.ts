@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import appSource from "../App.tsx?raw";
+import documentInputSource from "../components/DocumentInput.tsx?raw";
 
 describe("upload failure chrome", () => {
   it("clears stale upload notices before validating a new upload", () => {
@@ -73,5 +74,16 @@ describe("upload failure chrome", () => {
     expect(invalidateHandler).toContain("invalidateCurrentUploadRead();");
     expect(appSource).toContain("function beginUploadRead(): number");
     expect(appSource).toContain("function isCurrentUploadRead(runId: number): boolean");
+  });
+
+  it("supports dropping a PDF or text file onto the upload strip", () => {
+    expect(documentInputSource).toContain("handleUploadDrop");
+    expect(documentInputSource).toContain("handleUploadDragOver");
+    expect(documentInputSource).toContain("event.preventDefault();");
+    expect(documentInputSource).toContain("event.dataTransfer.files?.[0]");
+    expect(documentInputSource).toContain("onUpload(file);");
+    expect(documentInputSource).toContain("onDrop={handleUploadDrop}");
+    expect(documentInputSource).toContain("onDragOver={handleUploadDragOver}");
+    expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 文件"');
   });
 });

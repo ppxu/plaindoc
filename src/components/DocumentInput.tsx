@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type DragEvent } from "react";
 import { FileText, FolderOpen, ShieldCheck, Sparkles, Square, Trash2, Upload } from "lucide-react";
 import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
 import { getModelEndpointSecurity, modelEndpointNeedsApiKey, type ModelEndpointSecurity } from "../analyzer/modelEndpointSecurity";
@@ -84,6 +84,19 @@ export function DocumentInput({
     selectEvidenceText(textarea, evidenceSelection);
   }, [evidenceSelection]);
 
+  function handleUploadDragOver(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+  }
+
+  function handleUploadDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    if (isUploading || isAnalyzing) return;
+    const file = event.dataTransfer.files?.[0];
+    if (file) {
+      onUpload(file);
+    }
+  }
+
   return (
     <section className="input-panel" aria-label="文件输入与分析设置" aria-busy={isAnalyzing || isUploading}>
       <div className="panel-heading">
@@ -130,7 +143,12 @@ export function DocumentInput({
       </label>
 
       <div className="workspace-actions">
-        <label className="upload-strip">
+        <label
+          className="upload-strip"
+          aria-label="上传或拖入 PDF、txt、md 文件"
+          onDragOver={handleUploadDragOver}
+          onDrop={handleUploadDrop}
+        >
           <Upload aria-hidden="true" />
           <span>{isUploading ? "正在读取文件..." : "上传 PDF / .txt / .md 文件"}</span>
           <input
