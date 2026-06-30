@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import appSource from "../App.tsx?raw";
+import documentInputSource from "../components/DocumentInput.tsx?raw";
 import modelSettingsPanelSource from "../components/ModelSettingsPanel.tsx?raw";
 
 describe("model endpoint security chrome", () => {
@@ -18,5 +19,8 @@ describe("model endpoint security chrome", () => {
     expect(modelSettingsPanelSource).toContain("model-send-blocked-reason");
     expect(modelSettingsPanelSource).toContain("填写 API key 后才能确认发送正文给远程模型服务。");
     expect(modelSettingsPanelSource).toContain("修正模型 endpoint 后才能确认发送正文。");
+
+    expect(documentInputSource).toContain("getModelEndpointSecurity(modelSettings.baseUrl)");
+    expect(documentInputSource).toContain("生成本地清单（endpoint 不安全）");
   });
 });
