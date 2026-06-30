@@ -13,7 +13,7 @@ describe("copy state reset chrome", () => {
     }
 
     expect(actionPlanSource).toContain("[plan.message]");
-    expect(checklistSource).toContain("[items]");
+    expect(checklistSource).toContain("[checklistText]");
     expect(clauseEditPackSource).toContain("[editsText]");
     expect(priorityBriefSource).toContain("[briefText]");
     expect(riskCardSource).toContain("[finding.modification]");
@@ -28,5 +28,17 @@ describe("copy state reset chrome", () => {
     expect(actionPlanSource).toContain(".focus()");
     expect(actionPlanSource).toContain(".select()");
     expect(actionPlanSource).toContain("setSelectionRange(0, textarea.value.length)");
+  });
+
+  it("offers a manual checklist fallback when browser copy is blocked", () => {
+    expect(checklistSource).toContain("checklistFallbackRef");
+    expect(checklistSource).toContain("checklistToText(items)");
+    expect(checklistSource).toContain('copyState === "failed"');
+    expect(checklistSource).toContain("浏览器没有允许自动复制。可以在这里手动复制签署前问题清单。");
+    expect(checklistSource).toContain('aria-label="签署前问题清单，可手动复制"');
+    expect(checklistSource).toContain("selectFallbackText(checklistFallbackRef.current)");
+    expect(checklistSource).toContain(".focus()");
+    expect(checklistSource).toContain(".select()");
+    expect(checklistSource).toContain("setSelectionRange(0, textarea.value.length)");
   });
 });
