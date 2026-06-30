@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2, CircleAlert, Search } from "lucide-react";
 import type { RiskFinding } from "../types";
 import { copyTextToClipboard } from "../utils/clipboard";
@@ -11,10 +11,17 @@ interface RiskCardProps {
 export function RiskCard({ finding, onRevealEvidence }: RiskCardProps) {
   const Icon = finding.severity === "red" ? CircleAlert : finding.severity === "yellow" ? AlertTriangle : CheckCircle2;
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const modificationFallbackRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setCopyState("idle");
   }, [finding.modification]);
+
+  useEffect(() => {
+    if (copyState === "failed") {
+      selectFallbackText(modificationFallbackRef.current);
+    }
+  }, [copyState]);
 
   async function copyModification() {
     if (!finding.modification) return;
@@ -47,6 +54,17 @@ export function RiskCard({ finding, onRevealEvidence }: RiskCardProps) {
             </button>
           </div>
           <p>{finding.modification}</p>
+          {copyState === "failed" ? (
+            <div className="report-copy-fallback">
+              <span>浏览器没有允许自动复制。可以在这里手动复制这条建议修改条款。</span>
+              <textarea
+                ref={modificationFallbackRef}
+                readOnly
+                value={finding.modification}
+                aria-label="建议修改条款，可手动复制"
+              />
+            </div>
+          ) : null}
         </div>
       ) : null}
       {finding.evidence ? (
@@ -71,4 +89,15 @@ function copyLabel(state: "idle" | "copied" | "failed"): string {
   if (state === "copied") return "已复制";
   if (state === "failed") return "复制失败";
   return "复制";
+}
+
+function selectFallbackText(textarea: HTMLTextAreaElement | null): void {
+  if (!textarea) return;
+  textarea.focus();
+  textarea.select();
+  try {
+    textarea.setSelectionRange(0, textarea.value.length);
+  } catch {
+    // The visible textarea remains available even if a browser refuses programmatic selection.
+  }
 }

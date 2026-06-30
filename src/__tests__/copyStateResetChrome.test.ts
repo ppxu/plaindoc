@@ -1,9 +1,13 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import actionPlanSource from "../components/ActionPlan.tsx?raw";
 import checklistSource from "../components/Checklist.tsx?raw";
 import clauseEditPackSource from "../components/ClauseEditPack.tsx?raw";
 import priorityBriefSource from "../components/PriorityBrief.tsx?raw";
 import riskCardSource from "../components/RiskCard.tsx?raw";
+
+const stylesSource = readFileSync(fileURLToPath(new URL("../styles.css", import.meta.url)), "utf8");
 
 describe("copy state reset chrome", () => {
   it("resets copy button feedback when the copied content changes", () => {
@@ -62,5 +66,19 @@ describe("copy state reset chrome", () => {
     expect(clauseEditPackSource).toContain(".focus()");
     expect(clauseEditPackSource).toContain(".select()");
     expect(clauseEditPackSource).toContain("setSelectionRange(0, textarea.value.length)");
+  });
+
+  it("offers a manual single-clause fallback when browser copy is blocked", () => {
+    expect(riskCardSource).toContain("modificationFallbackRef");
+    expect(riskCardSource).toContain('copyState === "failed"');
+    expect(riskCardSource).toContain("浏览器没有允许自动复制。可以在这里手动复制这条建议修改条款。");
+    expect(riskCardSource).toContain('aria-label="建议修改条款，可手动复制"');
+    expect(riskCardSource).toContain("selectFallbackText(modificationFallbackRef.current)");
+    expect(riskCardSource).toContain(".focus()");
+    expect(riskCardSource).toContain(".select()");
+    expect(riskCardSource).toContain("setSelectionRange(0, textarea.value.length)");
+    expect(stylesSource).toContain(".modification-box .report-copy-fallback");
+    expect(stylesSource).toContain(".modification-box .report-copy-fallback {\n  display: grid;");
+    expect(stylesSource).toContain("width: 100%");
   });
 });

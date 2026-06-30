@@ -1037,6 +1037,7 @@ textarea:focus,
 .report-copy-fallback textarea {
   min-height: 180px;
   max-height: 320px;
+  width: 100%;
   color: #2d352f;
   background: #fff;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -1223,6 +1224,15 @@ textarea:focus,
   color: #40504b;
   font-size: 13px;
   line-height: 1.55;
+}
+
+.modification-box .report-copy-fallback {
+  display: grid;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid #ead9bf;
+  border-radius: 8px;
 }
 
 .risk-card blockquote {
