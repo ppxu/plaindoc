@@ -85,6 +85,30 @@ describe("report history", () => {
     expect(loaded[0].report.findings.every((finding) => finding.evidence === undefined)).toBe(true);
   });
 
+  it("refreshes older saved history titles so restored reports keep analysis source context", () => {
+    const storage = createMemoryStorage();
+    const report = analyzeDocument({
+      text: "押金 5000 元，甲方可自行扣除押金和维修费，提前退租需赔偿两个月租金。",
+      kind: "rental"
+    });
+    storage.setItem(
+      "plaindoc:report-history:v1",
+      JSON.stringify([
+        {
+          id: "old-history",
+          title: "租房合同 · 不建议直接签 · 20 分",
+          createdAt: "2026-06-28T00:00:00.000Z",
+          report
+        }
+      ])
+    );
+
+    const loaded = loadReportHistory(storage);
+
+    expect(loaded[0].title).toContain("本地规则");
+    expect(loaded[0].title).toContain("不建议直接签");
+  });
+
   it("limits saved reports and ignores invalid storage data", () => {
     const storage = createMemoryStorage();
 

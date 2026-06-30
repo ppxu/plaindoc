@@ -59,9 +59,11 @@ function writeReportHistory(items: SavedReport[], storage: Storage | undefined) 
 }
 
 function redactSavedReport(item: SavedReport): SavedReport {
+  const report = redactReportForHistory(item.report);
   return {
     ...item,
-    report: redactReportForHistory(item.report)
+    title: createReportTitle(report),
+    report
   };
 }
 
