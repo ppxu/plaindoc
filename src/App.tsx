@@ -495,7 +495,7 @@ export default function App() {
           </div>
           <div>
             <h1>PlainDoc</h1>
-            <p>Know what can hurt you before you sign.</p>
+            <p>签字前，先看懂哪里可能伤到你。</p>
           </div>
         </div>
         <div className="topbar-actions">

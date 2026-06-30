@@ -50,4 +50,9 @@ describe("accessibility chrome", () => {
     expect(reportPanelSource).toContain('aria-label="分析报告"');
     expect(reportPanelSource).toContain("aria-label={`风险阅读分 ${report.score}`}");
   });
+
+  it("uses a Chinese brand tagline in the first viewport", () => {
+    expect(appSource).toContain("签字前，先看懂哪里可能伤到你。");
+    expect(appSource).not.toContain("Know what can hurt you before you sign.");
+  });
 });
