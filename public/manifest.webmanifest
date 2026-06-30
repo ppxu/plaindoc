@@ -2,7 +2,7 @@
   "id": "/plaindoc/",
   "name": "PlainDoc",
   "short_name": "PlainDoc",
-  "description": "Plain-language risk notes and signing checklists for everyday documents.",
+  "description": "把日常合同、协议和保单转换成易懂的风险提示和签署前清单。",
   "lang": "zh-CN",
   "dir": "ltr",
   "start_url": "/plaindoc/",

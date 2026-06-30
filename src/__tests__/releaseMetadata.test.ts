@@ -13,6 +13,7 @@ const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta
 const roadmap = readFileSync(fileURLToPath(new URL("../../docs/roadmap.md", import.meta.url)), "utf8");
 const appIcon192Png = readFileSync(fileURLToPath(new URL("../../public/icon-192.png", import.meta.url)));
 const appIcon512Png = readFileSync(fileURLToPath(new URL("../../public/icon-512.png", import.meta.url)));
+const publicDescription = "把日常合同、协议和保单转换成易懂的风险提示和签署前清单。";
 
 describe("release metadata", () => {
   it("declares the document language for the Chinese-first app shell", () => {
@@ -23,13 +24,13 @@ describe("release metadata", () => {
     expect(html).toContain('<meta name="theme-color" content="#127c71" />');
     expect(html).toContain('<link rel="manifest" href="%BASE_URL%manifest.webmanifest" />');
     expect(html).toContain('<meta property="og:title" content="PlainDoc" />');
-    expect(html).toContain(
-      '<meta property="og:description" content="Plain-language risk notes and signing checklists for everyday documents." />'
-    );
+    expect(html).toContain(`<meta name="description" content="${publicDescription}" />`);
+    expect(html).toContain(`<meta property="og:description" content="${publicDescription}" />`);
     expect(html).toContain('<meta property="og:type" content="website" />');
     expect(html).toContain('<meta property="og:url" content="https://ppxu.github.io/plaindoc/" />');
     expect(html).toContain('<meta property="og:image" content="https://ppxu.github.io/plaindoc/social-preview.png" />');
     expect(html).toContain('<meta name="twitter:card" content="summary_large_image" />');
+    expect(html).toContain(`<meta name="twitter:description" content="${publicDescription}" />`);
     expect(html).toContain('<meta name="twitter:image" content="https://ppxu.github.io/plaindoc/social-preview.png" />');
     expect(html).toContain('<link rel="canonical" href="https://ppxu.github.io/plaindoc/" />');
     expect(socialPreviewPngUrl).toContain("social-preview.png");
@@ -57,7 +58,7 @@ describe("release metadata", () => {
     expect(manifest.id).toBe("/plaindoc/");
     expect(manifest.name).toBe("PlainDoc");
     expect(manifest.short_name).toBe("PlainDoc");
-    expect(manifest.description).toBe("Plain-language risk notes and signing checklists for everyday documents.");
+    expect(manifest.description).toBe(publicDescription);
     expect(manifest.lang).toBe("zh-CN");
     expect(manifest.dir).toBe("ltr");
     expect(manifest.start_url).toBe("/plaindoc/");
