@@ -216,8 +216,9 @@ export default function App() {
       if (!analysisRunTracker.current.isCurrent(runId)) {
         return;
       }
-      setReport(modelReport);
-      setHistory(saveReportToHistory(modelReport));
+      const reportWithMergedNotice = mergeReportNotice(modelReport, baseAnalysisNotice);
+      setReport(reportWithMergedNotice);
+      setHistory(saveReportToHistory(reportWithMergedNotice));
       if (needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
         setError("AI 增强已开启，但缺少 API key，已回退到本地分析。");
       }
@@ -229,7 +230,7 @@ export default function App() {
       const message = caught instanceof Error ? caught.message : "模型调用失败。";
       const fallbackReport = {
         ...localReport,
-        notice: `AI 增强失败，已回退到本地规则分析：${message}`
+        notice: mergeNotices(baseAnalysisNotice, `AI 增强失败，已回退到本地规则分析：${message}`)
       };
       setReport(fallbackReport);
       setHistory(saveReportToHistory(fallbackReport));
@@ -540,6 +541,13 @@ function resolveAnalysisKind(text: string, selectedKind: DocumentKind): { kind: 
 
 function mergeNotices(...notices: string[]): string {
   return notices.filter(Boolean).join(" ");
+}
+
+function mergeReportNotice(report: AnalysisReport, baseNotice: string): AnalysisReport {
+  return {
+    ...report,
+    notice: mergeNotices(baseNotice, report.notice ?? "")
+  };
 }
 
 function focusReportPanel(reportPanelRef: RefObject<HTMLElement | null>): void {

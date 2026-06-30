@@ -21,4 +21,14 @@ describe("analysis feedback chrome", () => {
       'setInputNotice(mergeNotices(baseAnalysisNotice, "未确认发送正文给模型服务，本次仅使用本地规则分析。勾选 AI 发送确认后可生成增强清单。"));'
     );
   });
+
+  it("keeps analysis context in the report notice after model success or failure", () => {
+    const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
+
+    expect(analyzeHandler).toContain("const reportWithMergedNotice = mergeReportNotice(modelReport, baseAnalysisNotice);");
+    expect(analyzeHandler).toContain("setReport(reportWithMergedNotice);");
+    expect(analyzeHandler).toContain("setHistory(saveReportToHistory(reportWithMergedNotice));");
+    expect(analyzeHandler).toContain("notice: mergeNotices(baseAnalysisNotice, `AI 增强失败，已回退到本地规则分析：${message}`)");
+    expect(appSource).toContain("function mergeReportNotice");
+  });
 });
