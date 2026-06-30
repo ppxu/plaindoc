@@ -71,6 +71,7 @@ export function ModelSettingsPanel({
         </span>
         <input
           type="checkbox"
+          aria-label="启用 AI 增强分析"
           checked={settings.enabled}
           onChange={(event) => update({ enabled: event.target.checked })}
         />
@@ -146,6 +147,7 @@ export function ModelSettingsPanel({
             </span>
             <input
               type="checkbox"
+              aria-label="记住 API key 到本机浏览器"
               checked={settings.rememberApiKey}
               onChange={(event) => update({ rememberApiKey: event.target.checked })}
             />
@@ -184,6 +186,7 @@ export function ModelSettingsPanel({
             </span>
             <input
               type="checkbox"
+              aria-label="确认本次允许发送正文给模型服务"
               checked={modelTextConsent}
               disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}
               onChange={(event) => onModelTextConsentChange(event.target.checked)}

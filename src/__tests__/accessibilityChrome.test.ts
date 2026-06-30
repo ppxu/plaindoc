@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import appSource from "../App.tsx?raw";
 import reportPanelSource from "../components/ReportPanel.tsx?raw";
+import modelSettingsPanelSource from "../components/ModelSettingsPanel.tsx?raw";
 
 const styles = readFileSync(fileURLToPath(new URL("../styles.css", import.meta.url)), "utf8");
 
@@ -31,5 +32,11 @@ describe("accessibility chrome", () => {
     );
     expect(textChangeHandler).not.toContain("focusReportPanel");
     expect(exampleChangeHandler).not.toContain("focusReportPanel");
+  });
+
+  it("gives AI setting toggles stable accessible names", () => {
+    expect(modelSettingsPanelSource).toContain('aria-label="启用 AI 增强分析"');
+    expect(modelSettingsPanelSource).toContain('aria-label="记住 API key 到本机浏览器"');
+    expect(modelSettingsPanelSource).toContain('aria-label="确认本次允许发送正文给模型服务"');
   });
 });
