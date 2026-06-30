@@ -32,6 +32,8 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("**生成时间：**");
     expect(markdown).toContain(report.generatedAt);
     expect(markdown).toContain(`**文本规模：** 约 ${report.wordCount} 字/词`);
+    expect(markdown).toContain("**生成工具：** PlainDoc");
+    expect(markdown).toContain("https://ppxu.github.io/plaindoc/");
     expect(markdown).not.toContain("字符线索");
   });
 

@@ -47,6 +47,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
     `**文件类型：** ${documentKindLabel(report)}`,
     `**生成时间：** ${report.generatedAt}`,
     `**文本规模：** ${formatTextScale(report.wordCount)}`,
+    "**生成工具：** PlainDoc（https://ppxu.github.io/plaindoc/）",
     "**导出范围：** 本报告不包含原始全文，只包含摘要、关键事实、必要证据片段、风险提示和建议。分享前请确认报告中是否仍有个人信息或敏感条款。",
     "",
     "## 关键事实",
