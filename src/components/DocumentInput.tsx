@@ -24,6 +24,7 @@ interface DocumentInputProps {
   modelConnectionStatus: { tone: "success" | "error"; message: string } | null;
   isTestingModelConnection: boolean;
   evidenceSelection: EvidenceSelectionTarget | null;
+  textFocusRequest: number;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
   onExampleChange: (id: string) => void;
@@ -57,6 +58,7 @@ export function DocumentInput({
   modelConnectionStatus,
   isTestingModelConnection,
   evidenceSelection,
+  textFocusRequest,
   onTextChange,
   onKindChange,
   onExampleChange,
@@ -84,6 +86,12 @@ export function DocumentInput({
     if (!textarea) return;
     selectEvidenceText(textarea, evidenceSelection);
   }, [evidenceSelection]);
+
+  useEffect(() => {
+    if (textFocusRequest > 0) {
+      textareaRef.current?.focus();
+    }
+  }, [textFocusRequest]);
 
   function handleUploadDragOver(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();

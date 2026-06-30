@@ -23,4 +23,17 @@ describe("workspace clear chrome", () => {
 
     expect(documentInputSource).toContain("canClearWorkspace: boolean;");
   });
+
+  it("returns focus to the document text field after clearing the workspace", () => {
+    const clearHandler = appSource.slice(
+      appSource.indexOf("function handleClearWorkspace"),
+      appSource.indexOf("function handleClearLocalData")
+    );
+
+    expect(appSource).toContain("const [documentTextFocusRequest, setDocumentTextFocusRequest] = useState(0);");
+    expect(clearHandler).toContain("setDocumentTextFocusRequest((request) => request + 1);");
+    expect(documentInputSource).toContain("textFocusRequest: number;");
+    expect(documentInputSource).toContain("if (textFocusRequest > 0) {");
+    expect(documentInputSource).toContain("textarea.focus();");
+  });
 });

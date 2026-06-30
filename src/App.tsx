@@ -58,6 +58,7 @@ export default function App() {
   const [modelConnectionStatus, setModelConnectionStatus] = useState<ModelConnectionStatus>(null);
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
   const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
+  const [documentTextFocusRequest, setDocumentTextFocusRequest] = useState(0);
 
   useEffect(() => {
     function handleBeforeUnload(event: BeforeUnloadEvent) {
@@ -157,6 +158,7 @@ export default function App() {
     setReport(cleared.report);
     setEvidenceSelection(cleared.evidenceSelection);
     setModelTextConsent(false);
+    setDocumentTextFocusRequest((request) => request + 1);
   }
 
   function handleClearLocalData() {
@@ -553,6 +555,7 @@ export default function App() {
           modelConnectionStatus={modelConnectionStatus}
           isTestingModelConnection={isTestingModelConnection}
           evidenceSelection={evidenceSelection}
+          textFocusRequest={documentTextFocusRequest}
           onTextChange={handleTextChange}
           onKindChange={handleKindChange}
           onExampleChange={handleExampleChange}
