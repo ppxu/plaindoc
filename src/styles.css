@@ -402,6 +402,13 @@ textarea:focus,
   opacity: 0.7;
 }
 
+.upload-hint {
+  margin: -7px 0 15px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .upload-strip svg,
 .clear-workspace-button svg,
 .primary-action svg,

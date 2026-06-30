@@ -93,4 +93,9 @@ describe("upload failure chrome", () => {
     expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md 文件");
     expect(documentInputSource).toContain("松开即可读取文件");
   });
+
+  it("sets scanner PDF expectations before upload", () => {
+    expect(documentInputSource).toContain("支持可选中文本 PDF");
+    expect(documentInputSource).toContain("扫描版 PDF 或照片请先 OCR");
+  });
 });

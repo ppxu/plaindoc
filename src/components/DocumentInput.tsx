@@ -160,6 +160,7 @@ export function DocumentInput({
         <label
           className={isUploadDragActive ? "upload-strip drag-active" : "upload-strip"}
           aria-label="上传或拖入 PDF、txt、md 文件"
+          aria-describedby="upload-format-hint"
           onDragEnter={handleUploadDragEnter}
           onDragOver={handleUploadDragOver}
           onDragLeave={handleUploadDragLeave}
@@ -192,6 +193,9 @@ export function DocumentInput({
           <span>清空当前文件</span>
         </button>
       </div>
+      <p className="upload-hint" id="upload-format-hint">
+        支持可选中文本 PDF、.txt、.md；扫描版 PDF 或照片请先 OCR 后再上传。
+      </p>
 
       <ReportHistory items={history} onSelect={onSelectHistory} onClear={onClearHistory} />
 
