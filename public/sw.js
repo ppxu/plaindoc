@@ -1,4 +1,4 @@
-const CACHE_NAME = "plaindoc-shell-v1";
+const CACHE_NAME = "plaindoc-shell-v2";
 const APP_SCOPE = "/plaindoc/";
 const APP_SHELL = [
   APP_SCOPE,

@@ -1,4 +1,4 @@
-const OFFLINE_CACHE_NAME = "plaindoc-shell-v1";
+const OFFLINE_CACHE_NAME = "plaindoc-shell-v2";
 
 interface OfflineAssetInput {
   baseUrl: string;

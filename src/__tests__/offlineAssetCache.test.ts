@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
+import offlineAssetCacheSource from "../pwa/offlineAssetCache.ts?raw";
 import { collectOfflineAssetUrls } from "../pwa/offlineAssetCache";
 
 describe("offline asset cache", () => {
+  it("warms the current app shell cache version", () => {
+    expect(offlineAssetCacheSource).toContain('const OFFLINE_CACHE_NAME = "plaindoc-shell-v2"');
+  });
+
   it("collects the app shell and same-origin resources under the app base path", () => {
     const urls = collectOfflineAssetUrls({
       baseUrl: "/plaindoc/",
