@@ -151,9 +151,7 @@ export function ModelSettingsPanel({
             />
           </label>
           <p className="model-key-retention-status">
-            {settings.rememberApiKey
-              ? "API key 会保存在本机浏览器；清除模型设置或取消勾选后会从持久化设置中移除。"
-              : "API key 仅保留在当前页面会话，刷新页面后需要重新填写。"}
+            {getModelKeyRetentionStatus(settings.rememberApiKey, settings.apiKey)}
           </p>
 
           <div className="model-text-scope" aria-label="AI 发送范围">
@@ -218,4 +216,14 @@ function getModelSendBlockedReason(endpointSecurityWarning: string, needsApiKey:
     return "填写 API key 后才能确认发送正文给远程模型服务。";
   }
   return "";
+}
+
+function getModelKeyRetentionStatus(rememberApiKey: boolean, apiKey: string): string {
+  if (!rememberApiKey) {
+    return "API key 仅保留在当前页面会话，刷新页面后需要重新填写。";
+  }
+  if (!apiKey.trim()) {
+    return "已开启记住 API key；填写 API key 后才会写入本机浏览器。";
+  }
+  return "API key 会保存在本机浏览器；清除模型设置或取消勾选后会从持久化设置中移除。";
 }
