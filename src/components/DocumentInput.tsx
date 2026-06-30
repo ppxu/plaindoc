@@ -160,6 +160,7 @@ export function DocumentInput({
 
       <ModelSettingsPanel
         settings={modelSettings}
+        documentText={text}
         modelTextConsent={modelTextConsent}
         modelConnectionStatus={modelConnectionStatus}
         isTestingModelConnection={isTestingModelConnection}

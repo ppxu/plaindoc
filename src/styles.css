@@ -779,6 +779,36 @@ textarea:focus,
   color: #9c5c12;
 }
 
+.model-text-scope {
+  margin: 8px 0 10px;
+  padding: 10px;
+  color: #304b45;
+  background: #f4fbf8;
+  border: 1px solid #cfe3dd;
+  border-radius: 8px;
+}
+
+.model-text-scope > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.model-text-scope svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--teal);
+}
+
+.model-text-scope p {
+  margin: 7px 0 0;
+  color: #5a6b66;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .model-sensitive-warning {
   margin: 8px 0 10px;
   padding: 10px;

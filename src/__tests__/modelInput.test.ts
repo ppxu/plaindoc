@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
-import { MAX_MODEL_DOCUMENT_CHARS, prepareModelBaseline, prepareModelDocumentText } from "../analyzer/modelInput";
+import {
+  formatModelDocumentScope,
+  MAX_MODEL_DOCUMENT_CHARS,
+  prepareModelBaseline,
+  prepareModelDocumentText
+} from "../analyzer/modelInput";
 
 describe("prepareModelDocumentText", () => {
   it("keeps short document text unchanged", () => {
@@ -38,6 +43,15 @@ describe("prepareModelDocumentText", () => {
       { start: 0, end: expect.any(Number) },
       { start: expect.any(Number), end: text.length }
     ]);
+  });
+
+  it("describes exactly what text will be sent before model analysis", () => {
+    const text = "条".repeat(MAX_MODEL_DOCUMENT_CHARS + 25);
+    const prepared = prepareModelDocumentText(text);
+
+    expect(formatModelDocumentScope(prepared)).toBe(
+      "正文较长，AI 增强只会发送开头和结尾共 12000 个字符（原文 12025 个字符）；完整文本仍先由本地规则分析。"
+    );
   });
 
   it("removes evidence snippets from the local baseline sent to a model", () => {

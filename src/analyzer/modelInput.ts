@@ -43,6 +43,14 @@ export function prepareModelDocumentText(text: string): PreparedModelDocumentTex
   };
 }
 
+export function formatModelDocumentScope(preparedDocument: PreparedModelDocumentText): string {
+  if (preparedDocument.truncated) {
+    return `正文较长，AI 增强只会发送开头和结尾共 ${preparedDocument.sentLength} 个字符（原文 ${preparedDocument.originalLength} 个字符）；完整文本仍先由本地规则分析。`;
+  }
+
+  return `本次 AI 增强会发送完整正文：${preparedDocument.sentLength} 个字符。`;
+}
+
 export function prepareModelBaseline(report: AnalysisReport, preparedDocument: PreparedModelDocumentText) {
   return {
     summary: report.summary,

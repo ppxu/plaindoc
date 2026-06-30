@@ -1,4 +1,5 @@
-import { BrainCircuit, KeyRound, PlugZap, ShieldAlert, Trash2 } from "lucide-react";
+import { BrainCircuit, FileText, KeyRound, PlugZap, ShieldAlert, Trash2 } from "lucide-react";
+import { formatModelDocumentScope, prepareModelDocumentText } from "../analyzer/modelInput";
 import {
   getModelEndpointSecurity,
   modelEndpointNeedsApiKey,
@@ -16,6 +17,7 @@ import type { ModelAnalyzerSettings } from "../types";
 
 interface ModelSettingsPanelProps {
   settings: ModelAnalyzerSettings;
+  documentText: string;
   modelTextConsent: boolean;
   modelConnectionStatus: { tone: "success" | "error"; message: string } | null;
   isTestingModelConnection: boolean;
@@ -29,6 +31,7 @@ interface ModelSettingsPanelProps {
 
 export function ModelSettingsPanel({
   settings,
+  documentText,
   modelTextConsent,
   modelConnectionStatus,
   isTestingModelConnection,
@@ -44,6 +47,7 @@ export function ModelSettingsPanel({
   const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
   const needsApiKey = modelEndpointNeedsApiKey(runtimeSettings.baseUrl);
   const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
+  const modelDocumentScope = formatModelDocumentScope(prepareModelDocumentText(documentText));
 
   function update(partial: Partial<ModelAnalyzerSettings>) {
     onChange({ ...settings, ...partial });
@@ -141,6 +145,14 @@ export function ModelSettingsPanel({
               onChange={(event) => update({ rememberApiKey: event.target.checked })}
             />
           </label>
+
+          <div className="model-text-scope" aria-label="AI 发送范围">
+            <div>
+              <FileText aria-hidden="true" />
+              <strong>授权发送前可确认这次模型会看到的正文范围。</strong>
+            </div>
+            <p>{modelDocumentScope}</p>
+          </div>
 
           {sensitiveTextSummary.hasSensitiveText ? (
             <div className="model-sensitive-warning" role="alert">
