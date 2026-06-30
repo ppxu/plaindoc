@@ -467,6 +467,8 @@ export default function App() {
     setIsTestingModelConnection(false);
   }
 
+  const canClearWorkspace = hasCurrentWorkspaceContent(text, report);
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#report-panel">
@@ -504,6 +506,7 @@ export default function App() {
           notice={inputNotice}
           isAnalyzing={isAnalyzing}
           isUploading={isUploading}
+          canClearWorkspace={canClearWorkspace}
           history={history}
           modelSettings={modelSettings}
           modelTextConsent={modelTextConsent}
@@ -599,6 +602,10 @@ function focusReportPanel(reportPanelRef: RefObject<HTMLElement | null>): void {
     reportPanel.scrollIntoView({ block: "start" });
     reportPanel.focus({ preventScroll: true });
   });
+}
+
+function hasCurrentWorkspaceContent(text: string, report: AnalysisReport): boolean {
+  return Boolean(text.trim() || report.wordCount || report.findings.length || report.facts.length);
 }
 
 function confirmLocalDataReset(): boolean {

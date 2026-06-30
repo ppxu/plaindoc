@@ -16,6 +16,7 @@ interface DocumentInputProps {
   notice: string;
   isAnalyzing: boolean;
   isUploading: boolean;
+  canClearWorkspace: boolean;
   history: SavedReport[];
   modelSettings: ModelAnalyzerSettings;
   modelTextConsent: boolean;
@@ -48,6 +49,7 @@ export function DocumentInput({
   notice,
   isAnalyzing,
   isUploading,
+  canClearWorkspace,
   history,
   modelSettings,
   modelTextConsent,
@@ -147,7 +149,7 @@ export function DocumentInput({
           className="clear-workspace-button"
           type="button"
           onClick={onClearWorkspace}
-          disabled={isUploading || isAnalyzing || !text.trim()}
+          disabled={isUploading || isAnalyzing || !canClearWorkspace}
           title="清空当前文件正文和报告"
           aria-label="清空当前文件正文和报告"
         >
