@@ -263,7 +263,11 @@ export function DocumentInput({
       <div className="privacy-note">
         <div>
           <FolderOpen aria-hidden="true" />
-          <span>{modelSettings.enabled ? "默认先做本地分析；开启 AI 增强后才会调用你配置的模型服务。" : "当前在浏览器本地处理文本，不上传文件。"}</span>
+          <span>
+            {modelSettings.enabled
+              ? "默认先做本地分析并保存正文草稿；开启 AI 增强后才会调用你配置的模型服务。"
+              : "当前在浏览器本地处理文本并保存正文草稿，不上传文件。"}
+          </span>
         </div>
         <button
           type="button"

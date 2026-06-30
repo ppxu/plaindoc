@@ -1,6 +1,7 @@
 import { clearModelSettings, DEFAULT_MODEL_SETTINGS } from "../analyzer/modelSettings";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
 import { clearReportHistory } from "../history/reportHistory";
+import { clearDocumentDraft } from "./draftText";
 import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
 
 export interface LocalDataResetState {
@@ -34,6 +35,7 @@ export function createLocalDataResetState(): LocalDataResetState {
 export function clearLocalStoredData(storage: Storage | undefined = getBrowserStorage()): void {
   clearReportHistory(storage);
   clearModelSettings(storage);
+  clearDocumentDraft(storage);
 }
 
 function getBrowserStorage() {

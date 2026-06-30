@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { documentExamples } from "../data/examples";
-import { createDraftTextState } from "../state/draftText";
+import {
+  clearDocumentDraft,
+  createDraftTextState,
+  createInitialDocumentState,
+  loadDocumentDraft,
+  saveDocumentDraft
+} from "../state/draftText";
 
 describe("draft text state", () => {
   it("refreshes the local report when a user pastes recognizable text", () => {
@@ -29,4 +35,77 @@ describe("draft text state", () => {
     expect(state.report.findings).toEqual([]);
     expect(state.notice).toBe("");
   });
+
+  it("stores and restores a local browser draft for custom document text", () => {
+    const storage = createMemoryStorage();
+    const text = "租赁合同：押金 5000 元，提前退租扣两个月租金。";
+
+    saveDocumentDraft({ text, kind: "rental" }, storage);
+
+    expect(loadDocumentDraft(storage)).toEqual({ text, kind: "rental" });
+  });
+
+  it("ignores empty or invalid stored drafts", () => {
+    const storage = createMemoryStorage();
+
+    saveDocumentDraft({ text: "   ", kind: "rental" }, storage);
+    expect(loadDocumentDraft(storage)).toBeNull();
+
+    storage.setItem("plaindoc:document-draft:v1", JSON.stringify({ text: "有效文本", kind: "not-a-kind" }));
+    expect(loadDocumentDraft(storage)).toBeNull();
+  });
+
+  it("clears a stored local browser draft", () => {
+    const storage = createMemoryStorage();
+    saveDocumentDraft({ text: "劳动合同：竞业限制补偿另行约定。", kind: "employment" }, storage);
+
+    clearDocumentDraft(storage);
+
+    expect(loadDocumentDraft(storage)).toBeNull();
+  });
+
+  it("restores a stored draft instead of the default example on startup", () => {
+    const storage = createMemoryStorage();
+    const fallbackExample = documentExamples[0];
+    const text = "装修合同：延期一天只赔 20 元，增项费用由业主承担。";
+    saveDocumentDraft({ text, kind: "renovation" }, storage);
+
+    const initial = createInitialDocumentState(fallbackExample, storage);
+
+    expect(initial.text).toBe(text);
+    expect(initial.kind).toBe("renovation");
+    expect(initial.selectedExampleId).toBe("");
+    expect(initial.notice).toContain("已恢复上次保存在本机浏览器的正文草稿");
+    expect(initial.report.documentKind).toBe("renovation");
+  });
+
+  it("uses the default example when no stored draft exists", () => {
+    const fallbackExample = documentExamples[0];
+
+    const initial = createInitialDocumentState(fallbackExample, createMemoryStorage());
+
+    expect(initial.text).toBe(fallbackExample.content);
+    expect(initial.kind).toBe(fallbackExample.kind);
+    expect(initial.selectedExampleId).toBe(fallbackExample.id);
+    expect(initial.notice).toBe("");
+  });
 });
+
+function createMemoryStorage(): Storage {
+  const values = new Map<string, string>();
+
+  return {
+    get length() {
+      return values.size;
+    },
+    clear: () => values.clear(),
+    getItem: (key: string) => values.get(key) ?? null,
+    key: (index: number) => Array.from(values.keys())[index] ?? null,
+    removeItem: (key: string) => {
+      values.delete(key);
+    },
+    setItem: (key: string, value: string) => {
+      values.set(key, value);
+    }
+  };
+}

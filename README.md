@@ -25,6 +25,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 - A next-step action plan and a message draft you can send back for clarification.
 - Plain-language explanations for non-experts.
 - Deduplicated local report history for revisiting recent analyses.
+- Automatic local draft restore for pasted or uploaded document text after refresh.
 - One-click current-workspace clearing after reviewing sensitive documents.
 - One-click local data reset for clearing the current text, recent report history, model settings, and AI send confirmation.
 - One-click copy for the full Markdown report.
@@ -78,9 +79,10 @@ Privacy boundary:
 - When AI mode is off, PlainDoc does not send document text anywhere.
 - PDF text extraction runs in your browser before analysis.
 - Offline support stores PlainDoc application files in browser Cache Storage. It does not cache original document text, evidence snippets, API keys, or report history.
+- The current editor draft is stored in browser localStorage so a refresh does not lose pasted or uploaded text. Loading a bundled example, clearing the current workspace, or using local data reset removes that stored draft.
 - Recent report history is stored in your browser, deduplicates repeated analyses, and stores report conclusions and suggestions only. It does not store the original document text or evidence snippets. Restoring a history report clears the editor so stale text is not shown beside the restored report.
-- The current-workspace clear button removes the visible document text and current report without deleting report history or model settings.
-- The local data reset button clears the visible document text, current report, recent report history, stored model settings, remembered API key opt-in state, and current AI send confirmation. It does not remove the application-shell cache used for offline reopening.
+- The current-workspace clear button removes the visible document text, stored editor draft, and current report without deleting report history or model settings.
+- The local data reset button clears the visible document text, stored editor draft, current report, recent report history, stored model settings, remembered API key opt-in state, and current AI send confirmation. It does not remove the application-shell cache used for offline reopening.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
 - **测试模型连接** sends only a minimal probe prompt to the configured model service. It does not send the visible document text, does not require AI send confirmation, and expects the model to return a JSON confirmation such as `{"ok":true}`.
 - Remote model endpoints must use HTTPS before PlainDoc will send document text or API keys. PlainDoc allows HTTP only for local model endpoints such as `http://localhost` or `http://127.0.0.1`.
@@ -103,6 +105,7 @@ Currently supported:
 
 - Paste text.
 - Pasted or edited text immediately refreshes the local-rule report so the visible report stays aligned with the editor.
+- Pasted or uploaded text is automatically saved as a local browser draft and restored after refresh.
 - Click **点击上传或拖入 PDF / .txt / .md 文件** to upload selectable-text PDF, `.txt`, and `.md` files.
 - Drag PDF, `.txt`, and `.md` files onto the upload strip, with a visible **松开即可读取文件** drop hint.
 - 一次只分析一个文件；如果拖入多个文件，PlainDoc 只读取第一个，并提示其余文件未处理。
@@ -132,8 +135,9 @@ Currently supported:
 - Copyable clause-edit pack.
 - Copyable next-step message draft for counterparties.
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
-- One-click current-workspace clearing for sensitive document text and the current report.
-- One-click local data reset for current text, report history, model settings, and AI send confirmation.
+- Local browser draft restore for current document text.
+- One-click current-workspace clearing for sensitive document text, stored draft, and the current report.
+- One-click local data reset for current text, stored draft, report history, model settings, and AI send confirmation.
 - Markdown report export with readable timestamped filenames.
 - Markdown 报告会标明 PlainDoc 来源链接：https://ppxu.github.io/plaindoc/
 - Print-friendly report output for browser printing or saving as PDF.

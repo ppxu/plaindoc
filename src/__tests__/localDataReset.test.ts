@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MODEL_SETTINGS, loadModelSettings, saveModelSettings } from "../analyzer/modelSettings";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
+import { loadDocumentDraft, saveDocumentDraft } from "../state/draftText";
 import { loadReportHistory, saveReportToHistory } from "../history/reportHistory";
 import { clearLocalStoredData, createLocalDataResetState } from "../state/localDataReset";
 import type { ModelAnalyzerSettings } from "../types";
@@ -33,11 +34,13 @@ describe("local data reset", () => {
     };
     saveModelSettings(settings, storage);
     saveReportToHistory(analyzeDocument({ text: "押金 5000 元，提前退租赔两个月租金。", kind: "rental" }), storage);
+    saveDocumentDraft({ text: "押金 5000 元，提前退租赔两个月租金。", kind: "rental" }, storage);
 
     clearLocalStoredData(storage);
 
     expect(loadModelSettings(storage)).toEqual(DEFAULT_MODEL_SETTINGS);
     expect(loadReportHistory(storage)).toEqual([]);
+    expect(loadDocumentDraft(storage)).toBeNull();
   });
 
   it("does not fail when browser localStorage access is blocked", () => {

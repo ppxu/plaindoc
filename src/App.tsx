@@ -18,7 +18,7 @@ import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./hi
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
 import { createAnalysisRunTracker } from "./state/analysisRun";
-import { createDraftTextState } from "./state/draftText";
+import { clearDocumentDraft, createDraftTextState, createInitialDocumentState, saveDocumentDraft } from "./state/draftText";
 import { createCustomExampleSelectionState, createExampleSelectionState } from "./state/exampleSelection";
 import { createKindSelectionState } from "./state/kindSelection";
 import { clearLocalStoredData, createLocalDataResetState } from "./state/localDataReset";
@@ -36,22 +36,21 @@ type ModelConnectionStatus = { tone: "success" | "error"; message: string } | nu
 
 export default function App() {
   const firstExample = documentExamples[0];
+  const [initialDocument] = useState(() => createInitialDocumentState(firstExample));
   const reportPanelRef = useRef<HTMLElement | null>(null);
   const analysisRunTracker = useRef(createAnalysisRunTracker());
   const modelRequestAbortController = useRef<AbortController | null>(null);
   const modelConnectionTestAbortController = useRef<AbortController | null>(null);
   const modelConnectionTestRunId = useRef(0);
   const uploadReadRunId = useRef(0);
-  const [text, setText] = useState(firstExample.content);
-  const [kind, setKind] = useState<DocumentKind>(firstExample.kind);
-  const [selectedExampleId, setSelectedExampleId] = useState(firstExample.id);
-  const [error, setError] = useState("");
-  const [inputNotice, setInputNotice] = useState("");
+  const [text, setText] = useState(initialDocument.text);
+  const [kind, setKind] = useState<DocumentKind>(initialDocument.kind);
+  const [selectedExampleId, setSelectedExampleId] = useState(initialDocument.selectedExampleId);
+  const [error, setError] = useState(initialDocument.error);
+  const [inputNotice, setInputNotice] = useState(initialDocument.notice);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [report, setReport] = useState<AnalysisReport>(() =>
-    analyzeDocument({ text: firstExample.content, kind: firstExample.kind })
-  );
+  const [report, setReport] = useState<AnalysisReport>(() => initialDocument.report);
   const [modelSettings, setModelSettings] = useState<ModelAnalyzerSettings>(() => loadModelSettings());
   const [modelTextConsent, setModelTextConsent] = useState(false);
   const [isTestingModelConnection, setIsTestingModelConnection] = useState(false);
@@ -59,6 +58,15 @@ export default function App() {
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
   const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
   const [documentTextFocusRequest, setDocumentTextFocusRequest] = useState(0);
+
+  useEffect(() => {
+    if (selectedExampleId) {
+      clearDocumentDraft();
+      return;
+    }
+
+    saveDocumentDraft({ text, kind });
+  }, [text, kind, selectedExampleId]);
 
   useEffect(() => {
     function handleBeforeUnload(event: BeforeUnloadEvent) {

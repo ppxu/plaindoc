@@ -9,8 +9,10 @@ describe("security policy", () => {
     expect(securityPolicy).toContain("Remote model endpoints must use HTTPS");
     expect(securityPolicy).toContain("session-only by default");
     expect(securityPolicy).toContain("localStorage");
+    expect(securityPolicy).toContain("current editor draft is stored in browser localStorage");
+    expect(securityPolicy).toContain("clearing the current workspace");
     expect(securityPolicy).toContain("does not store original document text or evidence snippets");
-    expect(securityPolicy).toContain("The local data reset action clears the visible document text");
+    expect(securityPolicy).toContain("The local data reset action clears the visible document text, stored editor draft");
     expect(securityPolicy).toContain("Offline app caching stores PlainDoc application files");
     expect(securityPolicy).toContain("beginning and ending portions");
     expect(securityPolicy).toContain("untrusted content");

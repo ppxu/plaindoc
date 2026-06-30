@@ -1,7 +1,9 @@
 import { detectDocumentKind } from "../analyzer/documentKindDetector";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
 import { getDocumentKindLabel } from "../data/documentKinds";
-import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget } from "../types";
+import type { AnalysisReport, DocumentExample, DocumentKind, EvidenceSelectionTarget } from "../types";
+
+const DOCUMENT_DRAFT_STORAGE_KEY = "plaindoc:document-draft:v1";
 
 export interface DraftTextStateInput {
   text: string;
@@ -19,6 +21,41 @@ export interface DraftTextState {
   modelTextConsent: boolean;
 }
 
+export interface StoredDocumentDraft {
+  text: string;
+  kind: DocumentKind;
+}
+
+export function createInitialDocumentState(
+  fallbackExample: DocumentExample,
+  storage: Storage | undefined = getBrowserStorage()
+): DraftTextState {
+  const storedDraft = loadDocumentDraft(storage);
+  if (storedDraft) {
+    return {
+      text: storedDraft.text,
+      kind: storedDraft.kind,
+      selectedExampleId: "",
+      error: "",
+      notice: "已恢复上次保存在本机浏览器的正文草稿。",
+      report: analyzeDocument({ text: storedDraft.text, kind: storedDraft.kind }),
+      evidenceSelection: null,
+      modelTextConsent: false
+    };
+  }
+
+  return {
+    text: fallbackExample.content,
+    kind: fallbackExample.kind,
+    selectedExampleId: fallbackExample.id,
+    error: "",
+    notice: "",
+    report: analyzeDocument({ text: fallbackExample.content, kind: fallbackExample.kind }),
+    evidenceSelection: null,
+    modelTextConsent: false
+  };
+}
+
 export function createDraftTextState({ text, selectedKind }: DraftTextStateInput): DraftTextState {
   const kind = resolveDraftKind(text, selectedKind);
 
@@ -32,6 +69,41 @@ export function createDraftTextState({ text, selectedKind }: DraftTextStateInput
     evidenceSelection: null,
     modelTextConsent: false
   };
+}
+
+export function saveDocumentDraft(
+  draft: StoredDocumentDraft,
+  storage: Storage | undefined = getBrowserStorage()
+): void {
+  if (!storage) return;
+
+  if (!draft.text.trim()) {
+    clearDocumentDraft(storage);
+    return;
+  }
+
+  storage.setItem(DOCUMENT_DRAFT_STORAGE_KEY, JSON.stringify({ text: draft.text, kind: draft.kind }));
+}
+
+export function loadDocumentDraft(storage: Storage | undefined = getBrowserStorage()): StoredDocumentDraft | null {
+  if (!storage) return null;
+
+  try {
+    const raw = storage.getItem(DOCUMENT_DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as Partial<StoredDocumentDraft>;
+    if (typeof value.text !== "string" || !value.text.trim() || !isDocumentKind(value.kind)) {
+      return null;
+    }
+
+    return { text: value.text, kind: value.kind };
+  } catch {
+    return null;
+  }
+}
+
+export function clearDocumentDraft(storage: Storage | undefined = getBrowserStorage()): void {
+  storage?.removeItem(DOCUMENT_DRAFT_STORAGE_KEY);
 }
 
 function resolveDraftKind(text: string, selectedKind: DocumentKind): DocumentKind {
@@ -57,4 +129,26 @@ function buildDraftNotice(text: string, selectedKind: DocumentKind, reportKind: 
   }
 
   return "正文已更新，已生成本地规则报告。";
+}
+
+function isDocumentKind(value: unknown): value is DocumentKind {
+  return (
+    value === "rental" ||
+    value === "employment" ||
+    value === "renovation" ||
+    value === "loan" ||
+    value === "insurance" ||
+    value === "unknown"
+  );
+}
+
+function getBrowserStorage() {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
 }
