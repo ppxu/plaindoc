@@ -779,6 +779,13 @@ textarea:focus,
   color: #9c5c12;
 }
 
+.model-send-blocked-reason {
+  margin: -4px 0 10px;
+  color: #7a4f21;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .model-text-scope {
   margin: 8px 0 10px;
   padding: 10px;

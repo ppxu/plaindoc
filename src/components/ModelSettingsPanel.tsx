@@ -48,6 +48,11 @@ export function ModelSettingsPanel({
   const needsApiKey = modelEndpointNeedsApiKey(runtimeSettings.baseUrl);
   const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
   const modelDocumentScope = formatModelDocumentScope(prepareModelDocumentText(documentText));
+  const modelSendBlockedReason = getModelSendBlockedReason(
+    endpointSecurityWarning,
+    needsApiKey,
+    runtimeSettings.apiKey
+  );
 
   function update(partial: Partial<ModelAnalyzerSettings>) {
     onChange({ ...settings, ...partial });
@@ -181,6 +186,7 @@ export function ModelSettingsPanel({
               onChange={(event) => onModelTextConsentChange(event.target.checked)}
             />
           </label>
+          {modelSendBlockedReason ? <p className="model-send-blocked-reason">{modelSendBlockedReason}</p> : null}
 
           <button className="clear-settings-button" type="button" onClick={onClear}>
             <Trash2 aria-hidden="true" />
@@ -197,4 +203,14 @@ export function ModelSettingsPanel({
       ) : null}
     </section>
   );
+}
+
+function getModelSendBlockedReason(endpointSecurityWarning: string, needsApiKey: boolean, apiKey: string): string {
+  if (endpointSecurityWarning) {
+    return "修正模型 endpoint 后才能确认发送正文。";
+  }
+  if (needsApiKey && !apiKey.trim()) {
+    return "填写 API key 后才能确认发送正文给远程模型服务。";
+  }
+  return "";
 }
