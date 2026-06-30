@@ -76,9 +76,7 @@ export function DocumentInput({
     if (!evidenceSelection) return;
     const textarea = textareaRef.current;
     if (!textarea) return;
-    textarea.focus();
-    textarea.setSelectionRange(evidenceSelection.start, evidenceSelection.end);
-    textarea.scrollIntoView({ block: "center", behavior: "smooth" });
+    selectEvidenceText(textarea, evidenceSelection);
   }, [evidenceSelection]);
 
   return (
@@ -237,4 +235,14 @@ function analyzeButtonLabel(
   if (modelEndpointNeedsApiKey(modelSettings.baseUrl) && !modelSettings.apiKey.trim()) return "生成本地清单（缺少 API key）";
   if (!modelTextConsent) return "生成本地清单（未确认 AI 发送）";
   return "生成 AI 增强清单";
+}
+
+function selectEvidenceText(textarea: HTMLTextAreaElement, selection: EvidenceSelectionTarget): void {
+  try {
+    textarea.focus();
+    textarea.setSelectionRange(selection.start, selection.end);
+    textarea.scrollIntoView({ block: "center", behavior: "smooth" });
+  } catch {
+    // Evidence locating is a convenience; blocked DOM selection should not break document editing.
+  }
 }
