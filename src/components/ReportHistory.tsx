@@ -27,9 +27,7 @@ export function ReportHistory({ items, onSelect, onClear }: ReportHistoryProps) 
           {items.map((item) => (
             <button key={item.id} type="button" onClick={() => onSelect(item)} className="history-item">
               <strong>{item.title}</strong>
-              <span>
-                {formatDate(item.createdAt)} · {sourceLabel(item.report)}
-              </span>
+              <span>{formatDate(item.createdAt)}</span>
             </button>
           ))}
         </div>
@@ -52,11 +50,4 @@ function formatDate(value: string): string {
     hour: "2-digit",
     minute: "2-digit"
   }).format(date);
-}
-
-function sourceLabel(report: SavedReport["report"]): string {
-  if (report.source === "model") {
-    return report.modelName ? `AI 增强：${report.modelName}` : "AI 增强";
-  }
-  return "本地规则";
 }

@@ -32,4 +32,11 @@ describe("report history clearing chrome", () => {
     expect(reportHistorySource).toContain("{items.length ? (");
     expect(reportHistorySource).toContain("历史只保存在本机浏览器");
   });
+
+  it("keeps analysis source in the history title without repeating it in the timestamp line", () => {
+    expect(reportHistorySource).toContain("<strong>{item.title}</strong>");
+    expect(reportHistorySource).toContain("<span>{formatDate(item.createdAt)}</span>");
+    expect(reportHistorySource).not.toContain("sourceLabel(item.report)");
+    expect(reportHistorySource).not.toContain("function sourceLabel");
+  });
 });
