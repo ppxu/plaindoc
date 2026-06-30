@@ -104,12 +104,14 @@ export default function App() {
   function handleRedactSensitiveText(redactedText: string) {
     invalidateCurrentAnalysis();
     const draft = createDraftTextState({ text: redactedText, selectedKind: kind });
+    const redactedReportNotice = "已基于脱敏副本生成本地规则报告；请检查占位符是否影响条款含义。";
+    const redactedReport = mergeReportNotice(draft.report, redactedReportNotice);
     setText(draft.text);
     setKind(draft.kind);
     setSelectedExampleId(draft.selectedExampleId);
     setError(draft.error);
     setInputNotice("已生成脱敏副本，并已取消本次 AI 发送确认。请检查正文后再重新确认发送。");
-    setReport(draft.report);
+    setReport(redactedReport);
     setEvidenceSelection(draft.evidenceSelection);
     setModelTextConsent(draft.modelTextConsent);
   }
