@@ -95,7 +95,7 @@ export function ModelSettingsPanel({
           </div>
 
           <label className="field compact-field">
-            <span>OpenAI-compatible endpoint</span>
+            <span>模型服务地址（OpenAI 兼容 endpoint）</span>
             <input
               value={settings.baseUrl}
               onChange={(event) => update({ baseUrl: event.target.value })}
@@ -114,7 +114,7 @@ export function ModelSettingsPanel({
           </label>
 
           <label className="field compact-field">
-            <span>API key</span>
+            <span>API key（密钥）</span>
             <input
               type="password"
               value={settings.apiKey}

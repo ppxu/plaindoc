@@ -73,4 +73,11 @@ describe("accessibility chrome", () => {
     expect(actionPlanSource).toContain('<p className="section-label">下一步</p>');
     expect(reportPanelSource).toContain('<p className="section-label">白话解释</p>');
   });
+
+  it("uses localized labels for model connection settings", () => {
+    expect(modelSettingsPanelSource).toContain("模型服务地址（OpenAI 兼容 endpoint）");
+    expect(modelSettingsPanelSource).toContain("API key（密钥）");
+    expect(modelSettingsPanelSource).not.toContain(">OpenAI-compatible endpoint<");
+    expect(modelSettingsPanelSource).not.toContain(">API key<");
+  });
 });
