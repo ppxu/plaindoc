@@ -431,7 +431,7 @@ export default function App() {
         <div className="topbar-actions">
           <span>
             <LockKeyhole aria-hidden="true" />
-            Local-first MVP
+            Local-first
           </span>
           <a href="https://github.com/ppxu/plaindoc" aria-label="PlainDoc GitHub repository">
             <Github aria-hidden="true" />

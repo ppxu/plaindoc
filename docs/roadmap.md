@@ -1,6 +1,6 @@
 # PlainDoc Roadmap
 
-## 0.1 Public MVP
+## 0.1 Public Launch
 
 - Local text analysis.
 - Instant local report refresh while pasting or editing document text.

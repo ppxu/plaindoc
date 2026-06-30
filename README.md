@@ -97,7 +97,7 @@ Privacy boundary:
 
 ## Current Scope
 
-Supported in this MVP:
+Currently supported:
 
 - Paste text.
 - Pasted or edited text immediately refreshes the local-rule report so the visible report stays aligned with the editor.

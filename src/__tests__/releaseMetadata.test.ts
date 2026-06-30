@@ -2,12 +2,15 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import html from "../../index.html?raw";
+import appSource from "../App.tsx?raw";
 import manifestText from "../../public/manifest.webmanifest?raw";
 import robotsText from "../../public/robots.txt?raw";
 import sitemapText from "../../public/sitemap.xml?raw";
 import socialPreviewPngUrl from "../../public/social-preview.png?url";
 
 const socialPreviewPng = readFileSync(fileURLToPath(new URL("../../public/social-preview.png", import.meta.url)));
+const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+const roadmap = readFileSync(fileURLToPath(new URL("../../docs/roadmap.md", import.meta.url)), "utf8");
 
 describe("release metadata", () => {
   it("declares the document language for the Chinese-first app shell", () => {
@@ -63,6 +66,13 @@ describe("release metadata", () => {
     expect(sitemapText).toContain("<loc>https://ppxu.github.io/plaindoc/</loc>");
     expect(sitemapText).toContain("<lastmod>2026-06-29</lastmod>");
     expect(sitemapText).not.toContain("localhost");
+  });
+
+  it("uses production-ready public wording instead of internal launch-stage labels", () => {
+    expect(appSource).toContain("Local-first");
+    expect(appSource).not.toContain("MVP");
+    expect(readme).not.toContain("MVP");
+    expect(roadmap).not.toContain("MVP");
   });
 });
 
