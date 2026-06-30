@@ -21,6 +21,8 @@ describe("model endpoint security chrome", () => {
     expect(modelSettingsPanelSource).toContain("修正模型 endpoint 后才能确认发送正文。");
 
     expect(documentInputSource).toContain("getModelEndpointSecurity(modelSettings.baseUrl)");
+    expect(documentInputSource).toContain("modelEndpointButtonBlockLabel");
+    expect(documentInputSource).toContain("生成本地清单（endpoint 无效）");
     expect(documentInputSource).toContain("生成本地清单（endpoint 不安全）");
   });
 });

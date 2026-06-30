@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { FileText, FolderOpen, ShieldCheck, Sparkles, Square, Trash2, Upload } from "lucide-react";
 import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
-import { getModelEndpointSecurity, modelEndpointNeedsApiKey } from "../analyzer/modelEndpointSecurity";
+import { getModelEndpointSecurity, modelEndpointNeedsApiKey, type ModelEndpointSecurity } from "../analyzer/modelEndpointSecurity";
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
@@ -237,10 +237,18 @@ function analyzeButtonLabel(
   if (isUploading) return "正在读取文件...";
   if (isAnalyzing) return "正在增强分析...";
   if (!modelSettings.enabled) return "生成风险清单";
-  if (!getModelEndpointSecurity(modelSettings.baseUrl).ok) return "生成本地清单（endpoint 不安全）";
+  const endpointSecurity = getModelEndpointSecurity(modelSettings.baseUrl);
+  if (!endpointSecurity.ok) return modelEndpointButtonBlockLabel(endpointSecurity);
   if (modelEndpointNeedsApiKey(modelSettings.baseUrl) && !modelSettings.apiKey.trim()) return "生成本地清单（缺少 API key）";
   if (!modelTextConsent) return "生成本地清单（未确认 AI 发送）";
   return "生成 AI 增强清单";
+}
+
+function modelEndpointButtonBlockLabel(endpointSecurity: ModelEndpointSecurity): string {
+  if (endpointSecurity.ok) return "生成 AI 增强清单";
+  if (endpointSecurity.reason === "invalid_url") return "生成本地清单（endpoint 无效）";
+  if (endpointSecurity.reason === "unsupported_protocol") return "生成本地清单（endpoint 协议不支持）";
+  return "生成本地清单（endpoint 不安全）";
 }
 
 function selectEvidenceText(textarea: HTMLTextAreaElement, selection: EvidenceSelectionTarget): void {
