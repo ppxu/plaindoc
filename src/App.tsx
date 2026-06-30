@@ -507,7 +507,7 @@ export default function App() {
             <LockKeyhole aria-hidden="true" />
             Local-first
           </span>
-          <a href="https://github.com/ppxu/plaindoc" aria-label="PlainDoc GitHub repository">
+          <a href="https://github.com/ppxu/plaindoc" aria-label="PlainDoc GitHub 仓库">
             <Github aria-hidden="true" />
             GitHub
           </a>

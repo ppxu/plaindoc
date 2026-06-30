@@ -63,7 +63,7 @@ export function ModelSettingsPanel({
   }
 
   return (
-    <section className="model-settings" aria-label="AI enhanced analysis settings">
+    <section className="model-settings" aria-label="AI 增强分析设置">
       <label className="mode-toggle">
         <span>
           <BrainCircuit aria-hidden="true" />
@@ -79,7 +79,7 @@ export function ModelSettingsPanel({
 
       {settings.enabled ? (
         <div className="model-settings-body">
-          <div className="model-provider-presets" aria-label="AI model service presets">
+          <div className="model-provider-presets" aria-label="AI 模型服务预设">
             {modelProviderPresets.map((preset) => (
               <button
                 key={preset.id}

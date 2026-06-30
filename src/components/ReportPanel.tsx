@@ -68,14 +68,14 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
   }
 
   return (
-    <section id="report-panel" className="report-panel" aria-label="Analysis report" tabIndex={-1} ref={ref}>
+    <section id="report-panel" className="report-panel" aria-label="分析报告" tabIndex={-1} ref={ref}>
       <div className="report-hero">
         <div>
           <p className="section-label">Report</p>
           <h2>{statusText(report.status)}</h2>
           <p>{report.summary}</p>
         </div>
-        <div className="score-card" aria-label={`Risk reading score ${report.score}`}>
+        <div className="score-card" aria-label={`风险阅读分 ${report.score}`}>
           <strong>{report.score}</strong>
           <span>阅读分</span>
         </div>

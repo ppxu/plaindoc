@@ -9,7 +9,7 @@ interface ReportHistoryProps {
 
 export function ReportHistory({ items, onSelect, onClear }: ReportHistoryProps) {
   return (
-    <section className="report-history" aria-label="Recent local reports">
+    <section className="report-history" aria-label="本机最近报告">
       <div className="history-heading">
         <span>
           <Clock3 aria-hidden="true" />

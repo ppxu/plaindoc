@@ -84,7 +84,7 @@ export function DocumentInput({
   }, [evidenceSelection]);
 
   return (
-    <section className="input-panel" aria-label="Document input" aria-busy={isAnalyzing || isUploading}>
+    <section className="input-panel" aria-label="文件输入与分析设置" aria-busy={isAnalyzing || isUploading}>
       <div className="panel-heading">
         <div>
           <p className="section-label">Document</p>
