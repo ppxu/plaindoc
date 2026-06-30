@@ -75,7 +75,14 @@ function redactReportForHistory(report: AnalysisReport): AnalysisReport {
 
 function createReportTitle(report: AnalysisReport): string {
   const kind = report.documentKind === "unknown" ? "文件" : getDocumentKindLabel(report.documentKind);
-  return `${kind} · ${statusLabel(report.status)} · ${report.score} 分`;
+  return `${kind} · ${sourceLabel(report)} · ${statusLabel(report.status)} · ${report.score} 分`;
+}
+
+function sourceLabel(report: AnalysisReport): string {
+  if (report.source === "model") {
+    return report.modelName ? `AI 增强：${report.modelName}` : "AI 增强";
+  }
+  return "本地规则";
 }
 
 function statusLabel(status: AnalysisReport["status"]): string {

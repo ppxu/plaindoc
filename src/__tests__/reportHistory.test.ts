@@ -31,6 +31,22 @@ describe("report history", () => {
     expect(loadReportHistory(storage)).toHaveLength(1);
   });
 
+  it("includes the analysis source in saved report titles", () => {
+    const storage = createMemoryStorage();
+    const localReport = analyzeDocument({ text: "押金 5000 元，提前退租需赔偿两个月租金。", kind: "rental" });
+    const modelReport = {
+      ...localReport,
+      source: "model" as const,
+      modelName: "gpt-4o-mini"
+    };
+
+    const localHistory = saveReportToHistory(localReport, storage);
+    const modelHistory = saveReportToHistory(modelReport, storage);
+
+    expect(localHistory[0].title).toContain("本地规则");
+    expect(modelHistory[0].title).toContain("AI 增强：gpt-4o-mini");
+  });
+
   it("removes evidence snippets before saving reports to history", () => {
     const storage = createMemoryStorage();
     const report = analyzeDocument({
