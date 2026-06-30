@@ -28,4 +28,27 @@ describe("upload failure chrome", () => {
     expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("!isPdfUpload && !isTextFile"));
     expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("!fileText.trim()"));
   });
+
+  it("ignores stale asynchronous upload reads after the workspace changes", () => {
+    const uploadHandler = appSource.slice(
+      appSource.indexOf("async function handleUpload"),
+      appSource.indexOf("async function copyChecklist")
+    );
+    const invalidateHandler = appSource.slice(
+      appSource.indexOf("function invalidateCurrentAnalysis()"),
+      appSource.indexOf("function abortCurrentModelRequest()")
+    );
+
+    expect(uploadHandler).toContain("const uploadRunId = beginUploadRead();");
+    expect(uploadHandler).toContain("if (!isCurrentUploadRead(uploadRunId)) {");
+    expect(uploadHandler).toContain("setReport(uploaded.report);");
+    expect(uploadHandler.indexOf("if (!isCurrentUploadRead(uploadRunId)) {")).toBeLessThan(
+      uploadHandler.indexOf("setReport(uploaded.report);")
+    );
+    expect(uploadHandler).toContain("if (isCurrentUploadRead(uploadRunId)) {");
+    expect(uploadHandler).toContain("setIsUploading(false);");
+    expect(invalidateHandler).toContain("invalidateCurrentUploadRead();");
+    expect(appSource).toContain("function beginUploadRead(): number");
+    expect(appSource).toContain("function isCurrentUploadRead(runId: number): boolean");
+  });
 });

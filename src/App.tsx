@@ -41,6 +41,7 @@ export default function App() {
   const modelRequestAbortController = useRef<AbortController | null>(null);
   const modelConnectionTestAbortController = useRef<AbortController | null>(null);
   const modelConnectionTestRunId = useRef(0);
+  const uploadReadRunId = useRef(0);
   const [text, setText] = useState(firstExample.content);
   const [kind, setKind] = useState<DocumentKind>(firstExample.kind);
   const [selectedExampleId, setSelectedExampleId] = useState(firstExample.id);
@@ -340,6 +341,7 @@ export default function App() {
 
   async function handleUpload(file: File) {
     invalidateCurrentAnalysis();
+    const uploadRunId = beginUploadRead();
     setError("");
     setInputNotice("");
     setModelTextConsent(false);
@@ -360,6 +362,9 @@ export default function App() {
 
     try {
       const fileText = isPdfUpload ? await extractUploadedPdfText(file) : await file.text();
+      if (!isCurrentUploadRead(uploadRunId)) {
+        return;
+      }
       if (!fileText.trim()) {
         setError("没有从文件中读取到可分析文本。如果这是扫描版 PDF，请先使用 OCR，或复制关键条款粘贴到正文框。");
         return;
@@ -374,9 +379,14 @@ export default function App() {
       setEvidenceSelection(uploaded.evidenceSelection);
       setModelTextConsent(uploaded.modelTextConsent);
     } catch {
+      if (!isCurrentUploadRead(uploadRunId)) {
+        return;
+      }
       setError("文件读取失败。请确认 PDF 不是加密文件，或直接复制关键条款粘贴到正文框。");
     } finally {
-      setIsUploading(false);
+      if (isCurrentUploadRead(uploadRunId)) {
+        setIsUploading(false);
+      }
     }
   }
 
@@ -426,8 +436,23 @@ export default function App() {
 
   function invalidateCurrentAnalysis() {
     abortCurrentModelRequest();
+    invalidateCurrentUploadRead();
     analysisRunTracker.current.invalidate();
     setIsAnalyzing(false);
+  }
+
+  function beginUploadRead(): number {
+    uploadReadRunId.current += 1;
+    return uploadReadRunId.current;
+  }
+
+  function isCurrentUploadRead(runId: number): boolean {
+    return uploadReadRunId.current === runId;
+  }
+
+  function invalidateCurrentUploadRead(): void {
+    uploadReadRunId.current += 1;
+    setIsUploading(false);
   }
 
   function abortCurrentModelRequest() {
