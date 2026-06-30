@@ -29,6 +29,29 @@ describe("upload failure chrome", () => {
     expect(uploadHandler.indexOf("setModelTextConsent(false);")).toBeLessThan(uploadHandler.indexOf("!fileText.trim()"));
   });
 
+  it("explains that failed uploads leave the current text and report unchanged", () => {
+    const uploadHandler = appSource.slice(
+      appSource.indexOf("async function handleUpload"),
+      appSource.indexOf("async function copyChecklist")
+    );
+
+    expect(uploadHandler).toContain("showUploadFailureUnchangedNotice();");
+    expect(uploadHandler.indexOf("showUploadFailureUnchangedNotice();")).toBeLessThan(
+      uploadHandler.indexOf("文件超过 20MB")
+    );
+    expect(uploadHandler.indexOf("showUploadFailureUnchangedNotice();", uploadHandler.indexOf("!isPdfUpload && !isTextFile"))).toBeLessThan(
+      uploadHandler.indexOf("当前支持 PDF、.txt、.md 和纯文本文件")
+    );
+    expect(uploadHandler.indexOf("showUploadFailureUnchangedNotice();", uploadHandler.indexOf("!fileText.trim()"))).toBeLessThan(
+      uploadHandler.indexOf("没有从文件中读取到可分析文本")
+    );
+    expect(uploadHandler.indexOf("showUploadFailureUnchangedNotice();", uploadHandler.indexOf("} catch {"))).toBeLessThan(
+      uploadHandler.indexOf("文件读取失败")
+    );
+    expect(appSource).toContain("function showUploadFailureUnchangedNotice()");
+    expect(appSource).toContain('setInputNotice("当前正文和报告未改变。");');
+  });
+
   it("ignores stale asynchronous upload reads after the workspace changes", () => {
     const uploadHandler = appSource.slice(
       appSource.indexOf("async function handleUpload"),

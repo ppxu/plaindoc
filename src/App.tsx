@@ -350,6 +350,7 @@ export default function App() {
     setInputNotice("");
     setModelTextConsent(false);
     if (file.size > MAX_UPLOAD_BYTES) {
+      showUploadFailureUnchangedNotice();
       setError("文件超过 20MB。请先压缩、拆分或复制关键条款后再分析。");
       return;
     }
@@ -358,6 +359,7 @@ export default function App() {
     const isTextFile = filename.endsWith(".txt") || filename.endsWith(".md") || file.type.startsWith("text/");
     const isPdfUpload = isPdfFile(file);
     if (!isPdfUpload && !isTextFile) {
+      showUploadFailureUnchangedNotice();
       setError("当前支持 PDF、.txt、.md 和纯文本文件。扫描件图片和 OCR 在路线图中。");
       return;
     }
@@ -370,6 +372,7 @@ export default function App() {
         return;
       }
       if (!fileText.trim()) {
+        showUploadFailureUnchangedNotice();
         setError("没有从文件中读取到可分析文本。如果这是扫描版 PDF，请先使用 OCR，或复制关键条款粘贴到正文框。");
         return;
       }
@@ -386,6 +389,7 @@ export default function App() {
       if (!isCurrentUploadRead(uploadRunId)) {
         return;
       }
+      showUploadFailureUnchangedNotice();
       setError("文件读取失败。请确认 PDF 不是加密文件，或直接复制关键条款粘贴到正文框。");
     } finally {
       if (isCurrentUploadRead(uploadRunId)) {
@@ -429,6 +433,10 @@ export default function App() {
   function handleModelTextConsentChange(checked: boolean) {
     invalidateCurrentAnalysis();
     setModelTextConsent(checked);
+  }
+
+  function showUploadFailureUnchangedNotice() {
+    setInputNotice("当前正文和报告未改变。");
   }
 
   function handleCancelAnalysis() {
