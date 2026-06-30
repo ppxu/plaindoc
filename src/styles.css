@@ -767,6 +767,13 @@ textarea:focus,
   border-radius: 8px;
 }
 
+.model-key-retention-status {
+  margin: -4px 0 10px;
+  color: #60706b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .model-send-consent {
   margin: 8px 0 10px;
   padding: 10px;

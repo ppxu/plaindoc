@@ -150,6 +150,11 @@ export function ModelSettingsPanel({
               onChange={(event) => update({ rememberApiKey: event.target.checked })}
             />
           </label>
+          <p className="model-key-retention-status">
+            {settings.rememberApiKey
+              ? "API key 会保存在本机浏览器；清除模型设置或取消勾选后会从持久化设置中移除。"
+              : "API key 仅保留在当前页面会话，刷新页面后需要重新填写。"}
+          </p>
 
           <div className="model-text-scope" aria-label="AI 发送范围">
             <div>
