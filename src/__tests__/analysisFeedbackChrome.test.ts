@@ -20,6 +20,14 @@ describe("analysis feedback chrome", () => {
     expect(analyzeHandler).not.toContain('setError("文本较短，报告可能不完整。你仍然可以继续生成。")');
   });
 
+  it("keeps local-only analysis context inside the visible report notice", () => {
+    const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
+
+    expect(analyzeHandler).toContain("const localReportWithMergedNotice = mergeReportNotice(localReport, baseAnalysisNotice);");
+    expect(analyzeHandler).toContain("setReport(localReportWithMergedNotice);");
+    expect(analyzeHandler).toContain("setHistory(saveReportToHistory(localReportWithMergedNotice));");
+  });
+
   it("keeps analysis context when AI enhanced analysis falls back to local results", () => {
     const analyzeHandler = appSource.slice(appSource.indexOf("async function handleAnalyze"), appSource.indexOf("function handleSelectHistory"));
 

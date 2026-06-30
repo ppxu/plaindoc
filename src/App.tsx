@@ -177,12 +177,13 @@ export default function App() {
 
     const resolvedKind = resolveAnalysisKind(text, kind);
     const localReport = analyzeDocument({ text, kind: resolvedKind.kind });
-    setReport(localReport);
     if (resolvedKind.kind !== kind) {
       setKind(resolvedKind.kind);
       setSelectedExampleId("");
     }
     const baseAnalysisNotice = mergeNotices(shortTextNotice, resolvedKind.notice);
+    const localReportWithMergedNotice = mergeReportNotice(localReport, baseAnalysisNotice);
+    setReport(localReportWithMergedNotice);
     setInputNotice(baseAnalysisNotice);
 
     const runtimeModelSettings = normalizeModelSettingsForRuntime(modelSettings);
@@ -201,7 +202,7 @@ export default function App() {
     const canUseModel = canSendDocumentTextToModel(modelSettings, modelTextConsent);
     if (!modelSettings.enabled || !canUseModel) {
       if (!modelSettings.enabled) {
-        setHistory(saveReportToHistory(localReport));
+        setHistory(saveReportToHistory(localReportWithMergedNotice));
       } else if (needsModelApiKey && !runtimeModelSettings.apiKey.trim()) {
         const missingKeyFallbackNotice = mergeNotices(baseAnalysisNotice, "AI 增强已开启，但缺少 API key，本次仅使用本地规则分析。");
         const missingKeyFallbackReport = mergeReportNotice(localReport, missingKeyFallbackNotice);
