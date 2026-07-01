@@ -121,6 +121,7 @@ export function ModelSettingsPanel({
               onChange={(event) => update({ apiKey: event.target.value })}
               placeholder="默认不持久保存"
               autoComplete="off"
+              aria-describedby="model-key-retention-status"
             />
           </label>
 
@@ -152,7 +153,7 @@ export function ModelSettingsPanel({
               onChange={(event) => update({ rememberApiKey: event.target.checked })}
             />
           </label>
-          <p className="model-key-retention-status">
+          <p className="model-key-retention-status" id="model-key-retention-status">
             {getModelKeyRetentionStatus(settings.rememberApiKey, settings.apiKey)}
           </p>
 

@@ -9,4 +9,9 @@ describe("model key retention chrome", () => {
     expect(modelSettingsPanelSource).toContain("已开启记住 API key；填写 API key 后才会写入本机浏览器。");
     expect(modelSettingsPanelSource).toContain("API key 会保存在本机浏览器；清除模型设置或取消勾选后会从持久化设置中移除。");
   });
+
+  it("connects the API key field to its local persistence explanation", () => {
+    expect(modelSettingsPanelSource).toContain('aria-describedby="model-key-retention-status"');
+    expect(modelSettingsPanelSource).toContain('id="model-key-retention-status"');
+  });
 });
