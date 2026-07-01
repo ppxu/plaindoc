@@ -14,4 +14,10 @@ describe("model connection test chrome", () => {
     expect(modelSettingsPanelSource).toContain("model-connection-status");
     expect(modelSettingsPanelSource).toContain("modelTextConsent");
   });
+
+  it("announces the model connection test busy state", () => {
+    expect(modelSettingsPanelSource).toContain('<div className="model-connection-test" aria-busy={isTestingModelConnection}>');
+    expect(modelSettingsPanelSource).toContain('<span className="sr-only" role="status" aria-live="polite" aria-atomic="true">');
+    expect(modelSettingsPanelSource).toContain("正在测试模型连接。");
+  });
 });

@@ -125,11 +125,16 @@ export function ModelSettingsPanel({
             />
           </label>
 
-          <div className="model-connection-test">
+          <div className="model-connection-test" aria-busy={isTestingModelConnection}>
             <button type="button" onClick={onTestModelConnection} disabled={isTestingModelConnection}>
               <PlugZap aria-hidden="true" />
               {isTestingModelConnection ? "正在测试连接..." : "测试模型连接"}
             </button>
+            {isTestingModelConnection ? (
+              <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+                正在测试模型连接。
+              </span>
+            ) : null}
             {modelConnectionStatus ? (
               <p
                 className={`model-connection-status ${modelConnectionStatus.tone}`}
