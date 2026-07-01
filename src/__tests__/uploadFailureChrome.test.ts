@@ -51,6 +51,14 @@ describe("upload failure chrome", () => {
     expect(appSource).toContain('[".png", ".jpg", ".jpeg", ".webp", ".heic", ".heif"]');
   });
 
+  it("lets picker uploads select photos so the OCR guidance is reachable", () => {
+    expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 或图片文件"');
+    expect(documentInputSource).toContain(
+      'accept=".pdf,.txt,.md,.png,.jpg,.jpeg,.webp,.heic,.heif,application/pdf,text/plain,text/markdown,image/*"'
+    );
+    expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md / 图片文件");
+  });
+
   it("explains that failed uploads leave the current text and report unchanged", () => {
     const uploadHandler = appSource.slice(
       appSource.indexOf("async function handleUpload"),
@@ -134,9 +142,9 @@ describe("upload failure chrome", () => {
     expect(documentInputSource).toContain("onDragOver={handleUploadDragOver}");
     expect(documentInputSource).toContain("onDragEnter={handleUploadDragEnter}");
     expect(documentInputSource).toContain("onDragLeave={handleUploadDragLeave}");
-    expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 文件"');
+    expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 或图片文件"');
     expect(documentInputSource).toContain('isUploadDragActive ? "upload-strip drag-active" : "upload-strip"');
-    expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md 文件");
+    expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md / 图片文件");
     expect(documentInputSource).toContain("松开即可读取文件");
   });
 

@@ -115,7 +115,8 @@ describe("release metadata", () => {
   });
 
   it("keeps the README aligned with shipped document and report workflows", () => {
-    expect(readme).toContain("点击上传或拖入 PDF / .txt / .md 文件");
+    expect(readme).toContain("点击上传或拖入 PDF / .txt / .md / 图片文件");
+    expect(readme).toContain("select a photo to receive the OCR-before-upload guidance");
     expect(readme).toContain("实时显示已输入字符数");
     expect(readme).toContain("一次只分析一个文件");
     expect(readme).toContain("Markdown 报告会标明 PlainDoc 来源链接");
