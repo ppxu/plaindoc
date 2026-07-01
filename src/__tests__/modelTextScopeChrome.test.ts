@@ -18,4 +18,12 @@ describe("model text scope chrome", () => {
     expect(modelSettingsPanelSource).toContain("readOnly");
     expect(modelSettingsPanelSource).toContain("model-text-preview");
   });
+
+  it("does not describe or preview whitespace-only text as sendable model input", () => {
+    expect(modelSettingsPanelSource).toContain("const modelDocumentScope = hasDocumentText");
+    expect(modelSettingsPanelSource).toContain("? formatModelDocumentScope(preparedModelDocument)");
+    expect(modelSettingsPanelSource).toContain("还没有可发送正文；粘贴、上传或选择样例后，PlainDoc 才会显示将发送给模型的内容。");
+    expect(modelSettingsPanelSource).toContain("{hasDocumentText ? (");
+    expect(modelSettingsPanelSource).toContain(") : null}");
+  });
 });

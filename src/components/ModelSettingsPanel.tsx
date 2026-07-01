@@ -51,7 +51,9 @@ export function ModelSettingsPanel({
   const hasDocumentText = Boolean(documentText.trim());
   const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
   const preparedModelDocument = prepareModelDocumentText(documentText);
-  const modelDocumentScope = formatModelDocumentScope(preparedModelDocument);
+  const modelDocumentScope = hasDocumentText
+    ? formatModelDocumentScope(preparedModelDocument)
+    : "还没有可发送正文；粘贴、上传或选择样例后，PlainDoc 才会显示将发送给模型的内容。";
   const modelSendBlockedReason = getModelSendBlockedReason(
     hasDocumentText,
     endpointSecurityWarning,
@@ -179,10 +181,12 @@ export function ModelSettingsPanel({
               <strong>授权发送前可确认这次模型会看到的正文范围。</strong>
             </div>
             <p>{modelDocumentScope}</p>
-            <details className="model-text-preview">
-              <summary>查看将发送的正文预览</summary>
-              <textarea aria-label="AI 将收到的正文预览" readOnly value={preparedModelDocument.text} />
-            </details>
+            {hasDocumentText ? (
+              <details className="model-text-preview">
+                <summary>查看将发送的正文预览</summary>
+                <textarea aria-label="AI 将收到的正文预览" readOnly value={preparedModelDocument.text} />
+              </details>
+            ) : null}
           </div>
 
           {sensitiveTextSummary.hasSensitiveText ? (

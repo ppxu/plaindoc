@@ -17,6 +17,7 @@ describe("security policy", () => {
     expect(securityPolicy).toContain("beginning and ending portions");
     expect(securityPolicy).toContain("read-only preview of the exact text that will be sent");
     expect(securityPolicy).toContain("Blank or whitespace-only document text cannot be confirmed for model sending");
+    expect(securityPolicy).toContain("does not show a sendable-text preview");
     expect(securityPolicy).toContain("untrusted content");
     expect(securityPolicy).toContain("local redacted copy");
     expect(securityPolicy).toContain("Local model endpoints can be used without an API key");
@@ -33,6 +34,7 @@ describe("security policy", () => {
     expect(readme).toContain("beginning and ending portions");
     expect(readme).toContain("read-only preview of the exact text that will be sent");
     expect(readme).toContain("Blank or whitespace-only document text cannot be confirmed for model sending");
+    expect(readme).toContain("does not show a sendable-text preview");
     expect(readme).toContain("untrusted document content");
     expect(readme).toContain("本机 Ollama 可不填 API key");
     expect(readme).toContain("远程模型仍需要 API key");
