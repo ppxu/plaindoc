@@ -178,9 +178,10 @@ export function DocumentInput({
 
       <div className="workspace-actions">
         <label
-          className={isUploadDragActive ? "upload-strip drag-active" : "upload-strip"}
+          className={uploadStripClassName(isUploading, isAnalyzing, isUploadDragActive)}
           aria-label="上传或拖入 PDF、txt、md 或图片文件"
           aria-describedby="upload-format-hint"
+          aria-disabled={isUploading || isAnalyzing}
           onDragEnter={handleUploadDragEnter}
           onDragOver={handleUploadDragOver}
           onDragLeave={handleUploadDragLeave}
@@ -298,6 +299,13 @@ function uploadStripLabel(isUploading: boolean, isUploadDragActive: boolean): st
   if (isUploading) return "正在读取文件...";
   if (isUploadDragActive) return "松开即可读取文件";
   return "点击上传或拖入 PDF / .txt / .md / 图片文件";
+}
+
+function uploadStripClassName(isUploading: boolean, isAnalyzing: boolean, isUploadDragActive: boolean): string {
+  const classes = ["upload-strip"];
+  if (isUploadDragActive) classes.push("drag-active");
+  if (isUploading || isAnalyzing) classes.push("is-disabled");
+  return classes.join(" ");
 }
 
 function analyzeButtonLabel(
