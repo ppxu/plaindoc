@@ -108,7 +108,11 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       </div>
 
       {report.notice ? <p className="report-notice">{report.notice}</p> : null}
-      {printState === "failed" ? <p className="report-notice">当前浏览器不支持自动打开打印窗口，请使用浏览器菜单打印。</p> : null}
+      {printState === "failed" ? (
+        <p className="report-notice" role="alert" aria-live="assertive">
+          当前浏览器不支持自动打开打印窗口，请使用浏览器菜单打印。
+        </p>
+      ) : null}
       {downloadReportState === "failed" ? (
         <div className="report-copy-fallback">
           <span>浏览器没有允许自动下载。可以复制完整 Markdown 报告后手动保存为 .md 文件。</span>

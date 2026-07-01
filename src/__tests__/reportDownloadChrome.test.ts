@@ -11,6 +11,18 @@ describe("report markdown download chrome", () => {
     expect(reportPanelSource).toContain('aria-label="完整 Markdown 报告，可手动保存"');
   });
 
+  it("announces print failures as an actionable alert", () => {
+    const printFailureStart = reportPanelSource.indexOf('printState === "failed"');
+    const printFailureBranch = reportPanelSource.slice(
+      printFailureStart,
+      reportPanelSource.indexOf('downloadReportState === "failed"', printFailureStart)
+    );
+
+    expect(printFailureBranch).toContain("当前浏览器不支持自动打开打印窗口，请使用浏览器菜单打印。");
+    expect(printFailureBranch).toContain('role="alert"');
+    expect(printFailureBranch).toContain('aria-live="assertive"');
+  });
+
   it("focuses and selects fallback markdown text when browser copy or download is blocked", () => {
     expect(reportPanelSource).toContain("selectFallbackText");
     expect(reportPanelSource).toContain("copyFallbackRef");
