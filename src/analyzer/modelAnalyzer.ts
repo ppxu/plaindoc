@@ -8,6 +8,7 @@ import type {
   RiskFinding,
   Severity
 } from "../types";
+import { buildActionPlan } from "./actionPlan";
 import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
 import {
   getModelEndpointSecurity,
@@ -268,14 +269,21 @@ export function mergeModelPayload(
   const actionPlan = sanitizeActionPlan(payload.actionPlan);
   const plainLanguage = sanitizeStringList(payload.plainLanguage, 4, 180);
   const summary = sanitizeString(payload.summary, 120);
+  const mergedFindings = mergeFindings(localReport.findings, findings);
+  const mergedChecklist = checklist.length ? checklist : localReport.checklist;
+  const mergedClarifyingQuestions = clarifyingQuestions.length ? clarifyingQuestions : localReport.clarifyingQuestions;
 
   return {
     ...localReport,
     summary: summary || localReport.summary,
-    findings: mergeFindings(localReport.findings, findings),
-    checklist: checklist.length ? checklist : localReport.checklist,
-    clarifyingQuestions: clarifyingQuestions.length ? clarifyingQuestions : localReport.clarifyingQuestions,
-    actionPlan: actionPlan ?? localReport.actionPlan,
+    findings: mergedFindings,
+    checklist: mergedChecklist,
+    clarifyingQuestions: mergedClarifyingQuestions,
+    actionPlan: actionPlan ?? (
+      clarifyingQuestions.length
+        ? buildActionPlan(localReport.documentKind, mergedFindings, mergedChecklist, mergedClarifyingQuestions)
+        : localReport.actionPlan
+    ),
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
     modelName,

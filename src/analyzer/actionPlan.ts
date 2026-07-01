@@ -1,7 +1,12 @@
-import type { ActionPlan, ChecklistItem, DocumentKind, RiskFinding } from "../types";
+import type { ActionPlan, ChecklistItem, ClarifyingQuestion, DocumentKind, RiskFinding } from "../types";
 import { getDocumentKindLabel } from "../data/documentKinds";
 
-export function buildActionPlan(kind: DocumentKind, findings: RiskFinding[], checklist: ChecklistItem[]): ActionPlan {
+export function buildActionPlan(
+  kind: DocumentKind,
+  findings: RiskFinding[],
+  checklist: ChecklistItem[],
+  clarifyingQuestions: ClarifyingQuestion[] = []
+): ActionPlan {
   const redFindings = findings.filter((finding) => finding.severity === "red");
   const yellowFindings = findings.filter((finding) => finding.severity === "yellow");
   const priority = redFindings.length ? "high" : yellowFindings.length ? "medium" : "low";
@@ -15,7 +20,7 @@ export function buildActionPlan(kind: DocumentKind, findings: RiskFinding[], che
     priority,
     title: actionTitle(priority, kind),
     steps: buildSteps(priority, topics),
-    message: buildCounterpartyMessage(kind, topics)
+    message: buildCounterpartyMessage(kind, topics, clarifyingQuestions)
   };
 }
 
@@ -49,9 +54,19 @@ function buildSteps(priority: ActionPlan["priority"], topics: string[]): string[
   ];
 }
 
-function buildCounterpartyMessage(kind: DocumentKind, topics: string[]): string {
-  const topicLines = topics.length
-    ? topics.map((topic, index) => `${index + 1}. ${topic}`).join("\n")
+function buildCounterpartyMessage(
+  kind: DocumentKind,
+  topics: string[],
+  clarifyingQuestions: ClarifyingQuestion[]
+): string {
+  const questionLines = clarifyingQuestions
+    .filter((item) => item.askBeforeSigning)
+    .slice(0, 4)
+    .map((item) => item.question);
+  const topicLines = questionLines.length
+    ? questionLines.map((question, index) => `${index + 1}. ${question}`).join("\n")
+    : topics.length
+      ? topics.map((topic, index) => `${index + 1}. ${topic}`).join("\n")
     : [
         "1. 金额、期限、退款/退出条件是否写成明确数字",
         "2. 违约责任、扣款条件和处理流程是否有上限和证据要求",

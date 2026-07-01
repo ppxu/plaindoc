@@ -22,6 +22,8 @@ describe("analyzeDocument", () => {
     expect(report.clarifyingQuestions[0].askBeforeSigning).toBe(true);
     expect(report.actionPlan.priority).toBe("high");
     expect(report.actionPlan.message).toContain("签署前想先确认");
+    expect(report.actionPlan.message).toContain("请对方书面确认：");
+    expect(report.actionPlan.message).toContain("押金扣除规则");
   });
 
   it("does not flag ordinary deposit terms as broad deduction risk", () => {

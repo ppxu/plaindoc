@@ -17,6 +17,7 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
   const findings = runRules(text, input.kind);
   const facts = extractFacts(text);
   const checklist = buildChecklist(text, input.kind);
+  const clarifyingQuestions = buildClarifyingQuestions(findings, input.kind);
   const score = scoreFindings(findings.map((finding) => finding.severity), wordCount);
   const status = statusFromScore(score);
 
@@ -27,8 +28,8 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
     facts,
     findings,
     checklist,
-    clarifyingQuestions: buildClarifyingQuestions(findings, input.kind),
-    actionPlan: buildActionPlan(input.kind, findings, checklist),
+    clarifyingQuestions,
+    actionPlan: buildActionPlan(input.kind, findings, checklist, clarifyingQuestions),
     plainLanguage: buildPlainLanguage(input.kind, findings.length),
     generatedAt: new Date().toISOString(),
     documentKind: input.kind,

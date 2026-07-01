@@ -90,6 +90,30 @@ describe("model analyzer", () => {
     expect(report.plainLanguage).toEqual(localReport.plainLanguage);
   });
 
+  it("uses model clarifying questions in the counterparty message when no model action plan is returned", () => {
+    const localReport = analyzeDocument({
+      text: "甲方可根据情况扣除全部押金，乙方提前退租需承担两个月租金作为违约金。",
+      kind: "rental"
+    });
+    const report = mergeModelPayload(
+      localReport,
+      {
+        clarifyingQuestions: [
+          {
+            question: "请房东书面确认押金扣除项目、金额上限、凭证材料和退还期限。",
+            whyItMatters: "这是退租时最容易产生争议的部分。",
+            severity: "red",
+            askBeforeSigning: true
+          }
+        ]
+      },
+      "test-model"
+    );
+
+    expect(report.clarifyingQuestions[0].question).toContain("押金扣除项目");
+    expect(report.actionPlan.message).toContain("请房东书面确认押金扣除项目");
+  });
+
   it("adds model input range notice when a long document is truncated before model analysis", () => {
     const localReport = analyzeDocument({ text: "甲方和乙方签署普通文件。", kind: "unknown" });
     const report = mergeModelPayload(
