@@ -28,6 +28,26 @@ export function buildActionPlan(
   };
 }
 
+export function ensureActionPlanMessageDetails(
+  plan: ActionPlan,
+  findings: RiskFinding[],
+  clarifyingQuestions: ClarifyingQuestion[]
+): ActionPlan {
+  const detailSections = buildCounterpartyDetailSections(findings, clarifyingQuestions).filter((section) => {
+    const firstMeaningfulLine = section.split("\n").find((line) => line.trim() && !line.endsWith("："));
+    return firstMeaningfulLine ? !plan.message.includes(firstMeaningfulLine.replace(/^\d+\.\s*/, "")) : false;
+  });
+
+  if (!detailSections.length) {
+    return plan;
+  }
+
+  return {
+    ...plan,
+    message: [plan.message.trim(), ...detailSections].join("\n\n")
+  };
+}
+
 function actionTitle(priority: ActionPlan["priority"], kind: DocumentKind): string {
   if (priority === "high") {
     return `${kindLabel(kind)}签署前先要求对方书面修改或确认`;
@@ -86,17 +106,39 @@ function buildCounterpartyMessage(
   ];
 
   if (modificationLines.length) {
-    messageParts.push(
-      "建议修改方向：",
-      "",
-      modificationLines.map((line, index) => `${index + 1}. ${line}`).join("\n"),
-      ""
-    );
+    messageParts.push(...buildCounterpartyDetailSectionsFromLines([], modificationLines));
   }
 
   messageParts.push("麻烦把这些点用书面方式说明；如果需要修改，也请直接写进合同正文、附件或补充协议里。确认后我再继续签署流程。");
 
   return messageParts.join("\n");
+}
+
+function buildCounterpartyDetailSections(
+  findings: RiskFinding[],
+  clarifyingQuestions: ClarifyingQuestion[]
+): string[] {
+  const questionLines = clarifyingQuestions
+    .filter((item) => item.askBeforeSigning)
+    .slice(0, 4)
+    .map((item) => item.question);
+  const modificationLines = findings
+    .filter((finding) => finding.severity !== "green" && finding.modification)
+    .slice(0, 2)
+    .map((finding) => `${finding.title}：${finding.modification}`);
+
+  return buildCounterpartyDetailSectionsFromLines(questionLines, modificationLines);
+}
+
+function buildCounterpartyDetailSectionsFromLines(questionLines: string[], modificationLines: string[]): string[] {
+  const sections: string[] = [];
+  if (questionLines.length) {
+    sections.push(["具体追问：", "", questionLines.map((line, index) => `${index + 1}. ${line}`).join("\n")].join("\n"));
+  }
+  if (modificationLines.length) {
+    sections.push(["建议修改方向：", "", modificationLines.map((line, index) => `${index + 1}. ${line}`).join("\n")].join("\n"));
+  }
+  return sections.length ? [...sections, ""] : [];
 }
 
 function kindLabel(kind: DocumentKind): string {

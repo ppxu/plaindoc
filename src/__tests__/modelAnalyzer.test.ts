@@ -77,6 +77,9 @@ describe("model analyzer", () => {
     expect(report.clarifyingQuestions[0].askBeforeSigning).toBe(true);
     expect(report.actionPlan.priority).toBe("high");
     expect(report.actionPlan.message).toContain("\n");
+    expect(report.actionPlan.message).toContain("请房东书面确认押金扣除项目");
+    expect(report.actionPlan.message).toContain("建议修改方向");
+    expect(report.actionPlan.message).toContain("建议写明扣款项目、凭证和退还期限。");
     expect(report.score).toBe(localReport.score);
     expect(report.notice).toContain("本地证据片段会被保留");
   });

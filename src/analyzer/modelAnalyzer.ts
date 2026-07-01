@@ -8,7 +8,7 @@ import type {
   RiskFinding,
   Severity
 } from "../types";
-import { buildActionPlan } from "./actionPlan";
+import { buildActionPlan, ensureActionPlanMessageDetails } from "./actionPlan";
 import { prepareModelBaseline, prepareModelDocumentText, type PreparedModelDocumentText } from "./modelInput";
 import {
   getModelEndpointSecurity,
@@ -279,11 +279,13 @@ export function mergeModelPayload(
     findings: mergedFindings,
     checklist: mergedChecklist,
     clarifyingQuestions: mergedClarifyingQuestions,
-    actionPlan: actionPlan ?? (
-      clarifyingQuestions.length
-        ? buildActionPlan(localReport.documentKind, mergedFindings, mergedChecklist, mergedClarifyingQuestions)
-        : localReport.actionPlan
-    ),
+    actionPlan: actionPlan
+      ? ensureActionPlanMessageDetails(actionPlan, mergedFindings, mergedClarifyingQuestions)
+      : (
+          clarifyingQuestions.length
+            ? buildActionPlan(localReport.documentKind, mergedFindings, mergedChecklist, mergedClarifyingQuestions)
+            : localReport.actionPlan
+        ),
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
     modelName,
