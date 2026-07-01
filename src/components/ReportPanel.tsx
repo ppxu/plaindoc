@@ -10,6 +10,7 @@ import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
 import { getEvidenceCoverage } from "../report/evidenceCoverage";
 import { formatReportGeneratedAt } from "../report/generatedAt";
+import { getReviewReadiness } from "../report/reviewReadiness";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClarifyingQuestions } from "./ClarifyingQuestions";
@@ -40,6 +41,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
   const coverageBoundary = getCoverageBoundary(report);
   const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
   const evidenceCoverage = getEvidenceCoverage(report);
+  const readiness = getReviewReadiness(report);
 
   useEffect(() => {
     setCopyReportState("idle");
@@ -167,7 +169,23 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
         </div>
       ) : null}
 
-      <PriorityBrief report={report} />
+      <section className={`report-section review-readiness review-readiness-${readiness.status}`}>
+        <p className="section-label">签署前状态</p>
+        <h3>{readiness.title}</h3>
+        <p className="review-readiness-summary">{readiness.summary}</p>
+        <div className="review-readiness-checks">
+          {readiness.checks.map((check) => (
+            <article key={check.id} className={`review-readiness-check ${check.status}`}>
+              <span>{readinessCheckLabel(check.status)}</span>
+              <div>
+                <strong>{check.label}</strong>
+                <p>{check.detail}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p className="review-readiness-next">{readiness.nextStep}</p>
+      </section>
 
       <section className="report-section coverage-boundary" aria-labelledby="coverage-boundary-title">
         <div>
@@ -200,6 +218,8 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
           </div>
         </div>
       </section>
+
+      <PriorityBrief report={report} />
 
       <section className="report-section">
         <p className="section-label">风险</p>
@@ -303,5 +323,13 @@ function statusText(status: AnalysisReport["status"]): string {
     safe_to_review: "可以继续确认",
     needs_attention: "需要重点确认",
     do_not_sign_directly: "不建议直接签"
+  }[status];
+}
+
+function readinessCheckLabel(status: "ok" | "review" | "blocked"): string {
+  return {
+    ok: "通过",
+    review: "待确认",
+    blocked: "阻断"
   }[status];
 }

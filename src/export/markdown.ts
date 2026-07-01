@@ -5,6 +5,7 @@ import { priorityBriefToText } from "./priorityBrief";
 import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
 import { getEvidenceCoverage } from "../report/evidenceCoverage";
+import { getReviewReadiness } from "../report/reviewReadiness";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
@@ -14,6 +15,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
   const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
   const coverageBoundary = getCoverageBoundary(report);
   const evidenceCoverage = getEvidenceCoverage(report);
+  const readiness = getReviewReadiness(report);
   const findings = report.findings
     .map((finding) => [
       `### ${severityLabel(finding.severity)} ${finding.title}`,
@@ -79,6 +81,14 @@ export function reportToMarkdown(report: AnalysisReport): string {
     inputWarnings ? "## 输入完整性" : "",
     inputWarnings,
     inputWarnings ? "" : "",
+    "## 签署前状态",
+    `**状态：** ${readiness.title}`,
+    readiness.summary,
+    "",
+    ...readiness.checks.map((check) => `- **${check.label}：** ${readinessCheckLabel(check.status)}。${check.detail}`),
+    "",
+    `**下一步：** ${readiness.nextStep}`,
+    "",
     "## 证据覆盖",
     `**定位情况：** ${evidenceCoverage.summary}`,
     `**建议动作：** ${evidenceCoverage.action}`,
@@ -150,5 +160,13 @@ function statusLabel(status: AnalysisReport["status"]): string {
     safe_to_review: "可以继续确认",
     needs_attention: "需要重点确认",
     do_not_sign_directly: "不建议直接签"
+  }[status];
+}
+
+function readinessCheckLabel(status: "ok" | "review" | "blocked"): string {
+  return {
+    ok: "通过",
+    review: "待确认",
+    blocked: "阻断"
   }[status];
 }

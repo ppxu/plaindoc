@@ -127,6 +127,19 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("要求对方提供原文位置");
   });
 
+  it("exports signing readiness before the detailed findings", () => {
+    const report = analyzeDocument({
+      text: "押金 5000 元。提前退租赔偿两个月租金。",
+      kind: "rental"
+    });
+    const markdown = reportToMarkdown(report);
+
+    expect(markdown).toContain("## 签署前状态");
+    expect(markdown).toContain("先暂停签署");
+    expect(markdown).toContain("补齐文件");
+    expect(markdown.indexOf("## 签署前状态")).toBeLessThan(markdown.indexOf("## 关键事实"));
+  });
+
   it("renders coverage scope as a fixed report section", () => {
     expect(reportPanelSource).toContain("coverage-boundary");
     expect(reportPanelSource).toContain("覆盖范围");
@@ -143,5 +156,11 @@ describe("reportToMarkdown", () => {
     expect(reportPanelSource).toContain("evidence-coverage");
     expect(reportPanelSource).toContain("证据覆盖");
     expect(reportPanelSource).toContain("evidenceCoverage.action");
+  });
+
+  it("renders signing readiness in the report panel", () => {
+    expect(reportPanelSource).toContain("review-readiness");
+    expect(reportPanelSource).toContain("签署前状态");
+    expect(reportPanelSource).toContain("readiness.nextStep");
   });
 });

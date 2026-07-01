@@ -1268,6 +1268,90 @@ textarea:focus,
   -webkit-line-clamp: 2;
 }
 
+.review-readiness {
+  background: #fbfcfc;
+}
+
+.review-readiness-blocked {
+  background: #fff8ee;
+}
+
+.review-readiness-summary,
+.review-readiness-next {
+  margin: 10px 0 0;
+  color: #34443f;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.review-readiness-next {
+  color: #6d5b2d;
+  font-weight: 750;
+}
+
+.review-readiness-checks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.review-readiness-check {
+  min-width: 0;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #dfe9e5;
+  border-radius: 10px;
+}
+
+.review-readiness-check.blocked {
+  border-left: 4px solid var(--red);
+}
+
+.review-readiness-check.review {
+  border-left: 4px solid var(--yellow);
+}
+
+.review-readiness-check.ok {
+  border-left: 4px solid var(--green);
+}
+
+.review-readiness-check > span {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 8px;
+  color: #315f52;
+  background: #eef6f3;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.review-readiness-check.blocked > span {
+  color: #7c2d12;
+  background: #fff1e6;
+}
+
+.review-readiness-check.review > span {
+  color: #7a4d0b;
+  background: #fff7df;
+}
+
+.review-readiness-check strong {
+  display: block;
+  margin-top: 9px;
+  color: #263430;
+  font-size: 13px;
+}
+
+.review-readiness-check p {
+  margin: 6px 0 0;
+  color: #4b5a55;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .coverage-boundary {
   background: #fbfcfc;
 }
@@ -1986,7 +2070,8 @@ textarea:focus,
   }
 
   .facts-grid,
-  .coverage-boundary-grid {
+  .coverage-boundary-grid,
+  .review-readiness-checks {
     grid-template-columns: 1fr;
   }
 
@@ -2073,6 +2158,7 @@ textarea:focus,
   .risk-card,
   .input-warning,
   .evidence-coverage-card,
+  .review-readiness-check,
   .facts-grid article,
   .coverage-boundary-grid article,
   .priority-card,
@@ -2085,6 +2171,7 @@ textarea:focus,
   .risk-card,
   .input-warning,
   .evidence-coverage-card,
+  .review-readiness-check,
   .facts-grid article,
   .coverage-boundary-grid article,
   .priority-card,
