@@ -3,6 +3,7 @@ import { documentKindMeta } from "../data/documentKinds";
 import { buildActionPlan } from "./actionPlan";
 import { checklistFromRules, runRules } from "./rules";
 import { countWords, findDateMatches, findEvidence, findMoneyMatches, findPercentageMatches } from "./patterns";
+import { assessInputCompleteness } from "../report/inputCompleteness";
 
 const DISCLAIMER = "PlainDoc 提供文件阅读辅助和风险提示，不构成法律、医疗、财务或其他专业建议。重要决定请咨询合格专业人士。";
 
@@ -18,6 +19,7 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
   const facts = extractFacts(text);
   const checklist = buildChecklist(text, input.kind);
   const clarifyingQuestions = buildClarifyingQuestions(findings, input.kind);
+  const inputWarnings = assessInputCompleteness(text, input.kind, wordCount);
   const score = scoreFindings(findings.map((finding) => finding.severity), wordCount);
   const status = statusFromScore(score);
 
@@ -27,6 +29,7 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
     score,
     facts,
     findings,
+    inputWarnings,
     checklist,
     clarifyingQuestions,
     actionPlan: buildActionPlan(input.kind, findings, checklist, clarifyingQuestions),
@@ -46,6 +49,7 @@ function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
     score: 0,
     facts: [],
     findings: [],
+    inputWarnings: [],
     checklist: [],
     clarifyingQuestions: [],
     actionPlan: {

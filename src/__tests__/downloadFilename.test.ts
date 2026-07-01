@@ -23,6 +23,7 @@ function createReport(partial: Partial<AnalysisReport>): AnalysisReport {
     score: 60,
     facts: [],
     findings: [],
+    inputWarnings: [],
     checklist: [],
     clarifyingQuestions: [],
     actionPlan: {

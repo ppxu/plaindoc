@@ -14,6 +14,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 
 - A one-sentence summary.
 - Visible report metadata with source, text scale, risk counts, and generation time.
+- Input-completeness warnings when pasted or uploaded text looks like a fragment instead of a full document.
 - A visible coverage boundary that says which risk areas PlainDoc checked and which limits still need human review.
 - Mobile-friendly single-column layout for reviewing reports on narrow screens.
 - Key facts such as money, percentages, dates, obligations, penalties, and acceptance terms.
@@ -119,6 +120,7 @@ Currently supported:
 - The editor header 实时显示已输入字符数，方便确认粘贴或上传是否完整。
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
 - Visible report metadata including risk counts, source, text scale, and generation time.
+- Visible input-completeness warnings in on-screen and Markdown reports when the text appears too short or lacks document-boundary signals.
 - Visible coverage scope and limitation notes in the on-screen and Markdown reports.
 - Mobile-friendly layout that keeps the input and report panels inside narrow viewports without horizontal scrolling.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.

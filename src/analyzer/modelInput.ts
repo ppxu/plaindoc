@@ -62,6 +62,7 @@ export function prepareModelBaseline(report: AnalysisReport, preparedDocument: P
       value: shouldIncludeFactValue(fact.evidence, preparedDocument) ? fact.value : undefined
     })),
     findings: report.findings.map(({ evidence, ...finding }) => finding),
+    inputWarnings: report.inputWarnings,
     checklist: report.checklist,
     clarifyingQuestions: report.clarifyingQuestions,
     actionPlan: report.actionPlan,

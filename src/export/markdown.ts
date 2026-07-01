@@ -42,6 +42,16 @@ export function reportToMarkdown(report: AnalysisReport): string {
     .map((step, index) => `${index + 1}. ${step}`)
     .join("\n") || "暂无下一步建议。";
   const clauseEdits = clauseEditsToText(getClauseEdits(report.findings));
+  const inputWarnings = report.inputWarnings.length
+    ? report.inputWarnings
+        .map((warning) => [
+          `### ${warning.title}`,
+          warning.message,
+          "",
+          `**建议动作：** ${warning.action}`
+        ].join("\n"))
+        .join("\n\n")
+    : "";
 
   return [
     "# PlainDoc 文件阅读报告",
@@ -64,6 +74,9 @@ export function reportToMarkdown(report: AnalysisReport): string {
     `**未覆盖：** ${coverageBoundary.limitation}。`,
     `**签前提醒：** ${coverageBoundary.reminder}`,
     "",
+    inputWarnings ? "## 输入完整性" : "",
+    inputWarnings,
+    inputWarnings ? "" : "",
     "## 关键事实",
     facts,
     "",

@@ -196,6 +196,27 @@ describe("report history", () => {
     expect(loadReportHistory(storage)).toEqual([]);
   });
 
+  it("loads saved reports from before input completeness warnings existed", () => {
+    const storage = createMemoryStorage();
+    const saved = saveReportToHistory(
+      analyzeDocument({ text: "押金 5000 元。提前退租赔偿两个月租金。", kind: "rental" }),
+      storage
+    );
+    const legacyEntry = {
+      ...saved[0],
+      report: {
+        ...saved[0].report,
+        inputWarnings: undefined
+      }
+    };
+    storage.setItem("plaindoc:report-history:v1", JSON.stringify([legacyEntry]));
+
+    const loaded = loadReportHistory(storage);
+
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0].report.inputWarnings).toEqual([]);
+  });
+
   it("keeps the current in-memory history when browser storage writes fail", () => {
     const storage = createFailingStorage({ failSetItem: true, failRemoveItem: true });
     const report = analyzeDocument({ text: "押金 5000 元，提前退租需赔偿两个月租金。", kind: "rental" });

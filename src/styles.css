@@ -417,7 +417,8 @@ textarea:focus,
 .primary-action svg,
 .ghost-button svg,
 .privacy-note svg,
-.coverage-panel svg {
+.coverage-panel svg,
+.input-warning-list svg {
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
@@ -1129,6 +1130,59 @@ textarea:focus,
   line-height: 1.5;
 }
 
+.input-warning-list {
+  display: grid;
+  gap: 10px;
+  padding: 16px 24px;
+  background: #fff8ee;
+  border-bottom: 1px solid #ead9bf;
+}
+
+.input-warning-list > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-warning-list svg {
+  color: #b97815;
+}
+
+.input-warning-list h3 {
+  margin: 3px 0 0;
+  color: #2a332f;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.input-warning {
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #eed6ae;
+  border-radius: 10px;
+}
+
+.input-warning-red {
+  border-left: 4px solid var(--red);
+}
+
+.input-warning-yellow {
+  border-left: 4px solid var(--yellow);
+}
+
+.input-warning strong {
+  display: block;
+  color: #573a12;
+  font-size: 14px;
+}
+
+.input-warning p {
+  margin: 7px 0 0;
+  color: #4b3f2d;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 .report-copy-fallback {
   display: grid;
   gap: 10px;
@@ -1823,6 +1877,7 @@ textarea:focus,
   .report-hero,
   .report-actions,
   .report-notice,
+  .input-warning-list,
   .report-copy-fallback,
   .disclaimer {
     padding-left: 16px;
@@ -1955,6 +2010,7 @@ textarea:focus,
 
   .report-section,
   .report-notice,
+  .input-warning-list,
   .disclaimer {
     padding: 16px 0;
     border-bottom: 1px solid #d0d0d0;
@@ -1962,6 +2018,7 @@ textarea:focus,
 
   .report-section,
   .risk-card,
+  .input-warning,
   .facts-grid article,
   .coverage-boundary-grid article,
   .priority-card,
@@ -1972,6 +2029,7 @@ textarea:focus,
   }
 
   .risk-card,
+  .input-warning,
   .facts-grid article,
   .coverage-boundary-grid article,
   .priority-card,

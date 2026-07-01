@@ -86,9 +86,28 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("**未覆盖：** 地区法律差异、法院裁量、监管口径、附件真伪、签署主体资质和线下口头承诺。");
   });
 
+  it("exports input completeness warnings for short document fragments", () => {
+    const report = analyzeDocument({
+      text: "押金 5000 元。提前退租赔偿两个月租金。",
+      kind: "rental"
+    });
+    const markdown = reportToMarkdown(report);
+
+    expect(report.inputWarnings).toHaveLength(1);
+    expect(markdown).toContain("## 输入完整性");
+    expect(markdown).toContain("输入内容可能不完整");
+    expect(markdown).toContain("完整合同正文、附件、补充协议和签字页");
+  });
+
   it("renders coverage scope as a fixed report section", () => {
     expect(reportPanelSource).toContain("coverage-boundary");
     expect(reportPanelSource).toContain("覆盖范围");
     expect(reportPanelSource).toContain("PlainDoc 当前重点检查");
+  });
+
+  it("renders input completeness warnings in the report panel", () => {
+    expect(reportPanelSource).toContain("input-warning-list");
+    expect(reportPanelSource).toContain("输入完整性");
+    expect(reportPanelSource).toContain("warning.action");
   });
 });

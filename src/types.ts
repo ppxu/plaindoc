@@ -56,12 +56,21 @@ export interface ActionPlan {
   message: string;
 }
 
+export interface ReportWarning {
+  id: string;
+  title: string;
+  message: string;
+  action: string;
+  severity: "yellow" | "red";
+}
+
 export interface AnalysisReport {
   summary: string;
   status: ReportStatus;
   score: number;
   facts: ExtractedFact[];
   findings: RiskFinding[];
+  inputWarnings: ReportWarning[];
   checklist: ChecklistItem[];
   clarifyingQuestions: ClarifyingQuestion[];
   actionPlan: ActionPlan;

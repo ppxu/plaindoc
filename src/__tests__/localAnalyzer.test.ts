@@ -37,6 +37,17 @@ describe("analyzeDocument", () => {
     expect(report.findings.some((finding) => finding.id === "rental-broad-deposit-deduction")).toBe(false);
   });
 
+  it("warns when the pasted document looks like an incomplete fragment", () => {
+    const report = analyzeDocument({
+      text: "押金 5000 元。提前退租赔偿两个月租金。",
+      kind: "rental"
+    });
+
+    expect(report.inputWarnings.some((warning) => warning.id === "incomplete-document-fragment")).toBe(true);
+    expect(report.inputWarnings[0].title).toContain("输入内容可能不完整");
+    expect(report.inputWarnings[0].action).toContain("完整合同正文、附件、补充协议和签字页");
+  });
+
   it("does not flag documented deposit deductions as broad deduction risk", () => {
     const report = analyzeDocument({
       text: "租房合同约定押金扣除仅限未付租金、水电燃气费和经双方确认的人为损坏维修费用；甲方应提供发票、报价单或双方确认记录，并在退租交接后 7 日内退还剩余押金。",

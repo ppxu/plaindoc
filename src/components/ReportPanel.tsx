@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
+import { AlertTriangle, ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
 import { downloadMarkdownFile } from "../export/downloadMarkdown";
 import { buildReportMarkdownFilename } from "../export/downloadFilename";
@@ -124,6 +124,24 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
         <p className="report-notice" role="status" aria-live="polite">
           {report.notice}
         </p>
+      ) : null}
+      {report.inputWarnings.length ? (
+        <section className="input-warning-list" aria-labelledby="input-warning-title">
+          <div>
+            <AlertTriangle aria-hidden="true" />
+            <div>
+              <p className="section-label">输入完整性</p>
+              <h3 id="input-warning-title">先确认文件是否完整</h3>
+            </div>
+          </div>
+          {report.inputWarnings.map((warning) => (
+            <article key={warning.id} className={`input-warning input-warning-${warning.severity}`}>
+              <strong>{warning.title}</strong>
+              <p>{warning.message}</p>
+              <p>{warning.action}</p>
+            </article>
+          ))}
+        </section>
       ) : null}
       {printState === "failed" ? (
         <p className="report-notice" role="alert" aria-live="assertive">
