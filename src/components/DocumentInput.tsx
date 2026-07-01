@@ -188,7 +188,7 @@ export function DocumentInput({
           onDrop={handleUploadDrop}
         >
           <Upload aria-hidden="true" />
-          <span>{uploadStripLabel(isUploading, isUploadDragActive)}</span>
+          <span>{uploadStripLabel(isUploading, isAnalyzing, isUploadDragActive)}</span>
           <input
             type="file"
             accept=".pdf,.txt,.md,.png,.jpg,.jpeg,.webp,.heic,.heif,application/pdf,text/plain,text/markdown,image/*"
@@ -295,8 +295,9 @@ export function DocumentInput({
   );
 }
 
-function uploadStripLabel(isUploading: boolean, isUploadDragActive: boolean): string {
+function uploadStripLabel(isUploading: boolean, isAnalyzing: boolean, isUploadDragActive: boolean): string {
   if (isUploading) return "正在读取文件...";
+  if (isAnalyzing) return "分析中，暂不能上传文件";
   if (isUploadDragActive) return "松开即可读取文件";
   return "点击上传或拖入 PDF / .txt / .md / 图片文件";
 }

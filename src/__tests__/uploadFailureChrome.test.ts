@@ -167,4 +167,16 @@ describe("upload failure chrome", () => {
     expect(documentInputSource).toContain("function uploadStripClassName(");
     expect(documentInputSource).toContain('classes.push("is-disabled")');
   });
+
+  it("explains why uploads are unavailable during an active analysis", () => {
+    expect(documentInputSource).toContain("uploadStripLabel(isUploading, isAnalyzing, isUploadDragActive)");
+    expect(documentInputSource).toContain(
+      "function uploadStripLabel(isUploading: boolean, isAnalyzing: boolean, isUploadDragActive: boolean): string"
+    );
+    expect(documentInputSource).toContain('if (isUploading) return "正在读取文件...";');
+    expect(documentInputSource).toContain('if (isAnalyzing) return "分析中，暂不能上传文件";');
+    expect(documentInputSource.indexOf('if (isUploading) return "正在读取文件...";')).toBeLessThan(
+      documentInputSource.indexOf('if (isAnalyzing) return "分析中，暂不能上传文件";')
+    );
+  });
 });
