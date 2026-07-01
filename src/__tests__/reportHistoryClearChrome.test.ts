@@ -14,6 +14,11 @@ describe("report history clearing chrome", () => {
     expect(reportHistorySource).toContain("onClear");
   });
 
+  it("labels the icon-only clear action for mouse and assistive users", () => {
+    expect(reportHistorySource).toContain('aria-label="清空本地报告历史"');
+    expect(reportHistorySource).toContain('title="清空本地报告历史"');
+  });
+
   it("invalidates any active analysis before clearing saved reports", () => {
     const clearHandlerIndex = appSource.indexOf("function handleClearHistory()");
     const invalidateIndex = appSource.indexOf("invalidateCurrentAnalysis();", clearHandlerIndex);

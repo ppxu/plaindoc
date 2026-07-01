@@ -16,7 +16,7 @@ export function ReportHistory({ items, onSelect, onClear }: ReportHistoryProps) 
           最近报告
         </span>
         {items.length ? (
-          <button type="button" onClick={onClear} aria-label="清空本地报告历史">
+          <button type="button" onClick={onClear} aria-label="清空本地报告历史" title="清空本地报告历史">
             <Trash2 aria-hidden="true" />
           </button>
         ) : null}
