@@ -48,4 +48,11 @@ describe("report markdown download chrome", () => {
     expect(fallbackContainers).toEqual(['<div className="report-copy-fallback">', '<div className="report-copy-fallback">']);
     expect(fallbackAlertMessages).toHaveLength(2);
   });
+
+  it("announces successful report copy and markdown export as polite status updates", () => {
+    expect(reportPanelSource).toContain("reportShareStatusText");
+    expect(reportPanelSource).toContain('<span className="sr-only" role="status" aria-live="polite" aria-atomic="true">');
+    expect(reportPanelSource).toContain("报告已复制到剪贴板。");
+    expect(reportPanelSource).toContain("Markdown 报告已导出。");
+  });
 });

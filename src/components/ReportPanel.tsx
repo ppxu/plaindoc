@@ -28,6 +28,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
   const [downloadReportState, setDownloadReportState] = useState<"idle" | "downloaded" | "failed">("idle");
   const [printState, setPrintState] = useState<"idle" | "failed">("idle");
+  const [reportShareStatus, setReportShareStatus] = useState("");
   const copyFallbackRef = useRef<HTMLTextAreaElement>(null);
   const downloadFallbackRef = useRef<HTMLTextAreaElement>(null);
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
@@ -39,6 +40,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
     setCopyReportState("idle");
     setDownloadReportState("idle");
     setPrintState("idle");
+    setReportShareStatus("");
   }, [markdownReport]);
 
   useEffect(() => {
@@ -54,13 +56,15 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
   }, [downloadReportState]);
 
   async function copyReport() {
-    setCopyReportState((await copyTextToClipboard(markdownReport)) ? "copied" : "failed");
+    const nextState = (await copyTextToClipboard(markdownReport)) ? "copied" : "failed";
+    setCopyReportState(nextState);
+    setReportShareStatus(reportShareStatusText("copy", nextState));
   }
 
   function downloadMarkdown() {
-    setDownloadReportState(
-      downloadMarkdownFile(markdownReport, buildReportMarkdownFilename(report)) ? "downloaded" : "failed"
-    );
+    const nextState = downloadMarkdownFile(markdownReport, buildReportMarkdownFilename(report)) ? "downloaded" : "failed";
+    setDownloadReportState(nextState);
+    setReportShareStatus(reportShareStatusText("download", nextState));
   }
 
   function printCurrentReport() {
@@ -104,6 +108,11 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
             </button>
           </div>
           <p className="report-share-reminder">复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。</p>
+          {reportShareStatus ? (
+            <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+              {reportShareStatus}
+            </span>
+          ) : null}
         </div>
       </div>
 
@@ -202,6 +211,15 @@ function downloadReportLabel(state: "idle" | "downloaded" | "failed"): string {
   if (state === "downloaded") return "已导出";
   if (state === "failed") return "导出失败";
   return "导出 Markdown";
+}
+
+function reportShareStatusText(
+  action: "copy" | "download",
+  state: "copied" | "downloaded" | "failed"
+): string {
+  if (action === "copy" && state === "copied") return "报告已复制到剪贴板。";
+  if (action === "download" && state === "downloaded") return "Markdown 报告已导出。";
+  return "";
 }
 
 function selectFallbackText(textarea: HTMLTextAreaElement | null): void {
