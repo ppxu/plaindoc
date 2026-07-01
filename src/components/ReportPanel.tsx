@@ -114,13 +114,13 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
         </p>
       ) : null}
       {downloadReportState === "failed" ? (
-        <div className="report-copy-fallback">
+        <div className="report-copy-fallback" role="alert" aria-live="assertive">
           <span>浏览器没有允许自动下载。可以复制完整 Markdown 报告后手动保存为 .md 文件。</span>
           <textarea ref={downloadFallbackRef} readOnly value={markdownReport} aria-label="完整 Markdown 报告，可手动保存" />
         </div>
       ) : null}
       {copyReportState === "failed" ? (
-        <div className="report-copy-fallback">
+        <div className="report-copy-fallback" role="alert" aria-live="assertive">
           <span>浏览器没有允许自动复制。可以在这里手动全选复制完整报告。</span>
           <textarea ref={copyFallbackRef} readOnly value={markdownReport} aria-label="完整 Markdown 报告" />
         </div>
