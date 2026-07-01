@@ -8,6 +8,7 @@ import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundaryNotice } from "../report/coverageBoundary";
+import { formatReportGeneratedAt } from "../report/generatedAt";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClarifyingQuestions } from "./ClarifyingQuestions";
@@ -88,7 +89,8 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
 
       <div className="report-actions">
         <span>
-          {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {formatTextScale(report.wordCount)} · {sourceText(report)}
+          {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {formatTextScale(report.wordCount)} · {sourceText(report)} ·
+          生成时间 {formatReportGeneratedAt(report.generatedAt)}
         </span>
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           报告已更新：{statusText(report.status)}，阅读分 {report.score}，{redCount} 个红色风险，{yellowCount} 个黄色提醒。

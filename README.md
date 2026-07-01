@@ -13,6 +13,7 @@ The first version focuses on rental, employment, renovation, loan, and insurance
 Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md` file, or load one of the bundled fictional scenarios. PlainDoc produces:
 
 - A one-sentence summary.
+- Visible report metadata with source, text scale, risk counts, and generation time.
 - Key facts such as money, percentages, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
 - A live document-text counter that helps confirm whether pasted or uploaded content was read.
@@ -115,6 +116,7 @@ Currently supported:
 - 一次只分析一个文件；如果拖入多个文件，PlainDoc 只读取第一个，并提示其余文件未处理。
 - The editor header 实时显示已输入字符数，方便确认粘贴或上传是否完整。
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
+- Visible report metadata including risk counts, source, text scale, and generation time.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.
 - Switching bundled examples immediately refreshes the local-rule report so the demo text and report stay aligned.
 - Changing the document type immediately regenerates the local-rule report with that rule pack.
