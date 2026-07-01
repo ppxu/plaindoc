@@ -14,6 +14,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 
 - A one-sentence summary.
 - Visible report metadata with source, text scale, risk counts, and generation time.
+- Mobile-friendly single-column layout for reviewing reports on narrow screens.
 - Key facts such as money, percentages, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
 - A live document-text counter that helps confirm whether pasted or uploaded content was read.
@@ -117,6 +118,7 @@ Currently supported:
 - The editor header 实时显示已输入字符数，方便确认粘贴或上传是否完整。
 - Successful uploads immediately refresh the local-rule report so the visible report matches the uploaded text.
 - Visible report metadata including risk counts, source, text scale, and generation time.
+- Mobile-friendly layout that keeps the input and report panels inside narrow viewports without horizontal scrolling.
 - Load ten fictional rental, employment, renovation, loan, and insurance examples.
 - Switching bundled examples immediately refreshes the local-rule report so the demo text and report stay aligned.
 - Changing the document type immediately regenerates the local-rule report with that rule pack.
