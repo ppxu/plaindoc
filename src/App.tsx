@@ -59,6 +59,7 @@ export default function App() {
   const [history, setHistory] = useState<SavedReport[]>(() => loadReportHistory());
   const [evidenceSelection, setEvidenceSelection] = useState<EvidenceSelectionTarget | null>(null);
   const [documentTextFocusRequest, setDocumentTextFocusRequest] = useState(0);
+  const [uploadErrorFocusRequest, setUploadErrorFocusRequest] = useState(0);
 
   useEffect(() => {
     if (selectedExampleId) {
@@ -482,6 +483,7 @@ export default function App() {
 
   function showUploadFailureUnchangedNotice() {
     setInputNotice("当前正文和报告未改变。");
+    setUploadErrorFocusRequest((request) => request + 1);
   }
 
   function handleCancelAnalysis() {
@@ -575,6 +577,7 @@ export default function App() {
           isTestingModelConnection={isTestingModelConnection}
           evidenceSelection={evidenceSelection}
           textFocusRequest={documentTextFocusRequest}
+          errorFocusRequest={uploadErrorFocusRequest}
           onTextChange={handleTextChange}
           onKindChange={handleKindChange}
           onExampleChange={handleExampleChange}

@@ -25,6 +25,7 @@ interface DocumentInputProps {
   isTestingModelConnection: boolean;
   evidenceSelection: EvidenceSelectionTarget | null;
   textFocusRequest: number;
+  errorFocusRequest: number;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
   onExampleChange: (id: string) => void;
@@ -59,6 +60,7 @@ export function DocumentInput({
   isTestingModelConnection,
   evidenceSelection,
   textFocusRequest,
+  errorFocusRequest,
   onTextChange,
   onKindChange,
   onExampleChange,
@@ -77,6 +79,7 @@ export function DocumentInput({
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const errorRef = useRef<HTMLParagraphElement>(null);
   const [isUploadDragActive, setIsUploadDragActive] = useState(false);
   const sensitiveTextSummary = detectSensitiveText(text);
 
@@ -92,6 +95,13 @@ export function DocumentInput({
       textareaRef.current?.focus();
     }
   }, [textFocusRequest]);
+
+  useEffect(() => {
+    if (errorFocusRequest > 0) {
+      errorRef.current?.focus();
+      errorRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [errorFocusRequest]);
 
   function handleUploadDragOver(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
@@ -237,7 +247,7 @@ export function DocumentInput({
       </label>
 
       {error ? (
-        <p className="error-message" role="alert" aria-live="assertive">
+        <p ref={errorRef} className="error-message" role="alert" aria-live="assertive" tabIndex={-1}>
           {error}
         </p>
       ) : null}

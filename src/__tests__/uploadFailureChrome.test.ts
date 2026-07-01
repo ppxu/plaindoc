@@ -74,6 +74,17 @@ describe("upload failure chrome", () => {
     expect(appSource).toContain('setInputNotice("当前正文和报告未改变。");');
   });
 
+  it("moves focus to the visible upload error after upload validation fails", () => {
+    expect(appSource).toContain("const [uploadErrorFocusRequest, setUploadErrorFocusRequest] = useState(0);");
+    expect(appSource).toContain("errorFocusRequest={uploadErrorFocusRequest}");
+    expect(appSource).toContain("setUploadErrorFocusRequest((request) => request + 1);");
+    expect(documentInputSource).toContain("errorFocusRequest: number;");
+    expect(documentInputSource).toContain("const errorRef = useRef<HTMLParagraphElement>(null);");
+    expect(documentInputSource).toContain("errorRef.current?.focus();");
+    expect(documentInputSource).toContain('tabIndex={-1}');
+    expect(documentInputSource).toContain("errorRef.current?.scrollIntoView");
+  });
+
   it("ignores stale asynchronous upload reads after the workspace changes", () => {
     const uploadHandler = appSource.slice(
       appSource.indexOf("async function handleUpload"),
