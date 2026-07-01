@@ -24,6 +24,8 @@ describe("analyzeDocument", () => {
     expect(report.actionPlan.message).toContain("签署前想先确认");
     expect(report.actionPlan.message).toContain("请对方书面确认：");
     expect(report.actionPlan.message).toContain("押金扣除规则");
+    expect(report.actionPlan.message).toContain("建议修改方向");
+    expect(report.actionPlan.message).toContain("乙方提前退租的，应提前 30 日书面通知甲方");
   });
 
   it("does not flag ordinary deposit terms as broad deduction risk", () => {

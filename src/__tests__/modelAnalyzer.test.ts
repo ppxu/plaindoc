@@ -98,6 +98,17 @@ describe("model analyzer", () => {
     const report = mergeModelPayload(
       localReport,
       {
+        findings: [
+          {
+            localFindingId: "rental-broad-deposit-deduction",
+            title: "押金扣除空间过大",
+            severity: "red",
+            explanation: "条款允许对方按情况扣除全部押金。",
+            whyItMatters: "这会让退租时的扣款依据变得不稳定。",
+            suggestion: "要求写明可扣款项目、上限和证据材料。",
+            modification: "建议写明扣款项目、凭证和退还期限。"
+          }
+        ],
         clarifyingQuestions: [
           {
             question: "请房东书面确认押金扣除项目、金额上限、凭证材料和退还期限。",
@@ -112,6 +123,8 @@ describe("model analyzer", () => {
 
     expect(report.clarifyingQuestions[0].question).toContain("押金扣除项目");
     expect(report.actionPlan.message).toContain("请房东书面确认押金扣除项目");
+    expect(report.actionPlan.message).toContain("建议修改方向");
+    expect(report.actionPlan.message).toContain("建议写明扣款项目、凭证和退还期限。");
   });
 
   it("adds model input range notice when a long document is truncated before model analysis", () => {

@@ -15,12 +15,16 @@ export function buildActionPlan(
   const topics = focusItems.length
     ? focusItems.map((finding) => finding.title)
     : fallbackQuestions.map((item) => item.question.replace(/[？?]$/, ""));
+  const modificationLines = focusItems
+    .filter((finding) => finding.modification)
+    .slice(0, 2)
+    .map((finding) => `${finding.title}：${finding.modification}`);
 
   return {
     priority,
     title: actionTitle(priority, kind),
     steps: buildSteps(priority, topics),
-    message: buildCounterpartyMessage(kind, topics, clarifyingQuestions)
+    message: buildCounterpartyMessage(kind, topics, clarifyingQuestions, modificationLines)
   };
 }
 
@@ -57,7 +61,8 @@ function buildSteps(priority: ActionPlan["priority"], topics: string[]): string[
 function buildCounterpartyMessage(
   kind: DocumentKind,
   topics: string[],
-  clarifyingQuestions: ClarifyingQuestion[]
+  clarifyingQuestions: ClarifyingQuestion[],
+  modificationLines: string[]
 ): string {
   const questionLines = clarifyingQuestions
     .filter((item) => item.askBeforeSigning)
@@ -73,13 +78,25 @@ function buildCounterpartyMessage(
         "3. 口头承诺是否能补进正文、附件或补充协议"
       ].join("\n");
 
-  return [
+  const messageParts = [
     `你好，我认真看了这份${kindShortLabel(kind)}，签署前想先确认几处内容：`,
     "",
     topicLines,
-    "",
-    "麻烦把这些点用书面方式说明；如果需要修改，也请直接写进合同正文、附件或补充协议里。确认后我再继续签署流程。"
-  ].join("\n");
+    ""
+  ];
+
+  if (modificationLines.length) {
+    messageParts.push(
+      "建议修改方向：",
+      "",
+      modificationLines.map((line, index) => `${index + 1}. ${line}`).join("\n"),
+      ""
+    );
+  }
+
+  messageParts.push("麻烦把这些点用书面方式说明；如果需要修改，也请直接写进合同正文、附件或补充协议里。确认后我再继续签署流程。");
+
+  return messageParts.join("\n");
 }
 
 function kindLabel(kind: DocumentKind): string {

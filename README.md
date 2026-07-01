@@ -23,7 +23,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 - A copyable clause-edit pack for sending all proposed changes together.
 - A signing checklist you can copy before talking to the other party.
 - Copyable pre-signing clarification questions that turn risks into questions for the counterparty.
-- A next-step action plan and a message draft that includes concrete clarification questions for the other party.
+- A next-step action plan and a message draft that includes concrete clarification questions and suggested wording for the other party.
 - Plain-language explanations for non-experts.
 - Deduplicated local report history for revisiting recent analyses.
 - Automatic local draft restore for pasted or uploaded document text after refresh.
@@ -139,7 +139,7 @@ Currently supported:
 - Suggested clause edits for common risk patterns.
 - Copyable clause-edit pack.
 - Copyable pre-signing clarification questions that turn findings into questions for counterparties.
-- Copyable next-step message draft for counterparties, populated with concrete pre-signing questions.
+- Copyable next-step message draft for counterparties, populated with concrete pre-signing questions and suggested clause wording.
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - Local browser draft restore for current document text.
 - One-click current-workspace clearing for sensitive document text, stored draft, and the current report.
