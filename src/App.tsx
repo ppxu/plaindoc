@@ -376,6 +376,11 @@ export default function App() {
     }
   }
 
+  function handleCancelModelConnectionTest() {
+    abortCurrentModelConnectionTest();
+    setModelConnectionStatus({ tone: "error", message: "已取消本次模型连接测试。" });
+  }
+
   async function handleUpload(file: File, options: { ignoredFileCount?: number } = {}) {
     invalidateCurrentAnalysis();
     const uploadRunId = beginUploadRead();
@@ -592,6 +597,7 @@ export default function App() {
           onClearModelSettings={handleClearModelSettings}
           onModelTextConsentChange={handleModelTextConsentChange}
           onTestModelConnection={handleTestModelConnection}
+          onCancelModelConnectionTest={handleCancelModelConnectionTest}
           onRedactSensitiveText={handleRedactSensitiveText}
         />
         <ReportPanel

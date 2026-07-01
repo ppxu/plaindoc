@@ -900,6 +900,9 @@ textarea:focus,
 }
 
 .model-connection-test {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin: 8px 0 10px;
 }
 
@@ -935,7 +938,23 @@ textarea:focus,
   color: var(--teal);
 }
 
+.model-connection-test .cancel-model-connection-test {
+  color: #7a332e;
+  border-color: #dfc8c3;
+}
+
+.model-connection-test .cancel-model-connection-test:hover {
+  color: #9b3329;
+  border-color: #d59c93;
+  background: #fffafa;
+}
+
+.model-connection-test .cancel-model-connection-test svg {
+  color: #9b3329;
+}
+
 .model-connection-status {
+  flex-basis: 100%;
   margin: 8px 0 0;
   padding: 9px 10px;
   border-radius: 8px;

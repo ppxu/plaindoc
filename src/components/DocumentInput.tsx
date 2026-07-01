@@ -40,6 +40,7 @@ interface DocumentInputProps {
   onClearModelSettings: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
   onTestModelConnection: () => void;
+  onCancelModelConnectionTest: () => void;
   onRedactSensitiveText: (text: string) => void;
 }
 
@@ -75,6 +76,7 @@ export function DocumentInput({
   onClearModelSettings,
   onModelTextConsentChange,
   onTestModelConnection,
+  onCancelModelConnectionTest,
   onRedactSensitiveText
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
@@ -231,6 +233,7 @@ export function DocumentInput({
         onClear={onClearModelSettings}
         onModelTextConsentChange={onModelTextConsentChange}
         onTestModelConnection={onTestModelConnection}
+        onCancelModelConnectionTest={onCancelModelConnectionTest}
         onRedactSensitiveText={() => onRedactSensitiveText(redactSensitiveText(text))}
       />
 

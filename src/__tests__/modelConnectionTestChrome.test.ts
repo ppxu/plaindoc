@@ -20,4 +20,14 @@ describe("model connection test chrome", () => {
     expect(modelSettingsPanelSource).toContain('<span className="sr-only" role="status" aria-live="polite" aria-atomic="true">');
     expect(modelSettingsPanelSource).toContain("正在测试模型连接。");
   });
+
+  it("lets users cancel an in-flight model connection test", () => {
+    expect(documentInputSource).toContain("onCancelModelConnectionTest");
+    expect(modelSettingsPanelSource).toContain("onCancelModelConnectionTest: () => void;");
+    expect(modelSettingsPanelSource).toContain("onCancelModelConnectionTest");
+    expect(modelSettingsPanelSource).toContain("取消连接测试");
+    expect(appSource).toContain("function handleCancelModelConnectionTest()");
+    expect(appSource).toContain('setModelConnectionStatus({ tone: "error", message: "已取消本次模型连接测试。" });');
+    expect(appSource).toContain("onCancelModelConnectionTest={handleCancelModelConnectionTest}");
+  });
 });

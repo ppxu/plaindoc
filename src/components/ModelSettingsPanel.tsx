@@ -1,4 +1,4 @@
-import { BrainCircuit, FileText, KeyRound, PlugZap, ShieldAlert, Trash2 } from "lucide-react";
+import { BrainCircuit, FileText, KeyRound, PlugZap, ShieldAlert, Square, Trash2 } from "lucide-react";
 import { formatModelDocumentScope, prepareModelDocumentText } from "../analyzer/modelInput";
 import {
   getModelEndpointSecurity,
@@ -26,6 +26,7 @@ interface ModelSettingsPanelProps {
   onClear: () => void;
   onModelTextConsentChange: (checked: boolean) => void;
   onTestModelConnection: () => void;
+  onCancelModelConnectionTest: () => void;
   onRedactSensitiveText: () => void;
 }
 
@@ -40,6 +41,7 @@ export function ModelSettingsPanel({
   onClear,
   onModelTextConsentChange,
   onTestModelConnection,
+  onCancelModelConnectionTest,
   onRedactSensitiveText
 }: ModelSettingsPanelProps) {
   const runtimeSettings = normalizeModelSettingsForRuntime(settings);
@@ -130,6 +132,12 @@ export function ModelSettingsPanel({
               <PlugZap aria-hidden="true" />
               {isTestingModelConnection ? "正在测试连接..." : "测试模型连接"}
             </button>
+            {isTestingModelConnection ? (
+              <button className="cancel-model-connection-test" type="button" onClick={onCancelModelConnectionTest}>
+                <Square aria-hidden="true" />
+                取消连接测试
+              </button>
+            ) : null}
             {isTestingModelConnection ? (
               <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
                 正在测试模型连接。
