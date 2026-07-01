@@ -188,12 +188,17 @@ export function ModelSettingsPanel({
             <input
               type="checkbox"
               aria-label="确认本次允许发送正文给模型服务"
+              aria-describedby={modelSendBlockedReason ? "model-send-blocked-reason" : undefined}
               checked={modelTextConsent}
               disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}
               onChange={(event) => onModelTextConsentChange(event.target.checked)}
             />
           </label>
-          {modelSendBlockedReason ? <p className="model-send-blocked-reason">{modelSendBlockedReason}</p> : null}
+          {modelSendBlockedReason ? (
+            <p className="model-send-blocked-reason" id="model-send-blocked-reason">
+              {modelSendBlockedReason}
+            </p>
+          ) : null}
 
           <button className="clear-settings-button" type="button" onClick={onClear}>
             <Trash2 aria-hidden="true" />

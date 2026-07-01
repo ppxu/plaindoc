@@ -17,6 +17,8 @@ describe("model endpoint security chrome", () => {
     expect(modelSettingsPanelSource).toContain("disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}");
     expect(modelSettingsPanelSource).toContain("const modelSendBlockedReason = getModelSendBlockedReason");
     expect(modelSettingsPanelSource).toContain("model-send-blocked-reason");
+    expect(modelSettingsPanelSource).toContain('aria-describedby={modelSendBlockedReason ? "model-send-blocked-reason" : undefined}');
+    expect(modelSettingsPanelSource).toContain('id="model-send-blocked-reason"');
     expect(modelSettingsPanelSource).toContain("填写 API key 后才能确认发送正文给远程模型服务。");
     expect(modelSettingsPanelSource).toContain("修正模型 endpoint 后才能确认发送正文。");
 
