@@ -48,6 +48,7 @@ export function ActionPlan({ plan, onCopyMessage }: ActionPlanProps) {
         <div className="message-draft">
           <span>沟通草稿</span>
           <p>{plan.message}</p>
+          <p className="message-draft-review">复制不会自动发送；发送前请核对对方、金额、日期和个人信息。</p>
         </div>
       </div>
 

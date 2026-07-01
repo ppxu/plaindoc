@@ -24,6 +24,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 - A signing checklist you can copy before talking to the other party.
 - Copyable pre-signing clarification questions that turn risks into questions for the counterparty.
 - A next-step action plan and a message draft that includes concrete clarification questions and suggested wording for the other party.
+- A send-before-review reminder on counterparty message drafts so copied text is checked before sharing.
 - Plain-language explanations for non-experts.
 - Deduplicated local report history that marks reports with ready-to-send counterparty drafts.
 - Automatic local draft restore for pasted or uploaded document text after refresh.
@@ -140,6 +141,7 @@ Currently supported:
 - Copyable clause-edit pack.
 - Copyable pre-signing clarification questions that turn findings into questions for counterparties.
 - Copyable next-step message draft for counterparties, populated with concrete pre-signing questions and suggested clause wording.
+- Counterparty message-draft review reminder before users send copied text outside PlainDoc.
 - Deduplicated local report history that omits original text and evidence snippets, marks ready-to-send counterparty drafts, clears the editor on restore, and supports one-click clear.
 - Local browser draft restore for current document text.
 - One-click current-workspace clearing for sensitive document text, stored draft, and the current report.

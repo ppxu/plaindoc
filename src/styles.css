@@ -1606,6 +1606,15 @@ textarea:focus,
   white-space: pre-line;
 }
 
+.message-draft .message-draft-review {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eef3f1;
+  color: #6d5b2d;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .plain-language {
   background: #fbfcfc;
 }

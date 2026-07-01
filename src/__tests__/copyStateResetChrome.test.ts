@@ -34,6 +34,12 @@ describe("copy state reset chrome", () => {
     expect(actionPlanSource).toContain("setSelectionRange(0, textarea.value.length)");
   });
 
+  it("reminds users to review counterparty drafts before sending them", () => {
+    expect(actionPlanSource).toContain("message-draft-review");
+    expect(actionPlanSource).toContain("复制不会自动发送");
+    expect(actionPlanSource).toContain("发送前请核对对方、金额、日期和个人信息");
+  });
+
   it("offers a manual checklist fallback when browser copy is blocked", () => {
     expect(checklistSource).toContain("checklistFallbackRef");
     expect(checklistSource).toContain("checklistToText(items)");
