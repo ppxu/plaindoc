@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import { FileText, FolderOpen, ShieldCheck, Sparkles, Square, Trash2, Upload } from "lucide-react";
-import type { DocumentExample, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, SavedReport } from "../types";
+import type {
+  DocumentExample,
+  DocumentKind,
+  EvidenceSelectionTarget,
+  ModelAnalyzerSettings,
+  ReviewPerspective,
+  SavedReport
+} from "../types";
 import { getModelEndpointSecurity, modelEndpointNeedsApiKey, type ModelEndpointSecurity } from "../analyzer/modelEndpointSecurity";
 import { documentKindMeta, documentKindOptions } from "../data/documentKinds";
+import { getReviewPerspectiveOptions } from "../data/reviewPerspectives";
 import { ModelSettingsPanel } from "./ModelSettingsPanel";
 import { ReportHistory } from "./ReportHistory";
 import { detectSensitiveText, redactSensitiveText } from "../privacy/sensitiveText";
@@ -11,6 +19,7 @@ import { formatDocumentInputStats } from "../state/documentInputStats";
 interface DocumentInputProps {
   text: string;
   kind: DocumentKind;
+  perspective: ReviewPerspective;
   examples: DocumentExample[];
   selectedExampleId: string;
   error: string;
@@ -28,6 +37,7 @@ interface DocumentInputProps {
   errorFocusRequest: number;
   onTextChange: (text: string) => void;
   onKindChange: (kind: DocumentKind) => void;
+  onPerspectiveChange: (perspective: ReviewPerspective) => void;
   onExampleChange: (id: string) => void;
   onAnalyze: () => void;
   onCancelAnalysis: () => void;
@@ -47,6 +57,7 @@ interface DocumentInputProps {
 export function DocumentInput({
   text,
   kind,
+  perspective,
   examples,
   selectedExampleId,
   error,
@@ -64,6 +75,7 @@ export function DocumentInput({
   errorFocusRequest,
   onTextChange,
   onKindChange,
+  onPerspectiveChange,
   onExampleChange,
   onAnalyze,
   onCancelAnalysis,
@@ -80,6 +92,7 @@ export function DocumentInput({
   onRedactSensitiveText
 }: DocumentInputProps) {
   const selectedKindMeta = documentKindMeta[kind];
+  const perspectiveOptions = getReviewPerspectiveOptions(kind);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
   const [isUploadDragActive, setIsUploadDragActive] = useState(false);
@@ -148,6 +161,21 @@ export function DocumentInput({
         <select value={kind} onChange={(event) => onKindChange(event.target.value as DocumentKind)}>
           {documentKindOptions.map((option) => (
             <option key={option.kind} value={option.kind}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="field">
+        <span>审阅视角</span>
+        <select
+          value={perspective}
+          aria-label="审阅视角"
+          onChange={(event) => onPerspectiveChange(event.target.value as ReviewPerspective)}
+        >
+          {perspectiveOptions.map((option) => (
+            <option key={option.id} value={option.id}>
               {option.label}
             </option>
           ))}

@@ -1,11 +1,13 @@
-import type { ActionPlan, ChecklistItem, ClarifyingQuestion, DocumentKind, RiskFinding } from "../types";
+import type { ActionPlan, ChecklistItem, ClarifyingQuestion, DocumentKind, ReviewPerspective, RiskFinding } from "../types";
 import { getDocumentKindLabel } from "../data/documentKinds";
+import { getReviewPerspectiveLabel } from "../data/reviewPerspectives";
 
 export function buildActionPlan(
   kind: DocumentKind,
   findings: RiskFinding[],
   checklist: ChecklistItem[],
-  clarifyingQuestions: ClarifyingQuestion[] = []
+  clarifyingQuestions: ClarifyingQuestion[] = [],
+  perspective: ReviewPerspective = "neutral"
 ): ActionPlan {
   const redFindings = findings.filter((finding) => finding.severity === "red");
   const yellowFindings = findings.filter((finding) => finding.severity === "yellow");
@@ -24,7 +26,7 @@ export function buildActionPlan(
     priority,
     title: actionTitle(priority, kind),
     steps: buildSteps(priority, topics),
-    message: buildCounterpartyMessage(kind, topics, clarifyingQuestions, modificationLines)
+    message: buildCounterpartyMessage(kind, topics, clarifyingQuestions, modificationLines, perspective)
   };
 }
 
@@ -82,7 +84,8 @@ function buildCounterpartyMessage(
   kind: DocumentKind,
   topics: string[],
   clarifyingQuestions: ClarifyingQuestion[],
-  modificationLines: string[]
+  modificationLines: string[],
+  perspective: ReviewPerspective
 ): string {
   const questionLines = clarifyingQuestions
     .filter((item) => item.askBeforeSigning)
@@ -99,7 +102,7 @@ function buildCounterpartyMessage(
       ].join("\n");
 
   const messageParts = [
-    `你好，我认真看了这份${kindShortLabel(kind)}，签署前想先确认几处内容：`,
+    `你好，${messagePerspectivePrefix(kind, perspective)}认真看了这份${kindShortLabel(kind)}，签署前想先确认几处内容：`,
     "",
     topicLines,
     ""
@@ -147,4 +150,9 @@ function kindLabel(kind: DocumentKind): string {
 
 function kindShortLabel(kind: DocumentKind): string {
   return kindLabel(kind);
+}
+
+function messagePerspectivePrefix(kind: DocumentKind, perspective: ReviewPerspective): string {
+  if (perspective === "neutral") return "我";
+  return `我作为${getReviewPerspectiveLabel(kind, perspective)}`;
 }

@@ -1,5 +1,6 @@
 import { analyzeDocument } from "../analyzer/localAnalyzer";
-import type { AnalysisReport, DocumentExample, DocumentKind, EvidenceSelectionTarget } from "../types";
+import { normalizeReviewPerspective } from "../data/reviewPerspectives";
+import type { AnalysisReport, DocumentExample, DocumentKind, EvidenceSelectionTarget, ReviewPerspective } from "../types";
 
 export interface CustomExampleSelectionStateInput {
   text: string;
@@ -18,14 +19,15 @@ export interface ExampleSelectionState {
   modelTextConsent: boolean;
 }
 
-export function createExampleSelectionState(example: DocumentExample): ExampleSelectionState {
+export function createExampleSelectionState(example: DocumentExample, perspective?: ReviewPerspective): ExampleSelectionState {
+  const reviewPerspective = normalizeReviewPerspective(example.kind, perspective);
   return {
     text: example.content,
     kind: example.kind,
     selectedExampleId: example.id,
     error: "",
     notice: `已加载「${example.title}」，并生成本地规则报告。`,
-    report: analyzeDocument({ text: example.content, kind: example.kind }),
+    report: analyzeDocument({ text: example.content, kind: example.kind, perspective: reviewPerspective }),
     evidenceSelection: null,
     modelTextConsent: false
   };

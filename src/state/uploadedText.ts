@@ -1,13 +1,15 @@
 import { detectDocumentKind } from "../analyzer/documentKindDetector";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
 import { getDocumentKindLabel } from "../data/documentKinds";
-import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget } from "../types";
+import { normalizeReviewPerspective } from "../data/reviewPerspectives";
+import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ReviewPerspective } from "../types";
 
 export interface UploadedTextStateInput {
   text: string;
   isPdfUpload: boolean;
   fileName?: string;
   fallbackKind: DocumentKind;
+  perspective?: ReviewPerspective;
   ignoredFileCount?: number;
 }
 
@@ -27,10 +29,12 @@ export function createUploadedTextState({
   isPdfUpload,
   fileName,
   fallbackKind,
+  perspective,
   ignoredFileCount = 0
 }: UploadedTextStateInput): UploadedTextState {
   const detection = detectDocumentKind(text);
   const kind = detection.kind === "unknown" ? fallbackKind : detection.kind;
+  const reviewPerspective = normalizeReviewPerspective(kind, perspective);
 
   return {
     text,
@@ -38,7 +42,7 @@ export function createUploadedTextState({
     selectedExampleId: "",
     error: "",
     notice: buildUploadedTextNotice(isPdfUpload, text, detection.kind, kind, fileName, ignoredFileCount),
-    report: analyzeDocument({ text, kind }),
+    report: analyzeDocument({ text, kind, perspective: reviewPerspective }),
     evidenceSelection: null,
     modelTextConsent: false
   };

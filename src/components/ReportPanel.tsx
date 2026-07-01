@@ -8,6 +8,7 @@ import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
+import { getReviewPerspectiveLabel } from "../data/reviewPerspectives";
 import { getEvidenceCoverage } from "../report/evidenceCoverage";
 import { formatReportGeneratedAt } from "../report/generatedAt";
 import { getReviewReadiness } from "../report/reviewReadiness";
@@ -98,6 +99,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       <div className="report-actions">
         <span>
           {redCount} 个红色风险 · {yellowCount} 个黄色提醒 · {formatTextScale(report.wordCount)} · {sourceText(report)} ·
+          审阅视角 {getReviewPerspectiveLabel(report.documentKind, report.reviewPerspective)} ·
           生成时间 {formatReportGeneratedAt(report.generatedAt)}
         </span>
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">

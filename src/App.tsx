@@ -14,6 +14,7 @@ import { DocumentInput } from "./components/DocumentInput";
 import { ReportPanel } from "./components/ReportPanel";
 import { getDocumentKindLabel } from "./data/documentKinds";
 import { documentExamples } from "./data/examples";
+import { getReviewPerspectiveLabel, normalizeReviewPerspective } from "./data/reviewPerspectives";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
@@ -27,7 +28,15 @@ import { shouldWarnBeforeLeaving } from "./state/leaveWarning";
 import { canSendDocumentTextToModel, shouldRevokeModelTextConsent } from "./state/modelTextConsent";
 import { createUploadedTextState } from "./state/uploadedText";
 import { createClearedWorkspaceState } from "./state/workspaceReset";
-import type { AnalysisReport, DocumentKind, EvidenceSelectionTarget, ModelAnalyzerSettings, RiskFinding, SavedReport } from "./types";
+import type {
+  AnalysisReport,
+  DocumentKind,
+  EvidenceSelectionTarget,
+  ModelAnalyzerSettings,
+  ReviewPerspective,
+  RiskFinding,
+  SavedReport
+} from "./types";
 import { copyTextToClipboard } from "./utils/clipboard";
 import { resolveEvidenceSelection } from "./utils/evidenceSelection";
 
@@ -47,6 +56,7 @@ export default function App() {
   const uploadReadRunId = useRef(0);
   const [text, setText] = useState(initialDocument.text);
   const [kind, setKind] = useState<DocumentKind>(initialDocument.kind);
+  const [perspective, setPerspective] = useState<ReviewPerspective>(() => initialDocument.report.reviewPerspective ?? "neutral");
   const [selectedExampleId, setSelectedExampleId] = useState(initialDocument.selectedExampleId);
   const [error, setError] = useState(initialDocument.error);
   const [inputNotice, setInputNotice] = useState(initialDocument.notice);
@@ -106,10 +116,12 @@ export default function App() {
     const example = documentExamples.find((item) => item.id === id);
     if (!example) return;
     invalidateCurrentAnalysis();
-    const selected = createExampleSelectionState(example);
+    const nextPerspective = normalizeReviewPerspective(example.kind, perspective);
+    const selected = createExampleSelectionState(example, nextPerspective);
     setSelectedExampleId(selected.selectedExampleId);
     setText(selected.text);
     setKind(selected.kind);
+    setPerspective(nextPerspective);
     setError(selected.error);
     setInputNotice(selected.notice);
     setReport(selected.report);
@@ -119,9 +131,11 @@ export default function App() {
 
   function handleTextChange(nextText: string) {
     invalidateCurrentAnalysis();
-    const draft = createDraftTextState({ text: nextText, selectedKind: kind });
+    const draft = createDraftTextState({ text: nextText, selectedKind: kind, perspective });
+    const nextPerspective = normalizeReviewPerspective(draft.kind, perspective);
     setText(draft.text);
     setKind(draft.kind);
+    setPerspective(nextPerspective);
     setSelectedExampleId(draft.selectedExampleId);
     setError(draft.error);
     setInputNotice(draft.notice);
@@ -132,11 +146,13 @@ export default function App() {
 
   function handleRedactSensitiveText(redactedText: string) {
     invalidateCurrentAnalysis();
-    const draft = createDraftTextState({ text: redactedText, selectedKind: kind });
+    const draft = createDraftTextState({ text: redactedText, selectedKind: kind, perspective });
+    const nextPerspective = normalizeReviewPerspective(draft.kind, perspective);
     const redactedReportNotice = "已基于脱敏副本生成本地规则报告；请检查占位符是否影响条款含义。";
     const redactedReport = mergeReportNotice(draft.report, redactedReportNotice);
     setText(draft.text);
     setKind(draft.kind);
+    setPerspective(nextPerspective);
     setSelectedExampleId(draft.selectedExampleId);
     setError(draft.error);
     setInputNotice("已生成脱敏副本，并已取消本次 AI 发送确认。请检查正文后再重新确认发送。");
@@ -147,9 +163,11 @@ export default function App() {
 
   function handleKindChange(nextKind: DocumentKind) {
     invalidateCurrentAnalysis();
-    const selected = createKindSelectionState({ text, nextKind });
+    const nextPerspective = normalizeReviewPerspective(nextKind, perspective);
+    const selected = createKindSelectionState({ text, nextKind, perspective: nextPerspective });
     setText(selected.text);
     setKind(selected.kind);
+    setPerspective(nextPerspective);
     setSelectedExampleId(selected.selectedExampleId);
     setError(selected.error);
     setInputNotice(selected.notice);
@@ -166,6 +184,7 @@ export default function App() {
     const cleared = createClearedWorkspaceState();
     setText(cleared.text);
     setKind(cleared.kind);
+    setPerspective(cleared.report.reviewPerspective ?? "neutral");
     setSelectedExampleId(cleared.selectedExampleId);
     setError(cleared.error);
     setInputNotice(cleared.notice);
@@ -185,6 +204,7 @@ export default function App() {
     const reset = createLocalDataResetState();
     setText(reset.text);
     setKind(reset.kind);
+    setPerspective(reset.report.reviewPerspective ?? "neutral");
     setSelectedExampleId(reset.selectedExampleId);
     setError(reset.error);
     setInputNotice(reset.notice);
@@ -214,10 +234,14 @@ export default function App() {
     setError("");
 
     const resolvedKind = resolveAnalysisKind(text, kind);
-    const localReport = analyzeDocument({ text, kind: resolvedKind.kind });
+    const resolvedPerspective = normalizeReviewPerspective(resolvedKind.kind, perspective);
+    const localReport = analyzeDocument({ text, kind: resolvedKind.kind, perspective: resolvedPerspective });
     if (resolvedKind.kind !== kind) {
       setKind(resolvedKind.kind);
       setSelectedExampleId("");
+    }
+    if (resolvedPerspective !== perspective) {
+      setPerspective(resolvedPerspective);
     }
     const baseAnalysisNotice = mergeNotices(shortTextNotice, resolvedKind.notice);
     const localReportWithMergedNotice = mergeReportNotice(localReport, baseAnalysisNotice);
@@ -265,9 +289,14 @@ export default function App() {
     const abortController = new AbortController();
     modelRequestAbortController.current = abortController;
     try {
-      const modelReport = await analyzeWithModel({ text, kind: resolvedKind.kind }, modelSettings, localReport, {
-        signal: abortController.signal
-      });
+      const modelReport = await analyzeWithModel(
+        { text, kind: resolvedKind.kind, perspective: resolvedPerspective },
+        modelSettings,
+        localReport,
+        {
+          signal: abortController.signal
+        }
+      );
       if (!analysisRunTracker.current.isCurrent(runId)) {
         return;
       }
@@ -306,6 +335,7 @@ export default function App() {
     const restored = restoreSavedReport(item);
     setReport(restored.report);
     setKind(restored.kind);
+    setPerspective(normalizeReviewPerspective(restored.kind, restored.report.reviewPerspective));
     setText(restored.text);
     setSelectedExampleId(restored.selectedExampleId);
     setError(restored.error);
@@ -440,11 +470,14 @@ export default function App() {
         isPdfUpload,
         fileName: file.name,
         fallbackKind: kind,
+        perspective,
         ignoredFileCount: options.ignoredFileCount
       });
+      const nextPerspective = normalizeReviewPerspective(uploaded.kind, perspective);
       setText(uploaded.text);
       setSelectedExampleId(uploaded.selectedExampleId);
       setKind(uploaded.kind);
+      setPerspective(nextPerspective);
       setError(uploaded.error);
       setInputNotice(uploaded.notice);
       setReport(uploaded.report);
@@ -499,6 +532,22 @@ export default function App() {
   function handleModelTextConsentChange(checked: boolean) {
     invalidateCurrentAnalysis();
     setModelTextConsent(checked);
+  }
+
+  function handlePerspectiveChange(nextPerspective: ReviewPerspective) {
+    invalidateCurrentAnalysis();
+    const normalizedPerspective = normalizeReviewPerspective(kind, nextPerspective);
+    const nextReport = analyzeDocument({ text, kind, perspective: normalizedPerspective });
+    setPerspective(normalizedPerspective);
+    setReport(nextReport);
+    setModelTextConsent(false);
+    setEvidenceSelection(null);
+    setInputNotice(
+      text.trim()
+        ? `已切换为${getReviewPerspectiveLabel(kind, normalizedPerspective)}视角，并重新生成本地规则报告。`
+        : `已切换为${getReviewPerspectiveLabel(kind, normalizedPerspective)}视角。`
+    );
+    setError("");
   }
 
   function showUploadFailureUnchangedNotice() {
@@ -595,6 +644,7 @@ export default function App() {
         <DocumentInput
           text={text}
           kind={kind}
+          perspective={perspective}
           examples={documentExamples}
           selectedExampleId={selectedExampleId}
           error={error}
@@ -612,6 +662,7 @@ export default function App() {
           errorFocusRequest={uploadErrorFocusRequest}
           onTextChange={handleTextChange}
           onKindChange={handleKindChange}
+          onPerspectiveChange={handlePerspectiveChange}
           onExampleChange={handleExampleChange}
           onAnalyze={handleAnalyze}
           onCancelAnalysis={handleCancelAnalysis}

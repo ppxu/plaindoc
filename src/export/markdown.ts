@@ -1,5 +1,6 @@
 import type { AnalysisReport } from "../types";
 import { getDocumentKindLabel } from "../data/documentKinds";
+import { getReviewPerspectiveLabel } from "../data/reviewPerspectives";
 import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 import { priorityBriefToText } from "./priorityBrief";
 import { formatTextScale } from "../report/textScale";
@@ -68,6 +69,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
     "",
     "## 报告信息",
     `**文件类型：** ${documentKindLabel(report)}`,
+    `**审阅视角：** ${reviewPerspectiveLabel(report)}`,
     `**生成时间：** ${report.generatedAt}`,
     `**文本规模：** ${formatTextScale(report.wordCount)}`,
     "**生成工具：** PlainDoc（https://ppxu.github.io/plaindoc/）",
@@ -145,6 +147,10 @@ function sourceLabel(report: AnalysisReport): string {
 
 function documentKindLabel(report: AnalysisReport): string {
   return report.documentKind === "unknown" ? "通用文件" : getDocumentKindLabel(report.documentKind);
+}
+
+function reviewPerspectiveLabel(report: AnalysisReport): string {
+  return getReviewPerspectiveLabel(report.documentKind, report.reviewPerspective);
 }
 
 function severityLabel(severity: "red" | "yellow" | "green"): string {

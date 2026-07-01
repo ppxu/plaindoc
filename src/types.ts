@@ -1,5 +1,18 @@
 export type DocumentKind = "rental" | "employment" | "renovation" | "loan" | "insurance" | "unknown";
 
+export type ReviewPerspective =
+  | "neutral"
+  | "rental_tenant"
+  | "rental_landlord"
+  | "employment_employee"
+  | "employment_employer"
+  | "renovation_owner"
+  | "renovation_contractor"
+  | "loan_borrower"
+  | "loan_lender"
+  | "insurance_policyholder"
+  | "insurance_insurer";
+
 export type Severity = "red" | "yellow" | "green";
 
 export type ReportStatus = "safe_to_review" | "needs_attention" | "do_not_sign_directly";
@@ -77,6 +90,7 @@ export interface AnalysisReport {
   plainLanguage: string[];
   generatedAt: string;
   documentKind: DocumentKind;
+  reviewPerspective?: ReviewPerspective;
   wordCount: number;
   source: AnalysisSource;
   modelName?: string;
@@ -102,6 +116,7 @@ export interface DocumentExample {
 export interface AnalyzerInput {
   text: string;
   kind: DocumentKind;
+  perspective?: ReviewPerspective;
 }
 
 export interface ModelAnalyzerSettings {

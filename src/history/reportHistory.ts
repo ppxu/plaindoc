@@ -136,6 +136,7 @@ function isAnalysisReport(value: unknown): value is AnalysisReport {
     value.plainLanguage.every((line) => typeof line === "string") &&
     typeof value.generatedAt === "string" &&
     isDocumentKind(value.documentKind) &&
+    (value.reviewPerspective === undefined || isReviewPerspective(value.reviewPerspective)) &&
     typeof value.wordCount === "number" &&
     isAnalysisSource(value.source) &&
     (value.modelName === undefined || typeof value.modelName === "string") &&
@@ -156,6 +157,22 @@ function isDocumentKind(value: unknown): value is AnalysisReport["documentKind"]
     value === "loan" ||
     value === "insurance" ||
     value === "unknown"
+  );
+}
+
+function isReviewPerspective(value: unknown): value is NonNullable<AnalysisReport["reviewPerspective"]> {
+  return (
+    value === "neutral" ||
+    value === "rental_tenant" ||
+    value === "rental_landlord" ||
+    value === "employment_employee" ||
+    value === "employment_employer" ||
+    value === "renovation_owner" ||
+    value === "renovation_contractor" ||
+    value === "loan_borrower" ||
+    value === "loan_lender" ||
+    value === "insurance_policyholder" ||
+    value === "insurance_insurer"
   );
 }
 
@@ -240,6 +257,7 @@ function isEvidence(value: unknown): boolean {
 function createReportFingerprint(report: AnalysisReport): string {
   return JSON.stringify({
     documentKind: report.documentKind,
+    reviewPerspective: report.reviewPerspective ?? "neutral",
     source: report.source,
     modelName: report.modelName ?? "",
     status: report.status,

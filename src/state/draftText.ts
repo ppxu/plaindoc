@@ -1,13 +1,15 @@
 import { detectDocumentKind } from "../analyzer/documentKindDetector";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
 import { getDocumentKindLabel } from "../data/documentKinds";
-import type { AnalysisReport, DocumentExample, DocumentKind, EvidenceSelectionTarget } from "../types";
+import { normalizeReviewPerspective } from "../data/reviewPerspectives";
+import type { AnalysisReport, DocumentExample, DocumentKind, EvidenceSelectionTarget, ReviewPerspective } from "../types";
 
 const DOCUMENT_DRAFT_STORAGE_KEY = "plaindoc:document-draft:v1";
 
 export interface DraftTextStateInput {
   text: string;
   selectedKind: DocumentKind;
+  perspective?: ReviewPerspective;
 }
 
 export interface DraftTextState {
@@ -58,8 +60,9 @@ export function createInitialDocumentState(
   };
 }
 
-export function createDraftTextState({ text, selectedKind }: DraftTextStateInput): DraftTextState {
+export function createDraftTextState({ text, selectedKind, perspective }: DraftTextStateInput): DraftTextState {
   const kind = resolveDraftKind(text, selectedKind);
+  const reviewPerspective = normalizeReviewPerspective(kind, perspective);
 
   return {
     text,
@@ -67,7 +70,7 @@ export function createDraftTextState({ text, selectedKind }: DraftTextStateInput
     selectedExampleId: "",
     error: "",
     notice: buildDraftNotice(text, selectedKind, kind),
-    report: analyzeDocument({ text, kind }),
+    report: analyzeDocument({ text, kind, perspective: reviewPerspective }),
     evidenceSelection: null,
     modelTextConsent: false
   };

@@ -51,7 +51,7 @@ describe("detectSensitiveText", () => {
     expect(documentInputSource).not.toContain("onTextChange(redactSensitiveText(text))");
 
     expect(appSource).toContain("function handleRedactSensitiveText(redactedText: string)");
-    expect(appSource).toContain("createDraftTextState({ text: redactedText, selectedKind: kind })");
+    expect(appSource).toContain("createDraftTextState({ text: redactedText, selectedKind: kind, perspective })");
     expect(appSource).toContain("已生成脱敏副本，并已取消本次 AI 发送确认。请检查正文后再重新确认发送。");
     expect(appSource).toContain("已基于脱敏副本生成本地规则报告；请检查占位符是否影响条款含义。");
     expect(appSource).toContain("const redactedReport = mergeReportNotice(draft.report, redactedReportNotice);");

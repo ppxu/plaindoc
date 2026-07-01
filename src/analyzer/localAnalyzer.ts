@@ -1,5 +1,6 @@
 import type { AnalysisReport, AnalyzerInput, ClarifyingQuestion, ExtractedFact, ReportStatus, RiskFinding } from "../types";
 import { documentKindMeta } from "../data/documentKinds";
+import { normalizeReviewPerspective } from "../data/reviewPerspectives";
 import { buildActionPlan } from "./actionPlan";
 import { checklistFromRules, runRules } from "./rules";
 import { countWords, findDateMatches, findEvidence, findMoneyMatches, findPercentageMatches } from "./patterns";
@@ -10,9 +11,10 @@ const DISCLAIMER = "PlainDoc 提供文件阅读辅助和风险提示，不构成
 export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
   const text = input.text.trim();
   const wordCount = countWords(text);
+  const perspective = normalizeReviewPerspective(input.kind, input.perspective);
 
   if (!text) {
-    return emptyReport(input.kind);
+    return emptyReport(input.kind, perspective);
   }
 
   const findings = runRules(text, input.kind);
@@ -32,17 +34,18 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
     inputWarnings,
     checklist,
     clarifyingQuestions,
-    actionPlan: buildActionPlan(input.kind, findings, checklist, clarifyingQuestions),
+    actionPlan: buildActionPlan(input.kind, findings, checklist, clarifyingQuestions, perspective),
     plainLanguage: buildPlainLanguage(input.kind, findings.length),
     generatedAt: new Date().toISOString(),
     documentKind: input.kind,
+    reviewPerspective: perspective,
     wordCount,
     source: "local",
     disclaimer: DISCLAIMER
   };
 }
 
-function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
+function emptyReport(kind: AnalyzerInput["kind"], perspective: NonNullable<AnalysisReport["reviewPerspective"]> = "neutral"): AnalysisReport {
   return {
     summary: "请先粘贴文件内容、选择样例或上传文本文件。",
     status: "needs_attention",
@@ -61,6 +64,7 @@ function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
     plainLanguage: ["PlainDoc 需要读取文件文字后才能生成风险提示。"],
     generatedAt: new Date().toISOString(),
     documentKind: kind,
+    reviewPerspective: perspective,
     wordCount: 0,
     source: "local",
     disclaimer: DISCLAIMER

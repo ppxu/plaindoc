@@ -24,6 +24,7 @@ import {
 } from "./modelServiceErrors";
 import { parseFirstJsonObject } from "./modelJson";
 import { normalizeModelSettingsForRuntime } from "./modelSettings";
+import { getReviewPerspectiveLabel, getReviewPerspectivePrompt, normalizeReviewPerspective } from "../data/reviewPerspectives";
 
 interface ChatCompletionResponse {
   choices?: Array<{
@@ -154,6 +155,7 @@ function fetchModelAnalysis(
   signal: AbortSignal | undefined,
   includeResponseFormat: boolean
 ): Promise<Response> {
+  const reviewPerspective = normalizeReviewPerspective(input.kind, input.perspective ?? localReport.reviewPerspective);
   return fetch(`${baseUrl.replace(/\/+$/, "")}/chat/completions`, {
     method: "POST",
     signal,
@@ -195,6 +197,11 @@ function fetchModelAnalysis(
             },
             untrustedDocument: {
               kind: input.kind,
+              reviewPerspective: {
+                id: reviewPerspective,
+                label: getReviewPerspectiveLabel(input.kind, reviewPerspective),
+                instruction: getReviewPerspectivePrompt(input.kind, reviewPerspective)
+              },
               text: preparedDocument.text,
               scope: {
                 originalChars: preparedDocument.originalLength,
@@ -283,7 +290,13 @@ export function mergeModelPayload(
       ? ensureActionPlanMessageDetails(actionPlan, mergedFindings, mergedClarifyingQuestions)
       : (
           clarifyingQuestions.length
-            ? buildActionPlan(localReport.documentKind, mergedFindings, mergedChecklist, mergedClarifyingQuestions)
+            ? buildActionPlan(
+                localReport.documentKind,
+                mergedFindings,
+                mergedChecklist,
+                mergedClarifyingQuestions,
+                localReport.reviewPerspective
+              )
             : localReport.actionPlan
         ),
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
