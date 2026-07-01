@@ -1437,6 +1437,110 @@ textarea:focus,
   color: #6d5b2d;
 }
 
+.ai-deep-review {
+  background: #f8fbfa;
+}
+
+.ai-deep-review-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(160px, 0.8fr);
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #dbe8e4;
+  border-radius: 10px;
+}
+
+.ai-deep-review-card > div {
+  min-width: 0;
+}
+
+.ai-deep-review-card span {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 8px;
+  color: #315f52;
+  background: #eef6f3;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.ai-deep-review-needs-setup .ai-deep-review-card span,
+.ai-deep-review-needs-consent .ai-deep-review-card span {
+  color: #7a4d0b;
+  background: #fff7df;
+}
+
+.ai-deep-review-complete .ai-deep-review-card span,
+.ai-deep-review-ready .ai-deep-review-card span {
+  color: #1f5d4d;
+  background: #e9f7f2;
+}
+
+.ai-deep-review-card strong {
+  display: block;
+  margin-top: 9px;
+  color: #263430;
+  font-size: 15px;
+}
+
+.ai-deep-review-card p {
+  margin: 7px 0 0;
+  color: #40514c;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.ai-deep-review-card > p {
+  grid-column: 1 / -1;
+  color: #6d5b2d;
+  font-weight: 750;
+}
+
+.ai-deep-review-card ul {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ai-deep-review-card li {
+  min-width: 0;
+  padding: 9px 10px;
+  color: #2d4842;
+  background: #f4f9f7;
+  border: 1px solid #dfe9e5;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ai-deep-review-card button {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: #fff;
+  background: #1f6b5d;
+  border: 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.ai-deep-review-card button svg {
+  width: 16px;
+  height: 16px;
+}
+
 .risk-list {
   display: grid;
   gap: 12px;
@@ -2071,8 +2175,14 @@ textarea:focus,
 
   .facts-grid,
   .coverage-boundary-grid,
-  .review-readiness-checks {
+  .review-readiness-checks,
+  .ai-deep-review-card {
     grid-template-columns: 1fr;
+  }
+
+  .ai-deep-review-card button {
+    justify-self: stretch;
+    justify-content: center;
   }
 
   .evidence-coverage-card {
@@ -2107,6 +2217,7 @@ textarea:focus,
   .report-copy-fallback,
   .locate-evidence-button,
   .copy-inline-button,
+  .ai-deep-review-card button,
   .section-row button {
     display: none !important;
   }
@@ -2158,6 +2269,7 @@ textarea:focus,
   .risk-card,
   .input-warning,
   .evidence-coverage-card,
+  .ai-deep-review-card,
   .review-readiness-check,
   .facts-grid article,
   .coverage-boundary-grid article,
@@ -2171,6 +2283,7 @@ textarea:focus,
   .risk-card,
   .input-warning,
   .evidence-coverage-card,
+  .ai-deep-review-card,
   .review-readiness-check,
   .facts-grid article,
   .coverage-boundary-grid article,

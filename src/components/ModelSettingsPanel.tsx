@@ -70,7 +70,7 @@ export function ModelSettingsPanel({
   }
 
   return (
-    <section className="model-settings" aria-label="AI 增强分析设置">
+    <section id="model-settings" className="model-settings" aria-label="AI 增强分析设置">
       <label className="mode-toggle">
         <span>
           <BrainCircuit aria-hidden="true" />

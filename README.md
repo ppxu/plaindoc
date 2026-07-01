@@ -18,6 +18,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 - A pre-signing readiness gate that summarizes whether the user should pause, keep negotiating, or continue checking.
 - A visible coverage boundary that says which risk areas PlainDoc checked and which limits still need human review.
 - An evidence-coverage summary showing how many risk findings can be located back to source text.
+- A report-level AI deep-review guide that explains when model analysis can add value and opens the model setup flow.
 - Mobile-friendly single-column layout for reviewing reports on narrow screens.
 - Key facts such as money, percentages, dates, obligations, penalties, and acceptance terms.
 - Local document-type detection for pasted or uploaded text.
@@ -135,6 +136,7 @@ Currently supported:
 - Analyze common insurance waiting-period, exclusion, renewal, and claim-notice clauses.
 - Local heuristic analysis with no API key.
 - Optional OpenAI-compatible model enhancement.
+- Report-level AI deep-review entry point for turning a local report into model-assisted review after setup and consent.
 - Model connection test that checks endpoint/model/API key/network and validates a `{"ok":true}` probe response before sending document text.
 - Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.

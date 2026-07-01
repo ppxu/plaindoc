@@ -17,6 +17,7 @@ import { documentExamples } from "./data/examples";
 import { clearReportHistory, loadReportHistory, saveReportToHistory } from "./history/reportHistory";
 import { restoreSavedReport } from "./history/reportRestore";
 import { isPdfFile } from "./ingest/pdfText";
+import { getAiDeepReviewGuide } from "./report/aiDeepReviewGuide";
 import { createAnalysisRunTracker } from "./state/analysisRun";
 import { clearDocumentDraft, createDraftTextState, createInitialDocumentState, saveDocumentDraft } from "./state/draftText";
 import { createCustomExampleSelectionState, createExampleSelectionState } from "./state/exampleSelection";
@@ -381,6 +382,20 @@ export default function App() {
     setModelConnectionStatus({ tone: "error", message: "已取消本次模型连接测试。" });
   }
 
+  function handleRequestAiDeepReview() {
+    invalidateCurrentAnalysis();
+    setError("");
+    setInputNotice("已打开 AI 深度审阅设置。PlainDoc 仍会先显示本地报告，只有确认发送正文后才会调用模型服务。");
+    if (!modelSettings.enabled) {
+      const nextSettings = { ...modelSettings, enabled: true };
+      setModelSettings(nextSettings);
+      saveModelSettings(nextSettings);
+    }
+    window.requestAnimationFrame(() => {
+      document.getElementById("model-settings")?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  }
+
   async function handleUpload(file: File, options: { ignoredFileCount?: number } = {}) {
     invalidateCurrentAnalysis();
     const uploadRunId = beginUploadRead();
@@ -532,6 +547,18 @@ export default function App() {
   }
 
   const canClearWorkspace = hasCurrentWorkspaceContent(text, report);
+  const runtimeModelSettings = normalizeModelSettingsForRuntime(modelSettings);
+  const aiEndpointSecurity = getModelEndpointSecurity(runtimeModelSettings.baseUrl);
+  const aiNeedsApiKey = modelEndpointNeedsApiKey(runtimeModelSettings.baseUrl);
+  const aiDeepReviewGuide = getAiDeepReviewGuide({
+    report,
+    modelEnabled: modelSettings.enabled,
+    modelTextConsent,
+    endpointOk: aiEndpointSecurity.ok,
+    needsApiKey: aiNeedsApiKey,
+    hasApiKey: Boolean(runtimeModelSettings.apiKey.trim()),
+    modelName: runtimeModelSettings.model
+  });
 
   return (
     <div className="app-shell">
@@ -603,8 +630,10 @@ export default function App() {
         <ReportPanel
           ref={reportPanelRef}
           report={report}
+          aiDeepReviewGuide={aiDeepReviewGuide}
           onCopyChecklist={copyChecklist}
           onCopyActionMessage={copyActionMessage}
+          onRequestAiDeepReview={handleRequestAiDeepReview}
           onRevealEvidence={handleRevealEvidence}
         />
       </main>

@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { AlertTriangle, ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
+import { AlertTriangle, BrainCircuit, ClipboardCheck, Download, Printer, ShieldCheck } from "lucide-react";
 import type { AnalysisReport, RiskFinding } from "../types";
 import { downloadMarkdownFile } from "../export/downloadMarkdown";
 import { buildReportMarkdownFilename } from "../export/downloadFilename";
@@ -11,6 +11,7 @@ import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/covera
 import { getEvidenceCoverage } from "../report/evidenceCoverage";
 import { formatReportGeneratedAt } from "../report/generatedAt";
 import { getReviewReadiness } from "../report/reviewReadiness";
+import type { AiDeepReviewGuide } from "../report/aiDeepReviewGuide";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
 import { ClarifyingQuestions } from "./ClarifyingQuestions";
@@ -20,13 +21,15 @@ import { RiskCard } from "./RiskCard";
 
 interface ReportPanelProps {
   report: AnalysisReport;
+  aiDeepReviewGuide: AiDeepReviewGuide;
   onCopyChecklist: () => Promise<boolean>;
   onCopyActionMessage: () => Promise<boolean>;
+  onRequestAiDeepReview: () => void;
   onRevealEvidence?: (finding: RiskFinding) => void;
 }
 
 export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function ReportPanel(
-  { report, onCopyChecklist, onCopyActionMessage, onRevealEvidence },
+  { report, aiDeepReviewGuide, onCopyChecklist, onCopyActionMessage, onRequestAiDeepReview, onRevealEvidence },
   ref
 ) {
   const [copyReportState, setCopyReportState] = useState<"idle" | "copied" | "failed">("idle");
@@ -219,6 +222,30 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
         </div>
       </section>
 
+      <section className={`report-section ai-deep-review ai-deep-review-${aiDeepReviewGuide.status}`}>
+        <div>
+          <p className="section-label">AI</p>
+          <h3>AI 深度审阅</h3>
+        </div>
+        <div className="ai-deep-review-card">
+          <div>
+            <span>{aiDeepReviewStatusLabel(aiDeepReviewGuide.status)}</span>
+            <strong>{aiDeepReviewGuide.title}</strong>
+            <p>{aiDeepReviewGuide.summary}</p>
+          </div>
+          <ul aria-label="AI 深度审阅可补充检查">
+            {aiDeepReviewGuide.capabilities.map((capability) => (
+              <li key={capability}>{capability}</li>
+            ))}
+          </ul>
+          <p>{aiDeepReviewGuide.nextStep}</p>
+          <button type="button" onClick={onRequestAiDeepReview}>
+            <BrainCircuit aria-hidden="true" />
+            {aiDeepReviewGuide.actionLabel}
+          </button>
+        </div>
+      </section>
+
       <PriorityBrief report={report} />
 
       <section className="report-section">
@@ -331,5 +358,15 @@ function readinessCheckLabel(status: "ok" | "review" | "blocked"): string {
     ok: "通过",
     review: "待确认",
     blocked: "阻断"
+  }[status];
+}
+
+function aiDeepReviewStatusLabel(status: AiDeepReviewGuide["status"]): string {
+  return {
+    off: "未开启",
+    "needs-setup": "待设置",
+    "needs-consent": "待确认",
+    ready: "可生成",
+    complete: "已完成"
   }[status];
 }
