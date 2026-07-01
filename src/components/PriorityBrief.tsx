@@ -58,7 +58,7 @@ export function PriorityBrief({ report }: PriorityBriefProps) {
       )}
 
       {copyState === "failed" ? (
-        <div className="report-copy-fallback">
+        <div className="report-copy-fallback" role="alert" aria-live="assertive">
           <span>浏览器没有允许自动复制。可以在这里手动复制优先处理提纲。</span>
           <textarea ref={briefFallbackRef} readOnly value={briefText} aria-label="优先处理提纲，可手动复制" />
         </div>

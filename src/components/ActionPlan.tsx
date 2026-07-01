@@ -52,7 +52,7 @@ export function ActionPlan({ plan, onCopyMessage }: ActionPlanProps) {
       </div>
 
       {copyState === "failed" ? (
-        <div className="report-copy-fallback">
+        <div className="report-copy-fallback" role="alert" aria-live="assertive">
           <span>浏览器没有允许自动复制。可以在这里手动复制沟通草稿。</span>
           <textarea ref={messageFallbackRef} readOnly value={plan.message} aria-label="沟通草稿，可手动复制" />
         </div>

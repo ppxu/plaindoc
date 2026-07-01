@@ -47,7 +47,7 @@ export function Checklist({ items, onCopy }: ChecklistProps) {
         ))}
       </ol>
       {copyState === "failed" ? (
-        <div className="report-copy-fallback">
+        <div className="report-copy-fallback" role="alert" aria-live="assertive">
           <span>浏览器没有允许自动复制。可以在这里手动复制签署前问题清单。</span>
           <textarea
             ref={checklistFallbackRef}

@@ -81,4 +81,10 @@ describe("copy state reset chrome", () => {
     expect(stylesSource).toContain(".modification-box .report-copy-fallback {\n  display: grid;");
     expect(stylesSource).toContain("width: 100%");
   });
+
+  it("announces manual copy fallbacks as assertive alerts", () => {
+    for (const source of [actionPlanSource, checklistSource, clauseEditPackSource, priorityBriefSource, riskCardSource]) {
+      expect(source).toContain('<div className="report-copy-fallback" role="alert" aria-live="assertive">');
+    }
+  });
 });
