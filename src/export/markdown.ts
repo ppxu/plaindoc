@@ -3,7 +3,7 @@ import { getDocumentKindLabel } from "../data/documentKinds";
 import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 import { priorityBriefToText } from "./priorityBrief";
 import { formatTextScale } from "../report/textScale";
-import { getCoverageBoundaryNotice } from "../report/coverageBoundary";
+import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
@@ -11,6 +11,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
     .join("\n") || "- 未识别出关键事实。";
 
   const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
+  const coverageBoundary = getCoverageBoundary(report);
   const findings = report.findings
     .map((finding) => [
       `### ${severityLabel(finding.severity)} ${finding.title}`,
@@ -57,6 +58,11 @@ export function reportToMarkdown(report: AnalysisReport): string {
     `**文本规模：** ${formatTextScale(report.wordCount)}`,
     "**生成工具：** PlainDoc（https://ppxu.github.io/plaindoc/）",
     "**导出范围：** 本报告不包含原始全文，只包含摘要、关键事实、必要证据片段、风险提示和建议。分享前请确认报告中是否仍有个人信息或敏感条款。",
+    "",
+    "## 覆盖范围",
+    `**PlainDoc 当前重点检查：** ${coverageBoundary.reviewScope}`,
+    `**未覆盖：** ${coverageBoundary.limitation}。`,
+    `**签前提醒：** ${coverageBoundary.reminder}`,
     "",
     "## 关键事实",
     facts,

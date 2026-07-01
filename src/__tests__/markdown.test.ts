@@ -73,4 +73,22 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("未命中不等于安全背书");
     expect(markdown).toContain("金额、期限、解除、违约、押金退还和维修责任");
   });
+
+  it("exports coverage scope even when risk rules matched", () => {
+    const example = documentExamples.find((item) => item.kind === "loan");
+    const report = analyzeDocument({ text: example?.content ?? "", kind: "loan" });
+    const markdown = reportToMarkdown(report);
+
+    expect(report.findings.length).toBeGreaterThan(0);
+    expect(markdown).toContain("## 覆盖范围");
+    expect(markdown).toContain("PlainDoc 当前重点检查");
+    expect(markdown).toContain("实际到账、综合成本、提前还款、逾期费用、担保责任和提前到期");
+    expect(markdown).toContain("**未覆盖：** 地区法律差异、法院裁量、监管口径、附件真伪、签署主体资质和线下口头承诺。");
+  });
+
+  it("renders coverage scope as a fixed report section", () => {
+    expect(reportPanelSource).toContain("coverage-boundary");
+    expect(reportPanelSource).toContain("覆盖范围");
+    expect(reportPanelSource).toContain("PlainDoc 当前重点检查");
+  });
 });

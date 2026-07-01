@@ -1214,6 +1214,46 @@ textarea:focus,
   -webkit-line-clamp: 2;
 }
 
+.coverage-boundary {
+  background: #fbfcfc;
+}
+
+.coverage-boundary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.coverage-boundary-grid article {
+  min-width: 0;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e0e9e6;
+  border-radius: 10px;
+}
+
+.coverage-boundary-grid span {
+  display: block;
+  margin-bottom: 7px;
+  color: #315f52;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.coverage-boundary-grid p,
+.coverage-boundary-reminder {
+  margin: 0;
+  color: #34443f;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.coverage-boundary-reminder {
+  margin-top: 10px;
+  color: #6d5b2d;
+}
+
 .risk-list {
   display: grid;
   gap: 12px;
@@ -1845,7 +1885,8 @@ textarea:focus,
     justify-content: center;
   }
 
-  .facts-grid {
+  .facts-grid,
+  .coverage-boundary-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -1922,6 +1963,7 @@ textarea:focus,
   .report-section,
   .risk-card,
   .facts-grid article,
+  .coverage-boundary-grid article,
   .priority-card,
   .checklist-item,
   .action-plan-section {
@@ -1931,6 +1973,7 @@ textarea:focus,
 
   .risk-card,
   .facts-grid article,
+  .coverage-boundary-grid article,
   .priority-card,
   .checklist-item {
     background: #fff;
@@ -1940,11 +1983,13 @@ textarea:focus,
 
   .section-label,
   .risk-severity,
-  .facts-grid span {
+  .facts-grid span,
+  .coverage-boundary-grid span {
     color: #333;
   }
 
-  .facts-grid {
+  .facts-grid,
+  .coverage-boundary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

@@ -7,7 +7,7 @@ import { reportToMarkdown } from "../export/markdown";
 import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { formatTextScale } from "../report/textScale";
-import { getCoverageBoundaryNotice } from "../report/coverageBoundary";
+import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
 import { formatReportGeneratedAt } from "../report/generatedAt";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
@@ -36,6 +36,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
   const redCount = report.findings.filter((finding) => finding.severity === "red").length;
   const yellowCount = report.findings.filter((finding) => finding.severity === "yellow").length;
   const markdownReport = reportToMarkdown(report);
+  const coverageBoundary = getCoverageBoundary(report);
   const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
 
   useEffect(() => {
@@ -147,6 +148,24 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       ) : null}
 
       <PriorityBrief report={report} />
+
+      <section className="report-section coverage-boundary" aria-labelledby="coverage-boundary-title">
+        <div>
+          <p className="section-label">边界</p>
+          <h3 id="coverage-boundary-title">覆盖范围</h3>
+        </div>
+        <div className="coverage-boundary-grid">
+          <article>
+            <span>PlainDoc 当前重点检查</span>
+            <p>{coverageBoundary.reviewScope}</p>
+          </article>
+          <article>
+            <span>未覆盖</span>
+            <p>{coverageBoundary.limitation}</p>
+          </article>
+        </div>
+        <p className="coverage-boundary-reminder">{coverageBoundary.reminder}</p>
+      </section>
 
       <section className="report-section">
         <p className="section-label">风险</p>
