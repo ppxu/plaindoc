@@ -179,7 +179,7 @@ export function DocumentInput({
       <div className="workspace-actions">
         <label
           className={uploadStripClassName(isUploading, isAnalyzing, isUploadDragActive)}
-          aria-label="上传或拖入 PDF、txt、md 或图片文件"
+          aria-label={uploadStripAriaLabel(isUploading, isAnalyzing)}
           aria-describedby="upload-format-hint"
           aria-disabled={isUploading || isAnalyzing}
           onDragEnter={handleUploadDragEnter}
@@ -300,6 +300,12 @@ function uploadStripLabel(isUploading: boolean, isAnalyzing: boolean, isUploadDr
   if (isAnalyzing) return "分析中，暂不能上传文件";
   if (isUploadDragActive) return "松开即可读取文件";
   return "点击上传或拖入 PDF / .txt / .md / 图片文件";
+}
+
+function uploadStripAriaLabel(isUploading: boolean, isAnalyzing: boolean): string {
+  if (isUploading) return "正在读取文件，暂不能上传新文件";
+  if (isAnalyzing) return "AI 分析中，暂不能上传文件";
+  return "上传或拖入 PDF、txt、md 或图片文件";
 }
 
 function uploadStripClassName(isUploading: boolean, isAnalyzing: boolean, isUploadDragActive: boolean): string {

@@ -52,7 +52,7 @@ describe("upload failure chrome", () => {
   });
 
   it("lets picker uploads select photos so the OCR guidance is reachable", () => {
-    expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 或图片文件"');
+    expect(documentInputSource).toContain("uploadStripAriaLabel(isUploading, isAnalyzing)");
     expect(documentInputSource).toContain(
       'accept=".pdf,.txt,.md,.png,.jpg,.jpeg,.webp,.heic,.heif,application/pdf,text/plain,text/markdown,image/*"'
     );
@@ -142,7 +142,7 @@ describe("upload failure chrome", () => {
     expect(documentInputSource).toContain("onDragOver={handleUploadDragOver}");
     expect(documentInputSource).toContain("onDragEnter={handleUploadDragEnter}");
     expect(documentInputSource).toContain("onDragLeave={handleUploadDragLeave}");
-    expect(documentInputSource).toContain('aria-label="上传或拖入 PDF、txt、md 或图片文件"');
+    expect(documentInputSource).toContain("uploadStripAriaLabel(isUploading, isAnalyzing)");
     expect(documentInputSource).toContain("uploadStripClassName(isUploading, isAnalyzing, isUploadDragActive)");
     expect(documentInputSource).toContain('classes.push("drag-active")');
     expect(documentInputSource).toContain("点击上传或拖入 PDF / .txt / .md / 图片文件");
@@ -178,5 +178,13 @@ describe("upload failure chrome", () => {
     expect(documentInputSource.indexOf('if (isUploading) return "正在读取文件...";')).toBeLessThan(
       documentInputSource.indexOf('if (isAnalyzing) return "分析中，暂不能上传文件";')
     );
+  });
+
+  it("keeps the upload strip accessible name aligned with busy states", () => {
+    expect(documentInputSource).toContain('aria-label={uploadStripAriaLabel(isUploading, isAnalyzing)}');
+    expect(documentInputSource).toContain("function uploadStripAriaLabel(isUploading: boolean, isAnalyzing: boolean): string");
+    expect(documentInputSource).toContain('if (isUploading) return "正在读取文件，暂不能上传新文件";');
+    expect(documentInputSource).toContain('if (isAnalyzing) return "AI 分析中，暂不能上传文件";');
+    expect(documentInputSource).toContain('return "上传或拖入 PDF、txt、md 或图片文件";');
   });
 });
