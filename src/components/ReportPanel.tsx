@@ -107,7 +107,11 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
         </div>
       </div>
 
-      {report.notice ? <p className="report-notice">{report.notice}</p> : null}
+      {report.notice ? (
+        <p className="report-notice" role="status" aria-live="polite">
+          {report.notice}
+        </p>
+      ) : null}
       {printState === "failed" ? (
         <p className="report-notice" role="alert" aria-live="assertive">
           当前浏览器不支持自动打开打印窗口，请使用浏览器菜单打印。

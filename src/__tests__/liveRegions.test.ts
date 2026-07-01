@@ -16,4 +16,9 @@ describe("live regions", () => {
     expect(reportPanelSource).toContain('aria-atomic="true"');
     expect(reportPanelSource).toContain('role="status"');
   });
+
+  it("announces report notices as polite status updates", () => {
+    expect(reportPanelSource).toContain("report.notice");
+    expect(reportPanelSource).toContain('<p className="report-notice" role="status" aria-live="polite">');
+  });
 });
