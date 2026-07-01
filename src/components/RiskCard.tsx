@@ -55,8 +55,10 @@ export function RiskCard({ finding, onRevealEvidence }: RiskCardProps) {
           </div>
           <p>{finding.modification}</p>
           {copyState === "failed" ? (
-            <div className="report-copy-fallback" role="alert" aria-live="assertive">
-              <span>浏览器没有允许自动复制。可以在这里手动复制这条建议修改条款。</span>
+            <div className="report-copy-fallback">
+              <span className="report-copy-fallback-message" role="alert" aria-live="assertive">
+                浏览器没有允许自动复制。可以在这里手动复制这条建议修改条款。
+              </span>
               <textarea
                 ref={modificationFallbackRef}
                 readOnly

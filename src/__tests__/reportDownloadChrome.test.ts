@@ -38,13 +38,14 @@ describe("report markdown download chrome", () => {
     const fallbackContainers = [...reportPanelSource.matchAll(/<div className="report-copy-fallback"[^>]*>/g)].map(
       ([match]) => match
     );
+    const fallbackAlertMessages = [
+      ...reportPanelSource.matchAll(/<span className="report-copy-fallback-message" role="alert" aria-live="assertive">/g)
+    ].map(([match]) => match);
 
     expect(reportPanelSource).toContain("浏览器没有允许自动下载。可以复制完整 Markdown 报告后手动保存为 .md 文件。");
     expect(reportPanelSource).toContain("浏览器没有允许自动复制。可以在这里手动全选复制完整报告。");
     expect(fallbackContainers).toHaveLength(2);
-    expect(fallbackContainers).toEqual([
-      '<div className="report-copy-fallback" role="alert" aria-live="assertive">',
-      '<div className="report-copy-fallback" role="alert" aria-live="assertive">'
-    ]);
+    expect(fallbackContainers).toEqual(['<div className="report-copy-fallback">', '<div className="report-copy-fallback">']);
+    expect(fallbackAlertMessages).toHaveLength(2);
   });
 });

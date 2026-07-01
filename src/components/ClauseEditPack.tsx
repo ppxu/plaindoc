@@ -58,8 +58,10 @@ export function ClauseEditPack({ findings }: ClauseEditPackProps) {
       </div>
 
       {copyState === "failed" ? (
-        <div className="report-copy-fallback" role="alert" aria-live="assertive">
-          <span>浏览器没有允许自动复制。可以在这里手动复制修改条款包。</span>
+        <div className="report-copy-fallback">
+          <span className="report-copy-fallback-message" role="alert" aria-live="assertive">
+            浏览器没有允许自动复制。可以在这里手动复制修改条款包。
+          </span>
           <textarea ref={editsFallbackRef} readOnly value={editsText} aria-label="修改条款包，可手动复制" />
         </div>
       ) : null}
