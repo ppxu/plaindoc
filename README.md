@@ -84,6 +84,7 @@ Privacy boundary:
 - The current-workspace clear button removes the visible document text, stored editor draft, and current report without deleting report history or model settings.
 - The local data reset button clears the visible document text, stored editor draft, current report, recent report history, stored model settings, remembered API key opt-in state, and current AI send confirmation. It does not remove the application-shell cache used for offline reopening.
 - When AI mode is on, PlainDoc still uses local analysis unless you explicitly confirm **本次允许发送正文给模型服务**. Without that confirmation, the report is generated locally.
+- Blank or whitespace-only document text cannot be confirmed for model sending; paste, upload, or choose an example first.
 - **测试模型连接** sends only a minimal probe prompt to the configured model service. It does not send the visible document text, does not require AI send confirmation, and expects the model to return a JSON confirmation such as `{"ok":true}`.
 - Remote model endpoints must use HTTPS before PlainDoc will send document text or API keys. PlainDoc allows HTTP only for local model endpoints such as `http://localhost` or `http://127.0.0.1`.
 - 本机 Ollama 可不填 API key；远程模型仍需要 API key. If your local model server requires authentication, you can still enter a key manually.
@@ -123,6 +124,7 @@ Currently supported:
 - Model connection test that checks endpoint/model/API key/network and validates a `{"ok":true}` probe response before sending document text.
 - Local sensitive-data category warning and redacted-copy helper before AI model sending.
 - Per-session model-send confirmation that resets when the document or model destination changes.
+- Blank or whitespace-only document text cannot be confirmed for model sending.
 - HTTPS-required remote model endpoints, with HTTP allowed only for local model endpoints.
 - Local model endpoints such as Ollama can be used without an API key; remote model endpoints still require an API key.
 - Transparent long-document AI scope notice when only beginning and ending portions are sent to the configured model service.

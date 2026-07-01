@@ -48,10 +48,12 @@ export function ModelSettingsPanel({
   const endpointSecurity = getModelEndpointSecurity(runtimeSettings.baseUrl);
   const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
   const needsApiKey = modelEndpointNeedsApiKey(runtimeSettings.baseUrl);
+  const hasDocumentText = Boolean(documentText.trim());
   const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
   const preparedModelDocument = prepareModelDocumentText(documentText);
   const modelDocumentScope = formatModelDocumentScope(preparedModelDocument);
   const modelSendBlockedReason = getModelSendBlockedReason(
+    hasDocumentText,
     endpointSecurityWarning,
     needsApiKey,
     runtimeSettings.apiKey
@@ -208,7 +210,7 @@ export function ModelSettingsPanel({
               aria-label="确认本次允许发送正文给模型服务"
               aria-describedby={modelSendBlockedReason ? "model-send-blocked-reason" : undefined}
               checked={modelTextConsent}
-              disabled={(needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}
+              disabled={!hasDocumentText || (needsApiKey && !runtimeSettings.apiKey.trim()) || !endpointSecurity.ok}
               onChange={(event) => onModelTextConsentChange(event.target.checked)}
             />
           </label>
@@ -235,7 +237,15 @@ export function ModelSettingsPanel({
   );
 }
 
-function getModelSendBlockedReason(endpointSecurityWarning: string, needsApiKey: boolean, apiKey: string): string {
+function getModelSendBlockedReason(
+  hasDocumentText: boolean,
+  endpointSecurityWarning: string,
+  needsApiKey: boolean,
+  apiKey: string
+): string {
+  if (!hasDocumentText) {
+    return "粘贴、上传或选择样例正文后才能确认发送给模型服务。";
+  }
   if (endpointSecurityWarning) {
     return "修正模型 endpoint 后才能确认发送正文。";
   }
