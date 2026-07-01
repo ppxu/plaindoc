@@ -15,6 +15,7 @@ describe("security policy", () => {
     expect(securityPolicy).toContain("The local data reset action clears the visible document text, stored editor draft");
     expect(securityPolicy).toContain("Offline app caching stores PlainDoc application files");
     expect(securityPolicy).toContain("beginning and ending portions");
+    expect(securityPolicy).toContain("read-only preview of the exact text that will be sent");
     expect(securityPolicy).toContain("untrusted content");
     expect(securityPolicy).toContain("local redacted copy");
     expect(securityPolicy).toContain("Local model endpoints can be used without an API key");
@@ -29,6 +30,7 @@ describe("security policy", () => {
 
   it("keeps the README aligned with the implemented AI sending scope", () => {
     expect(readme).toContain("beginning and ending portions");
+    expect(readme).toContain("read-only preview of the exact text that will be sent");
     expect(readme).toContain("untrusted document content");
     expect(readme).toContain("本机 Ollama 可不填 API key");
     expect(readme).toContain("远程模型仍需要 API key");

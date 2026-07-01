@@ -49,7 +49,8 @@ export function ModelSettingsPanel({
   const endpointSecurityWarning = modelEndpointSecurityMessage(endpointSecurity);
   const needsApiKey = modelEndpointNeedsApiKey(runtimeSettings.baseUrl);
   const activePresetId = getMatchingModelProviderPresetId(runtimeSettings);
-  const modelDocumentScope = formatModelDocumentScope(prepareModelDocumentText(documentText));
+  const preparedModelDocument = prepareModelDocumentText(documentText);
+  const modelDocumentScope = formatModelDocumentScope(preparedModelDocument);
   const modelSendBlockedReason = getModelSendBlockedReason(
     endpointSecurityWarning,
     needsApiKey,
@@ -176,6 +177,10 @@ export function ModelSettingsPanel({
               <strong>授权发送前可确认这次模型会看到的正文范围。</strong>
             </div>
             <p>{modelDocumentScope}</p>
+            <details className="model-text-preview">
+              <summary>查看将发送的正文预览</summary>
+              <textarea aria-label="AI 将收到的正文预览" readOnly value={preparedModelDocument.text} />
+            </details>
           </div>
 
           {sensitiveTextSummary.hasSensitiveText ? (

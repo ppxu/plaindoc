@@ -859,6 +859,30 @@ textarea:focus,
   line-height: 1.55;
 }
 
+.model-text-preview {
+  margin-top: 9px;
+}
+
+.model-text-preview summary {
+  cursor: pointer;
+  color: #1d5f55;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.model-text-preview textarea {
+  width: 100%;
+  min-height: 124px;
+  max-height: 220px;
+  margin-top: 8px;
+  resize: vertical;
+  color: #374844;
+  background: #fff;
+  border-color: #cfe0dc;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .model-sensitive-warning {
   margin: 8px 0 10px;
   padding: 10px;

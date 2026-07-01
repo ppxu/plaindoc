@@ -90,6 +90,7 @@ Privacy boundary:
 - Before AI sending, PlainDoc locally checks whether the visible text appears to contain common sensitive data categories such as phone numbers, email addresses, ID numbers, or bank card numbers. It only shows category labels and does not store or display the matched values. You can generate a local redacted copy that replaces those values with placeholders before confirming model sending.
 - Changing the document text, loading an example, uploading a file, restoring a history report, clearing the workspace, or changing the model endpoint/model/API key cancels the send confirmation.
 - After confirmation, PlainDoc sends up to 12,000 characters from the beginning and ending portions of the document text from your browser to the endpoint you configured. The full document is still analyzed locally, and long AI-enhanced reports include a notice when the model received only those portions.
+- Before confirmation, PlainDoc shows a read-only preview of the exact text that will be sent to the configured model service.
 - PlainDoc labels the sent text as untrusted document content in the model request and instructs the model not to follow instructions embedded inside the document, reveal prompts, or change the required JSON report shape.
 - The local baseline sent to the model omits evidence snippets, so extracted raw evidence from outside the sent text range is not included in the model request.
 - If the document or model settings change while an AI request is still in flight, the stale model result is ignored instead of replacing the current report.
@@ -125,6 +126,7 @@ Currently supported:
 - HTTPS-required remote model endpoints, with HTTP allowed only for local model endpoints.
 - Local model endpoints such as Ollama can be used without an API key; remote model endpoints still require an API key.
 - Transparent long-document AI scope notice when only beginning and ending portions are sent to the configured model service.
+- Read-only preview of the exact text that will be sent before AI model confirmation.
 - Model prompts isolate uploaded or pasted text as untrusted document content before AI-enhanced analysis.
 - Automatic AI request timeout with local-rule fallback.
 - Cancelable in-flight AI analysis with request abort and stale-result protection.
