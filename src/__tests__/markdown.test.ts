@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
+import { mergeModelPayload } from "../analyzer/modelAnalyzer";
 import clarifyingQuestionsSource from "../components/ClarifyingQuestions.tsx?raw";
 import reportPanelSource from "../components/ReportPanel.tsx?raw";
 import { documentExamples } from "../data/examples";
@@ -99,6 +100,33 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("完整合同正文、附件、补充协议和签字页");
   });
 
+  it("exports evidence coverage when some findings cannot be located in the source text", () => {
+    const localReport = analyzeDocument({
+      text: "押金 5000 元。甲方可根据情况扣除全部押金，乙方提前退租需赔偿两个月租金。",
+      kind: "rental"
+    });
+    const report = mergeModelPayload(
+      localReport,
+      {
+        findings: [
+          {
+            title: "模型补充但未定位原文的风险",
+            severity: "yellow",
+            explanation: "模型认为还需要确认口头承诺。",
+            whyItMatters: "口头承诺很难在争议时证明。",
+            suggestion: "要求对方写入正文或附件。"
+          }
+        ]
+      },
+      "test-model"
+    );
+    const markdown = reportToMarkdown(report);
+
+    expect(markdown).toContain("## 证据覆盖");
+    expect(markdown).toContain("1 个风险提示缺少可定位证据");
+    expect(markdown).toContain("要求对方提供原文位置");
+  });
+
   it("renders coverage scope as a fixed report section", () => {
     expect(reportPanelSource).toContain("coverage-boundary");
     expect(reportPanelSource).toContain("覆盖范围");
@@ -109,5 +137,11 @@ describe("reportToMarkdown", () => {
     expect(reportPanelSource).toContain("input-warning-list");
     expect(reportPanelSource).toContain("输入完整性");
     expect(reportPanelSource).toContain("warning.action");
+  });
+
+  it("renders evidence coverage in the report panel", () => {
+    expect(reportPanelSource).toContain("evidence-coverage");
+    expect(reportPanelSource).toContain("证据覆盖");
+    expect(reportPanelSource).toContain("evidenceCoverage.action");
   });
 });

@@ -8,6 +8,7 @@ import { printReport } from "../export/printReport";
 import { copyTextToClipboard } from "../utils/clipboard";
 import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
+import { getEvidenceCoverage } from "../report/evidenceCoverage";
 import { formatReportGeneratedAt } from "../report/generatedAt";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
@@ -38,6 +39,7 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
   const markdownReport = reportToMarkdown(report);
   const coverageBoundary = getCoverageBoundary(report);
   const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
+  const evidenceCoverage = getEvidenceCoverage(report);
 
   useEffect(() => {
     setCopyReportState("idle");
@@ -183,6 +185,20 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
           </article>
         </div>
         <p className="coverage-boundary-reminder">{coverageBoundary.reminder}</p>
+      </section>
+
+      <section className={`report-section evidence-coverage evidence-coverage-${evidenceCoverage.status}`}>
+        <p className="section-label">证据</p>
+        <h3>证据覆盖</h3>
+        <div className="evidence-coverage-card">
+          <strong>
+            {evidenceCoverage.located}/{evidenceCoverage.total}
+          </strong>
+          <div>
+            <p>{evidenceCoverage.summary}</p>
+            <p>{evidenceCoverage.action}</p>
+          </div>
+        </div>
       </section>
 
       <section className="report-section">

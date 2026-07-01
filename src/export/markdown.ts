@@ -4,6 +4,7 @@ import { clauseEditsToText, getClauseEdits } from "./clauseEdits";
 import { priorityBriefToText } from "./priorityBrief";
 import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundary, getCoverageBoundaryNotice } from "../report/coverageBoundary";
+import { getEvidenceCoverage } from "../report/evidenceCoverage";
 
 export function reportToMarkdown(report: AnalysisReport): string {
   const facts = report.facts
@@ -12,6 +13,7 @@ export function reportToMarkdown(report: AnalysisReport): string {
 
   const coverageBoundaryNotice = getCoverageBoundaryNotice(report);
   const coverageBoundary = getCoverageBoundary(report);
+  const evidenceCoverage = getEvidenceCoverage(report);
   const findings = report.findings
     .map((finding) => [
       `### ${severityLabel(finding.severity)} ${finding.title}`,
@@ -77,6 +79,10 @@ export function reportToMarkdown(report: AnalysisReport): string {
     inputWarnings ? "## 输入完整性" : "",
     inputWarnings,
     inputWarnings ? "" : "",
+    "## 证据覆盖",
+    `**定位情况：** ${evidenceCoverage.summary}`,
+    `**建议动作：** ${evidenceCoverage.action}`,
+    "",
     "## 关键事实",
     facts,
     "",
