@@ -47,6 +47,18 @@ describe("report history", () => {
     expect(modelHistory[0].title).toContain("AI 增强：gpt-4o-mini");
   });
 
+  it("marks saved reports that include a ready counterparty draft", () => {
+    const storage = createMemoryStorage();
+    const report = analyzeDocument({
+      text: "押金 5000 元，甲方可自行扣除押金和维修费，提前退租需赔偿两个月租金。",
+      kind: "rental"
+    });
+
+    const saved = saveReportToHistory(report, storage);
+
+    expect(saved[0].title).toContain("可发草稿");
+  });
+
   it("removes evidence snippets before saving reports to history", () => {
     const storage = createMemoryStorage();
     const report = analyzeDocument({

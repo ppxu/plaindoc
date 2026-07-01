@@ -78,7 +78,9 @@ function redactReportForHistory(report: AnalysisReport): AnalysisReport {
 
 function createReportTitle(report: AnalysisReport): string {
   const kind = report.documentKind === "unknown" ? "文件" : getDocumentKindLabel(report.documentKind);
-  return `${kind} · ${sourceLabel(report)} · ${statusLabel(report.status)} · ${report.score} 分`;
+  return [kind, sourceLabel(report), counterpartyDraftLabel(report), statusLabel(report.status), `${report.score} 分`]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 function sourceLabel(report: AnalysisReport): string {
@@ -86,6 +88,14 @@ function sourceLabel(report: AnalysisReport): string {
     return report.modelName ? `AI 增强：${report.modelName}` : "AI 增强";
   }
   return "本地规则";
+}
+
+function counterpartyDraftLabel(report: AnalysisReport): string | undefined {
+  const message = report.actionPlan.message;
+  if (message.includes("请对方书面确认") || message.includes("建议修改方向")) {
+    return "可发草稿";
+  }
+  return undefined;
 }
 
 function statusLabel(status: AnalysisReport["status"]): string {
