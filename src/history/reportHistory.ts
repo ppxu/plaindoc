@@ -71,7 +71,8 @@ function redactReportForHistory(report: AnalysisReport): AnalysisReport {
   return {
     ...report,
     facts: report.facts.map(({ evidence, ...fact }) => fact),
-    findings: report.findings.map(({ evidence, ...finding }) => finding)
+    findings: report.findings.map(({ evidence, ...finding }) => finding),
+    clarifyingQuestions: report.clarifyingQuestions ?? []
   };
 }
 
@@ -115,6 +116,8 @@ function isAnalysisReport(value: unknown): value is AnalysisReport {
     value.findings.every(isFinding) &&
     Array.isArray(value.checklist) &&
     value.checklist.every(isChecklistItem) &&
+    (value.clarifyingQuestions === undefined ||
+      (Array.isArray(value.clarifyingQuestions) && value.clarifyingQuestions.every(isClarifyingQuestion))) &&
     isActionPlan(value.actionPlan) &&
     Array.isArray(value.plainLanguage) &&
     value.plainLanguage.every((line) => typeof line === "string") &&
@@ -184,6 +187,16 @@ function isChecklistItem(value: unknown): boolean {
   return typeof value.question === "string" && typeof value.reason === "string" && isSeverity(value.severity);
 }
 
+function isClarifyingQuestion(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.question === "string" &&
+    typeof value.whyItMatters === "string" &&
+    isSeverity(value.severity) &&
+    typeof value.askBeforeSigning === "boolean"
+  );
+}
+
 function isActionPlan(value: unknown): boolean {
   if (!isRecord(value)) return false;
   return (
@@ -219,7 +232,8 @@ function createReportFingerprint(report: AnalysisReport): string {
       severity: finding.severity,
       evidence: finding.evidence?.text ?? ""
     })),
-    checklist: report.checklist.map((item) => item.question)
+    checklist: report.checklist.map((item) => item.question),
+    clarifyingQuestions: (report.clarifyingQuestions ?? []).map((item) => item.question)
   });
 }
 

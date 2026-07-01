@@ -29,6 +29,14 @@ export function reportToMarkdown(report: AnalysisReport): string {
     .map((item, index) => `${index + 1}. ${item.question}\n   - ${item.reason}`)
     .join("\n") || "暂无检查项。";
 
+  const clarifyingQuestions = (report.clarifyingQuestions ?? [])
+    .map((item, index) => [
+      `${index + 1}. ${item.question}`,
+      `   - 为什么要问：${item.whyItMatters}`,
+      `   - ${item.askBeforeSigning ? "签前必须问" : "建议追问"}`
+    ].join("\n"))
+    .join("\n") || "暂无签前追问。";
+
   const actionSteps = report.actionPlan.steps
     .map((step, index) => `${index + 1}. ${step}`)
     .join("\n") || "暂无下一步建议。";
@@ -64,6 +72,9 @@ export function reportToMarkdown(report: AnalysisReport): string {
     "",
     "## 签署前问题清单",
     checklist,
+    "",
+    "## 签前追问",
+    clarifyingQuestions,
     "",
     "## 下一步行动",
     `**优先级：** ${priorityLabel(report.actionPlan.priority)}`,

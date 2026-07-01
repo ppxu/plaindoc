@@ -63,6 +63,7 @@ export function prepareModelBaseline(report: AnalysisReport, preparedDocument: P
     })),
     findings: report.findings.map(({ evidence, ...finding }) => finding),
     checklist: report.checklist,
+    clarifyingQuestions: report.clarifyingQuestions,
     actionPlan: report.actionPlan,
     plainLanguage: report.plainLanguage
   };

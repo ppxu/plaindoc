@@ -42,6 +42,13 @@ export interface ChecklistItem {
   severity: Severity;
 }
 
+export interface ClarifyingQuestion {
+  question: string;
+  whyItMatters: string;
+  severity: Severity;
+  askBeforeSigning: boolean;
+}
+
 export interface ActionPlan {
   priority: "low" | "medium" | "high";
   title: string;
@@ -56,6 +63,7 @@ export interface AnalysisReport {
   facts: ExtractedFact[];
   findings: RiskFinding[];
   checklist: ChecklistItem[];
+  clarifyingQuestions: ClarifyingQuestion[];
   actionPlan: ActionPlan;
   plainLanguage: string[];
   generatedAt: string;

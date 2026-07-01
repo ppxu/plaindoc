@@ -22,6 +22,7 @@ Paste a contract, click upload or drag in a selectable-text PDF / `.txt` / `.md`
 - Suggested clause edits for flagged risks.
 - A copyable clause-edit pack for sending all proposed changes together.
 - A signing checklist you can copy before talking to the other party.
+- Copyable pre-signing clarification questions that turn risks into questions for the counterparty.
 - A next-step action plan and a message draft you can send back for clarification.
 - Plain-language explanations for non-experts.
 - Deduplicated local report history for revisiting recent analyses.
@@ -64,7 +65,7 @@ npm run build
 
 ## AI-Enhanced Mode
 
-PlainDoc works without a model by default. The browser runs local heuristic rules first, then optionally asks your configured model service to improve the summary, risk cards, checklist, and plain-language explanation. AI-enhanced findings are conservatively merged with the local baseline so evidence snippets from local rules stay attached to the relevant risk cards.
+PlainDoc works without a model by default. The browser runs local heuristic rules first, then optionally asks your configured model service to improve the summary, risk cards, checklist, pre-signing clarification questions, and plain-language explanation. AI-enhanced findings are conservatively merged with the local baseline so evidence snippets from local rules stay attached to the relevant risk cards.
 
 To use it:
 
@@ -137,6 +138,7 @@ Currently supported:
 - One-click original-text locating for risk evidence snippets, with paragraph-level fallback when exact snippet text no longer matches.
 - Suggested clause edits for common risk patterns.
 - Copyable clause-edit pack.
+- Copyable pre-signing clarification questions that turn findings into questions for counterparties.
 - Copyable next-step message draft for counterparties.
 - Deduplicated local report history that omits original text and evidence snippets, clears the editor on restore, and supports one-click clear.
 - Local browser draft restore for current document text.

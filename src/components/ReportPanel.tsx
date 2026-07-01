@@ -10,6 +10,7 @@ import { formatTextScale } from "../report/textScale";
 import { getCoverageBoundaryNotice } from "../report/coverageBoundary";
 import { ActionPlan } from "./ActionPlan";
 import { Checklist } from "./Checklist";
+import { ClarifyingQuestions } from "./ClarifyingQuestions";
 import { ClauseEditPack } from "./ClauseEditPack";
 import { PriorityBrief } from "./PriorityBrief";
 import { RiskCard } from "./RiskCard";
@@ -185,6 +186,8 @@ export const ReportPanel = forwardRef<HTMLElement, ReportPanelProps>(function Re
       </section>
 
       <Checklist items={report.checklist} onCopy={onCopyChecklist} />
+
+      <ClarifyingQuestions questions={report.clarifyingQuestions ?? []} />
 
       <ActionPlan plan={report.actionPlan} onCopyMessage={onCopyActionMessage} />
 

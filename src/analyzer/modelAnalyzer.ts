@@ -3,6 +3,7 @@ import type {
   AnalysisReport,
   AnalyzerInput,
   ChecklistItem,
+  ClarifyingQuestion,
   ModelAnalyzerSettings,
   RiskFinding,
   Severity
@@ -35,6 +36,7 @@ interface ModelReportPayload {
   summary?: unknown;
   findings?: unknown;
   checklist?: unknown;
+  clarifyingQuestions?: unknown;
   actionPlan?: unknown;
   plainLanguage?: unknown;
 }
@@ -185,6 +187,8 @@ function fetchModelAnalysis(
               findings:
                 "array, max 6 items, each has localFindingId(optional, copy from localBaseline.findings[].id when improving one local risk), title, severity(red/yellow/green), explanation, whyItMatters, suggestion, modification",
               checklist: "array, max 8 items, each has question, reason, severity(red/yellow/green)",
+              clarifyingQuestions:
+                "array, max 5 items, each has question, whyItMatters, severity(red/yellow/green), askBeforeSigning(boolean)",
               actionPlan: "object with priority(low/medium/high), title, steps(max 3 strings), message",
               plainLanguage: "array, max 4 strings"
             },
@@ -260,6 +264,7 @@ export function mergeModelPayload(
 ): AnalysisReport {
   const findings = sanitizeFindings(payload.findings);
   const checklist = sanitizeChecklist(payload.checklist);
+  const clarifyingQuestions = sanitizeClarifyingQuestions(payload.clarifyingQuestions);
   const actionPlan = sanitizeActionPlan(payload.actionPlan);
   const plainLanguage = sanitizeStringList(payload.plainLanguage, 4, 180);
   const summary = sanitizeString(payload.summary, 120);
@@ -269,6 +274,7 @@ export function mergeModelPayload(
     summary: summary || localReport.summary,
     findings: mergeFindings(localReport.findings, findings),
     checklist: checklist.length ? checklist : localReport.checklist,
+    clarifyingQuestions: clarifyingQuestions.length ? clarifyingQuestions : localReport.clarifyingQuestions,
     actionPlan: actionPlan ?? localReport.actionPlan,
     plainLanguage: plainLanguage.length ? plainLanguage : localReport.plainLanguage,
     source: "model",
@@ -374,6 +380,22 @@ function mergeFindings(localFindings: RiskFinding[], modelFindings: ModelFinding
   }));
 
   return [...enhancedLocalFindings, ...supplementalFindings];
+}
+
+function sanitizeClarifyingQuestions(value: unknown): ClarifyingQuestion[] {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 5).flatMap((item) => {
+    if (!isRecord(item)) return [];
+    const question = sanitizeString(item.question, 140);
+    const whyItMatters = sanitizeString(item.whyItMatters, 220);
+    if (!question || !whyItMatters) return [];
+    return [{
+      question,
+      whyItMatters,
+      severity: sanitizeSeverity(item.severity),
+      askBeforeSigning: item.askBeforeSigning !== false
+    }];
+  });
 }
 
 function sanitizeChecklist(value: unknown): ChecklistItem[] {

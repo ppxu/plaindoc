@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyzeDocument } from "../analyzer/localAnalyzer";
+import clarifyingQuestionsSource from "../components/ClarifyingQuestions.tsx?raw";
 import reportPanelSource from "../components/ReportPanel.tsx?raw";
 import { documentExamples } from "../data/examples";
 import { reportToMarkdown } from "../export/markdown";
@@ -16,6 +17,8 @@ describe("reportToMarkdown", () => {
     expect(markdown).toContain("**建议修改条款：**");
     expect(markdown).toContain("## 修改条款包");
     expect(markdown).toContain("## 签署前问题清单");
+    expect(markdown).toContain("## 签前追问");
+    expect(markdown).toContain("为什么要问：");
     expect(markdown).toContain("## 下一步行动");
     expect(markdown).toContain("### 可复制给对方的消息");
     expect(markdown).toContain("## 免责声明");
@@ -51,6 +54,12 @@ describe("reportToMarkdown", () => {
     expect(reportPanelSource).toContain("report-share-actions");
     expect(reportPanelSource).toContain("report-share-reminder");
     expect(reportPanelSource).toContain("复制或导出前，请复核证据片段中是否仍有个人信息或敏感条款。");
+  });
+
+  it("renders clarifying questions as a dedicated report section", () => {
+    expect(reportPanelSource).toContain("ClarifyingQuestions");
+    expect(clarifyingQuestionsSource).toContain('<p className="section-label">追问</p>');
+    expect(clarifyingQuestionsSource).toContain("签前追问");
   });
 
   it("exports coverage limits when no risk rule matched", () => {

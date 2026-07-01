@@ -45,6 +45,14 @@ describe("model analyzer", () => {
             severity: "red"
           }
         ],
+        clarifyingQuestions: [
+          {
+            question: "请房东书面确认押金扣除项目、金额上限和凭证材料。",
+            whyItMatters: "把扣款边界写清楚，退租时才不容易被任意扣押金。",
+            severity: "red",
+            askBeforeSigning: true
+          }
+        ],
         actionPlan: {
           priority: "high",
           title: "先确认押金扣除边界",
@@ -65,6 +73,8 @@ describe("model analyzer", () => {
     expect(enhancedDepositFinding?.modification).toContain("退还期限");
     expect(report.findings.some((finding) => finding.id.startsWith("model-1-"))).toBe(true);
     expect(report.checklist[0].severity).toBe("red");
+    expect(report.clarifyingQuestions[0].question).toContain("押金扣除项目");
+    expect(report.clarifyingQuestions[0].askBeforeSigning).toBe(true);
     expect(report.actionPlan.priority).toBe("high");
     expect(report.actionPlan.message).toContain("\n");
     expect(report.score).toBe(localReport.score);

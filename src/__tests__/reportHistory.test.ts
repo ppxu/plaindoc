@@ -109,6 +109,31 @@ describe("report history", () => {
     expect(loaded[0].title).toContain("不建议直接签");
   });
 
+  it("fills missing clarifying questions when loading older saved reports", () => {
+    const storage = createMemoryStorage();
+    const report = analyzeDocument({
+      text: "押金 5000 元，甲方可自行扣除押金和维修费，提前退租需赔偿两个月租金。",
+      kind: "rental"
+    }) as unknown as Record<string, unknown>;
+    delete report.clarifyingQuestions;
+    storage.setItem(
+      "plaindoc:report-history:v1",
+      JSON.stringify([
+        {
+          id: "old-history",
+          title: "旧版报告",
+          createdAt: "2026-06-28T00:00:00.000Z",
+          report
+        }
+      ])
+    );
+
+    const loaded = loadReportHistory(storage);
+
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0].report.clarifyingQuestions).toEqual([]);
+  });
+
   it("limits saved reports and ignores invalid storage data", () => {
     const storage = createMemoryStorage();
 

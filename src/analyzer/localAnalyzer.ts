@@ -1,4 +1,4 @@
-import type { AnalysisReport, AnalyzerInput, ExtractedFact, ReportStatus } from "../types";
+import type { AnalysisReport, AnalyzerInput, ClarifyingQuestion, ExtractedFact, ReportStatus, RiskFinding } from "../types";
 import { documentKindMeta } from "../data/documentKinds";
 import { buildActionPlan } from "./actionPlan";
 import { checklistFromRules, runRules } from "./rules";
@@ -27,6 +27,7 @@ export function analyzeDocument(input: AnalyzerInput): AnalysisReport {
     facts,
     findings,
     checklist,
+    clarifyingQuestions: buildClarifyingQuestions(findings, input.kind),
     actionPlan: buildActionPlan(input.kind, findings, checklist),
     plainLanguage: buildPlainLanguage(input.kind, findings.length),
     generatedAt: new Date().toISOString(),
@@ -45,6 +46,7 @@ function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
     facts: [],
     findings: [],
     checklist: [],
+    clarifyingQuestions: [],
     actionPlan: {
       priority: "medium",
       title: "请先提供可分析的文件内容",
@@ -58,6 +60,35 @@ function emptyReport(kind: AnalyzerInput["kind"]): AnalysisReport {
     source: "local",
     disclaimer: DISCLAIMER
   };
+}
+
+function buildClarifyingQuestions(findings: RiskFinding[], kind: AnalyzerInput["kind"]): ClarifyingQuestion[] {
+  const riskQuestions = findings.slice(0, 4).map((finding) => ({
+    question: `请对方书面确认：${finding.suggestion}`,
+    whyItMatters: finding.whyItMatters,
+    severity: finding.severity,
+    askBeforeSigning: finding.severity === "red" || finding.severity === "yellow"
+  }));
+
+  const universalQuestions: ClarifyingQuestion[] = [{
+    question: kindSpecificClarifyingQuestion(kind),
+    whyItMatters: "把关键口头承诺写成可追溯的文字，后续争议时更容易举证。",
+    severity: "yellow",
+    askBeforeSigning: true
+  }];
+
+  return [...riskQuestions, ...universalQuestions].slice(0, 5);
+}
+
+function kindSpecificClarifyingQuestion(kind: AnalyzerInput["kind"]): string {
+  return {
+    rental: "请对方书面确认金额、押金扣除、维修责任和提前解除条件是否以合同正文为准。",
+    employment: "请对方书面确认薪酬、岗位职责、离职限制、违约责任和补偿安排是否都已写进正文。",
+    renovation: "请对方书面确认付款节点、验收标准、延期责任和增项报价是否都以书面附件为准。",
+    loan: "请对方书面确认总成本、还款计划、提前还款费用和逾期责任是否没有隐藏收费。",
+    insurance: "请对方书面确认等待期、免责范围、续保条件和理赔材料是否已完整说明。",
+    unknown: "请对方书面确认金额、期限、解除条件、违约责任和附件清单是否都以正文为准。"
+  }[kind];
 }
 
 function extractFacts(text: string): ExtractedFact[] {

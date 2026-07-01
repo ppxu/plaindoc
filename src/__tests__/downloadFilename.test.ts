@@ -24,6 +24,7 @@ function createReport(partial: Partial<AnalysisReport>): AnalysisReport {
     facts: [],
     findings: [],
     checklist: [],
+    clarifyingQuestions: [],
     actionPlan: {
       priority: "medium",
       title: "下一步",
